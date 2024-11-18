@@ -1,0 +1,48 @@
+# Python Bytecode
+__pycache__/
+*.py[cod]
+
+# Virtual Environment
+venv/
+ENV/
+env/
+*.venv
+*.env
+
+# Django Specific
+db.sqlite3  # SQLite database file
+*.log       # Log files
+
+# Django migrations
+**/migrations/* 
+!**/migrations/__init__.py  
+
+# Editor and IDE files
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Python Package Files
+*.egg
+*.egg-info/
+dist/
+build/
+*.egg-info
+
+# Other
+*.bak
+*.swp
+
+# Pycharm specific
+*.iml
+*.ipr
+*.iws
+
+# Config files
+*.cfg
+*.ini
+.env
