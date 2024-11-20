@@ -33,6 +33,7 @@ Install Django and Other Packages:
 pip install django                  # django-admin --version should be 5.1.3
 pip install djangorestframework     # djangorestframework --version should be 3.15.2
 pip install django-stubs djangorestframework-stubs  # for better code control
+pip install requests-oauthlib       # oauthlib-3.2.2 requests-oauthlib-2.0.0
 ```
 ### **3. Set Up the Database**
 
@@ -73,3 +74,18 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 3. After applying any changes make sure to restart the server
+
+### **8. Endpoints**
+```powershell
+admin/                                      # admin panel   
+students/ [name='student-list']             # list of students
+students/<int:pk>/ [name='student-detail']  # particular student
+courses/ [name='course-list']               # list of courses
+courses/<int:pk>/ [name='course-detail']    # particular course
+grades/ [name='grade-list']                 # list of grades
+grades/<int:pk>/ [name='grade-detail']      # particular grade
+grades/create/ [name='create-grade']        
+oauth/start                                 # USOS redirection
+oauth/callback                              # USOS callback
+oauth/logout                                # USOS logout
+```

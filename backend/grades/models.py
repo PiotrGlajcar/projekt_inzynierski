@@ -8,6 +8,8 @@ class User(AbstractUser):
         ('teacher', 'Teacher'),
     )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student')
+    usos_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
+    email = models.EmailField(unique=True, null=True, blank=True)  # Optional for email storage
 
     def __str__(self):
         return f"{self.username} ({self.role})"
@@ -15,6 +17,7 @@ class User(AbstractUser):
 
 class Student(models.Model):
 
+    usos_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     enrollment_number = models.CharField(max_length=50, unique=True)

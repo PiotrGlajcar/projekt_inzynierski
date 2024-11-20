@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'grades'
+    'grades',
+    'oauth',
 ]
 
 MIDDLEWARE = [
@@ -84,6 +85,18 @@ DATABASES = {
 
 
 AUTH_USER_MODEL = 'grades.User'
+
+
+# OAuth Configuration
+
+USOS_CONSUMER_KEY = "vu7qhje2x7ptS9VFPbcr"
+USOS_CONSUMER_SECRET = "ZrTx4cJHQq6MK8sHsjkd6ZwxgjPqRqQtpGt4kWeV"
+USOS_REQUEST_TOKEN_URL = "https://usosapi.polsl.pl/services/oauth/request_token"
+USOS_AUTHORIZE_URL = "https://usosapi.polsl.pl/services/oauth/authorize"
+USOS_ACCESS_TOKEN_URL = "https://usosapi.polsl.pl/services/oauth/access_token"
+USOS_CALLBACK_URL = "http://localhost:8000/oauth/callback/"
+                  # Replace with your frontend callback if needed
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

@@ -14,7 +14,7 @@ class UserAdmin(BaseUserAdmin):
     Custom User Admin for the grades.User model.
     """
     # Specify fields to display in the list view
-    list_display = ('username', 'email', 'role', 'is_staff', 'is_active')
+    list_display = ('username', 'email', 'role', 'usos_id', 'is_staff', 'is_active')
     list_filter = ('role', 'is_staff', 'is_superuser', 'is_active')
 
     # Define fields for the user detail view
