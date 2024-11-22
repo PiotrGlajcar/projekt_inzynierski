@@ -1,8 +1,8 @@
 from django.urls import path
-from .views import get_request_token, oauth_callback, logout_view
+from .views import initiate_oauth, process_oauth_callback, logout_user
 
 urlpatterns = [
-    path('start/', get_request_token, name='oauth_start'),
-    path('callback/', oauth_callback, name='oauth_callback'),
-    path('logout/', logout_view, name='logout'),
+    path('start/', initiate_oauth, name='oauth_start'),
+    path('callback/', process_oauth_callback, name='oauth_callback'),
+    path('logout/', logout_user, name='logout_user'),
 ]

@@ -12,7 +12,7 @@ Follow these steps to set up and run the project on your local machine.
 ### **1. Clone the Repository**
 Clone this project to your computer:
 ```powershell
-git clone [<repository-url>](https://github.com/PiotrGlajcar/projekt_inzynierski.git)
+git clone (https://github.com/PiotrGlajcar/projekt_inzynierski.git)
 
 cd projekt_inzynierski
 
@@ -88,4 +88,41 @@ grades/create/ [name='create-grade']
 oauth/start                                 # USOS redirection
 oauth/callback                              # USOS callback
 oauth/logout                                # USOS logout
+```
+
+### **9. Request responses (from backend to frontend)**
+
+1. **Success Response Example**
+```json
+{
+    "status": "success",
+    "message": "Action performed successfully",
+    "data": {
+        "key1": "value1",
+        "key2": "value2"
+    }
+}
+```
+
+2. **Error Response Example**
+```json
+{
+    "status": "error",
+    "message": "An error occurred during the action",
+    "error_code": "ERROR_CODE_HERE",
+    "data": {
+        "key1": "value1",
+        "key2": "value2"
+    }
+}
+```
+
+3. **No Additional Data Example**
+
+For actions like deletions or responses with no extra data:
+```json
+{
+    "status": "success",
+    "message": "Resource deleted successfully"
+}
 ```

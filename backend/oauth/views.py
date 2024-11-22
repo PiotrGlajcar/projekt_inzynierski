@@ -1,70 +1,95 @@
-from requests_oauthlib import OAuth1Session
 from django.shortcuts import redirect
-from django.http import JsonResponse
 from django.conf import settings
+from oauth.utils import api_response
+from oauth.usos import UsosAPI
 
-def get_request_token(request):
+# Initialize the UsosAPI instance
+usos_api = UsosAPI(
+    consumer_key=settings.USOS_CONSUMER_KEY,
+    consumer_secret=settings.USOS_CONSUMER_SECRET,
+    callback_url=settings.USOS_CALLBACK_URL,
+    base_url="https://usosapi.polsl.pl"
+)
+
+def initiate_oauth(request):
     """
-    Directly redirects the user to the USOS login page to authorize.
+    Starts the OAuth process by fetching request tokens and redirecting to the USOS login page.
     """
-    usos = OAuth1Session(
-        settings.USOS_CONSUMER_KEY,
-        client_secret=settings.USOS_CONSUMER_SECRET,
-        callback_uri=settings.USOS_CALLBACK_URL,
-    )
+    try:
+        # Add the required scopes
+        scopes = 'email|studies|personal'
 
-    # Fetch the request token
-    fetch_response = usos.fetch_request_token(settings.USOS_REQUEST_TOKEN_URL)
-    request.session['oauth_token'] = fetch_response.get('oauth_token')
-    request.session['oauth_token_secret'] = fetch_response.get('oauth_token_secret')
+        # Fetch request tokens with scopes
+        tokens = usos_api.fetch_request_token(scopes=scopes)
 
-    # Generate the authorization URL and redirect the user
-    authorization_url = usos.authorization_url(settings.USOS_AUTHORIZE_URL)
-    return redirect(authorization_url)
+        # Store tokens in the session
+        request.session['oauth_token'] = tokens['oauth_token']
+        request.session['oauth_token_secret'] = tokens['oauth_token_secret']
 
-def oauth_callback(request):
+        # Generate the authorization URL
+        authorization_url = usos_api.get_authorization_url(tokens['oauth_token'])
+        return redirect(authorization_url)
+    except Exception as e:
+        return api_response(
+            status="error",
+            message="Failed to initiate OAuth",
+            error_code="OAUTH_INIT_ERROR",
+            data={"exception": str(e)},
+            status_code=500
+        )
+
+def process_oauth_callback(request):
     """
-    Handles the callback from USOS and retrieves user information with basic error handling.
+    Handles the callback from USOS, retrieves user information, and returns a standardized response.
     """
     oauth_token = request.GET.get('oauth_token')
     oauth_verifier = request.GET.get('oauth_verifier')
     oauth_token_secret = request.session.get('oauth_token_secret')
 
-    # Check if required tokens are present
     if not oauth_token or not oauth_verifier or not oauth_token_secret:
-        return JsonResponse({'error': 'Missing OAuth tokens'}, status=400)
-
-    try:
-        # Initialize OAuth session
-        usos = OAuth1Session(
-            settings.USOS_CONSUMER_KEY,
-            client_secret=settings.USOS_CONSUMER_SECRET,
-            resource_owner_key=oauth_token,
-            resource_owner_secret=oauth_token_secret,
-            verifier=oauth_verifier,
+        return api_response(
+            status="error",
+            message="Missing OAuth tokens",
+            error_code="MISSING_TOKENS",
+            status_code=400
         )
 
+    try:
         # Fetch access tokens
-        oauth_tokens = usos.fetch_access_token(settings.USOS_ACCESS_TOKEN_URL)
-        request.session['access_token'] = oauth_tokens['oauth_token']
-        request.session['access_token_secret'] = oauth_tokens['oauth_token_secret']
+        access_tokens = usos_api.fetch_access_token(oauth_token, oauth_token_secret, oauth_verifier)
+        request.session['access_token'] = access_tokens['oauth_token']
+        request.session['access_token_secret'] = access_tokens['oauth_token_secret']
 
         # Fetch user information
-        response = usos.get('https://usosapi.polsl.pl/services/users/user')
-        if response.status_code != 200:
-            return JsonResponse({'error': 'Failed to fetch user info', 'details': response.text}, status=response.status_code)
+        user_info = usos_api.get_user_info(
+            access_token=access_tokens['oauth_token'],
+            access_token_secret=access_tokens['oauth_token_secret'],
+            fields='id|first_name|last_name|email|student_number|student_status|staff_status'
+        )
 
-        # Parse and return the user info directly
-        user_info = response.json()  # This assumes the API returns a valid JSON object
-        return JsonResponse(user_info)
+        return api_response(
+            status="success",
+            message="User data retrieved successfully",
+            data=user_info,
+            status_code=200
+        )
 
     except Exception as e:
-        # Catch any exceptions and return an error response
-        return JsonResponse({'error': 'OAuth callback failed', 'exception': str(e)}, status=500)
+        return api_response(
+            status="error",
+            message="OAuth callback failed",
+            error_code="OAUTH_CALLBACK_ERROR",
+            data={"exception": str(e)},
+            status_code=500
+        )
 
-def logout_view(request):
+def logout_user(request):
     """
-    Clears session data and logs the user out.
+    Logs out the user by clearing session data.
     """
     request.session.flush()  # Clears all session data
-    return JsonResponse({'message': 'User logged out successfully'}, status=200)
+    return api_response(
+        status="success",
+        message="User logged out successfully",
+        status_code=200
+    )
