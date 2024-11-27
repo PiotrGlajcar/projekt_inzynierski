@@ -1,9 +1,8 @@
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view
 from rest_framework.request import Request
 from oauth.utils import api_response
 from .models import Student, Course, Grade
 from .serializers import StudentSerializer, CourseSerializer, GradeSerializer
-from .permissions import IsTeacher
 
 @api_view(['GET', 'POST'])
 def student_list(request):
@@ -255,7 +254,7 @@ def grade_detail(request, pk: int):
         )
 
 @api_view(['POST'])
-@permission_classes([IsTeacher])
+#@permission_classes([IsTeacher])
 def create_grade(request):
     """
     Handles grade creation.
@@ -277,3 +276,26 @@ def create_grade(request):
         data=serializer.errors,
         status_code=400
     )
+
+@api_view(['GET'])
+def student_me(request):
+    """
+    Endpoint to fetch the logged-in student's data.
+    """
+    try:
+        # Fetch the student record linked to the logged-in user
+        student = request.user.student
+        serializer = StudentSerializer(student)
+        return api_response(
+            status="success",
+            message="Student data retrieved successfully",
+            data=serializer.data,
+            status_code=200
+        )
+    except Student.DoesNotExist:
+        return api_response(
+            status="error",
+            message="Student record not found",
+            error_code="STUDENT_NOT_FOUND",
+            status_code=404
+        )

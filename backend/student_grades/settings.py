@@ -54,6 +54,18 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'student_grades.urls'
 
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'oauth.exceptions.custom_exception_handler',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

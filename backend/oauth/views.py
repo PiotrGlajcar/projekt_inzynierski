@@ -1,6 +1,7 @@
 from django.shortcuts import redirect
+from django.contrib.auth import login
 from django.conf import settings
-from oauth.utils import api_response
+from oauth.utils import api_response, process_usos_user
 from oauth.usos import UsosAPI
 
 # Initialize the UsosAPI instance
@@ -66,6 +67,12 @@ def process_oauth_callback(request):
             access_token_secret=access_tokens['oauth_token_secret'],
             fields='id|first_name|last_name|email|student_number|student_status|staff_status'
         )
+
+        # Process and create/update user
+        user = process_usos_user(user_info)
+
+        # Log the user in to associate the session with the User object
+        login(request, user)
 
         return api_response(
             status="success",

@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Student, Course, Grade
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from .models import Student, Course, Grade
 from .models import User
 
 admin.site.register(Student)
@@ -21,7 +21,7 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         ('Personal info', {'fields': ('email', 'first_name', 'last_name')}),
-        ('Roles and Permissions', {'fields': ('role', 'is_staff', 'is_superuser', 'is_active', 'groups', 'user_permissions')}),
+        ('Roles and Permissions', {'fields': ('role', 'is_staff', 'is_superuser', 'is_active')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
 
@@ -29,7 +29,8 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'email', 'password1', 'password2', 'role', 'is_staff', 'is_active')}
+            'fields': ('username', 'email', 'password1', 
+                       'password2', 'role', 'is_staff', 'is_active')}
         ),
     )
 
