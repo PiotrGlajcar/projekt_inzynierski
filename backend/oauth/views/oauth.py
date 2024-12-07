@@ -1,8 +1,10 @@
 from django.shortcuts import redirect
 from django.contrib.auth import login
 from django.conf import settings
-from oauth.utils import api_response, process_usos_user
-from oauth.usos import UsosAPI
+from oauth.utils.responses import api_response
+from oauth.utils.users import process_usos_user
+from oauth.services.usos import UsosAPI
+from django.contrib.auth import get_user_model
 
 # Initialize the UsosAPI instance
 usos_api = UsosAPI(
@@ -62,23 +64,31 @@ def process_oauth_callback(request):
         request.session['access_token_secret'] = access_tokens['oauth_token_secret']
 
         # Fetch user information
-        user_info = usos_api.get_user_info(
+        user_info = usos_api.get_usos_user_data(
             access_token=access_tokens['oauth_token'],
             access_token_secret=access_tokens['oauth_token_secret'],
             fields='id|first_name|last_name|email|student_number|student_status|staff_status'
         )
 
-        # Process and create/update user
+        # Debug inside process_oauth_callback
         user = process_usos_user(user_info)
+
+        if not user:
+            raise ValueError("process_usos_user returned None.")
+        if not isinstance(user, get_user_model()):
+            raise ValueError("process_usos_user returned an invalid object.")
+
+        print(f"User retrieved: {user}, Role: {user.role}")
+
 
         # Log the user in to associate the session with the User object
         login(request, user)
 
-        return api_response(
+        return(api_response(  
             status="success",
             message="User data retrieved successfully",
             data=user_info,
-            status_code=200
+            status_code=200)
         )
 
     except Exception as e:

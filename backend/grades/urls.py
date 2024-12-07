@@ -5,7 +5,9 @@ urlpatterns = [
     # Students
     path('students/', views.student_list, name='student-list'),
     path('students/<int:pk>/', views.student_detail, name='student-detail'),
-    path('students/me/', views.student_me, name='student-me'),
+
+    #Users
+    path('users/me', views.users_me, name='users-me'),
 
     # Courses
     path('courses/', views.course_list, name='course-list'),

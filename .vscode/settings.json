@@ -1,5 +1,4 @@
 {
-    "python.defaultInterpreterPath": "C:\\Users\\glajcar.p\\Documents\\projekt_inzynierski\\backend\\venv\\Scripts\\python.exe",
     "python.analysis.extraPaths": [
         "./",
         "./backend"

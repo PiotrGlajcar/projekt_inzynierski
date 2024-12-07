@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import initiate_oauth, process_oauth_callback, logout_user
+from .views.oauth import initiate_oauth, process_oauth_callback, logout_user
 
 urlpatterns = [
     path('start/', initiate_oauth, name='oauth_start'),

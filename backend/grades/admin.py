@@ -14,13 +14,13 @@ class UserAdmin(BaseUserAdmin):
     Custom User Admin for the grades.User model.
     """
     # Specify fields to display in the list view
-    list_display = ('username', 'email', 'role', 'usos_id', 'is_staff', 'is_active')
+    list_display = ('username', 'email', 'first_name', 'last_name', 'role', 'is_staff', 'is_active')
     list_filter = ('role', 'is_staff', 'is_superuser', 'is_active')
 
     # Define fields for the user detail view
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        ('Personal info', {'fields': ('email', 'first_name', 'last_name')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'email')}),
         ('Roles and Permissions', {'fields': ('role', 'is_staff', 'is_superuser', 'is_active')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )

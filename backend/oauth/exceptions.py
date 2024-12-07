@@ -1,5 +1,5 @@
 from rest_framework.views import exception_handler
-from oauth.utils import api_response
+from oauth.utils.responses import api_response
 
 def custom_exception_handler(exc, context):
     """

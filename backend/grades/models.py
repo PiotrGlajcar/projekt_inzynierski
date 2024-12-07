@@ -25,31 +25,10 @@ class User(AbstractUser):
         ('unknown', 'Unknown'),
     )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='unknown')
-    usos_id = models.CharField(max_length=50, unique=True)
     email = models.EmailField(unique=True, null=False)
 
     def __str__(self):
         return f"{self.username} ({self.role})"
-
-    def set_role(self, student_status=None, staff_status=None):
-        """
-        Sets the user's role based on their student_status and staff_status.
-
-        Args:
-            student_status (int, optional): The status indicating if the user is a student.
-            staff_status (int, optional): The status indicating if the user is staff.
-
-        Returns:
-            None
-        """
-
-        if staff_status == 2:
-            self.role = 'staff'
-        elif student_status == 2:
-            self.role = 'student'
-        else:
-            self.role = 'unknown'
-        self.save()
 
 class Student(models.Model):
     """
@@ -66,12 +45,10 @@ class Student(models.Model):
     """
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="student")
-    name = models.CharField(max_length=100, null=True)
-    last_name = models.CharField(max_length=100, null=True)
-    student_number = models.CharField(max_length=10, null=True, unique=True)
+    student_number = models.CharField(max_length=10, unique=True)
 
     def __str__(self):
-        return self.user.usos_id
+        return f"{self.user.first_name} {self.user.last_name} - {self.student_number}"
 
 class Staff(models.Model):
     """
@@ -87,11 +64,9 @@ class Staff(models.Model):
     """
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="staff")
-    name = models.CharField(max_length=100, null=True)
-    last_name = models.CharField(max_length=100, null=True)
 
     def __str__(self):
-        return self.user.usos_id
+        return f"{self.user.first_name} {self.user.last_name}"
 
 class Course(models.Model):
     """
@@ -121,4 +96,4 @@ class Grade(models.Model):
     date_assigned = models.DateField(default=date.today)
 
     def __str__(self):
-        return f"{self.student.name} - {self.course.course_name}: {self.score}"
+        return f" - {self.course.course_name}: {self.score}"

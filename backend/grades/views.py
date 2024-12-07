@@ -1,8 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.request import Request
-from oauth.utils import api_response
+from oauth.utils.responses import api_response
 from .models import Student, Course, Grade
-from .serializers import StudentSerializer, CourseSerializer, GradeSerializer
+from .serializers import StudentSerializer, CourseSerializer, GradeSerializer, UserSerializer
 
 @api_view(['GET', 'POST'])
 def student_list(request):
@@ -278,24 +278,15 @@ def create_grade(request):
     )
 
 @api_view(['GET'])
-def student_me(request):
+def users_me(request):
     """
-    Endpoint to fetch the logged-in student's data.
+    Returns the logged-in user's details, including role-specific data.
     """
-    try:
-        # Fetch the student record linked to the logged-in user
-        student = request.user.student
-        serializer = StudentSerializer(student)
-        return api_response(
-            status="success",
-            message="Student data retrieved successfully",
-            data=serializer.data,
-            status_code=200
-        )
-    except Student.DoesNotExist:
-        return api_response(
-            status="error",
-            message="Student record not found",
-            error_code="STUDENT_NOT_FOUND",
-            status_code=404
-        )
+    user = request.user
+    serializer = UserSerializer(user)
+    return api_response(
+        status="success",
+        message="User data retrieved successfully",
+        data=serializer.data,
+        status_code=200,
+    )

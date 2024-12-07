@@ -80,7 +80,7 @@ python manage.py migrate
 admin/                                      # admin panel   
 students/ [name='student-list']             # list of students
 students/<int:pk>/ [name='student-detail']  # particular student
-students/me                                 # currently logged in user
+users/me                                    # currently logged in user
 courses/ [name='course-list']               # list of courses
 courses/<int:pk>/ [name='course-detail']    # particular course
 grades/ [name='grade-list']                 # list of grades

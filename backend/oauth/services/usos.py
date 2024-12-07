@@ -93,7 +93,7 @@ class UsosAPI:
         response = session.fetch_access_token(f"{self.base_url}/services/oauth/access_token")
         return response
 
-    def get_user_info(self, access_token, access_token_secret, fields=None):
+    def get_usos_user_data(self, access_token, access_token_secret, fields=None):
         """
         Fetch user information from the USOS API.
 
