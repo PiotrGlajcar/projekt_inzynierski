@@ -18,7 +18,7 @@ db.sqlite3  # SQLite database file
 !**/migrations/__init__.py  
 
 # Editor and IDE files
-.vscode/
+.vscode/*
 *.sublime-workspace
 *.sublime-project
 
