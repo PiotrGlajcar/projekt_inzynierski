@@ -1,5 +1,5 @@
 from django.shortcuts import redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.conf import settings
 from oauth.utils.responses import api_response
 from oauth.utils.users import process_usos_user
@@ -102,11 +102,12 @@ def process_oauth_callback(request):
 
 def logout_user(request):
     """
-    Logs out the user by clearing session data.
+    Logs out the user by clearing session data and resetting authentication state.
     """
-    request.session.flush()  # Clears all session data
+    logout(request)  # Clears the session and resets request.user
     return api_response(
         status="success",
         message="User logged out successfully",
         status_code=200
     )
+

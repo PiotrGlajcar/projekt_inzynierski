@@ -28,7 +28,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True, null=False)
 
     def __str__(self):
-        return f"{self.username} ({self.role})"
+        return f"{self.first_name} {self.last_name} - {self.email})"
 
 class Student(models.Model):
     """
@@ -71,29 +71,49 @@ class Staff(models.Model):
 class Course(models.Model):
     """
     Represents a course in the system.
-
-    Attributes:
-        course_name (str): The name of the course.
-        course_code (str): The unique code of the course.
-        description (str): The optional description of the course.
-
-    Methods:
-        __str__: Returns a string representation of the course name.
     """
-
-    course_name = models.CharField(max_length=100)
-    course_code = models.CharField(max_length=20, unique=True)
-    description = models.TextField(blank=True, null=True)
-
-    def __str__(self) -> str:
-        return str(self.course_name)
-
-
-class Grade(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="grades")
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="grades")
-    score = models.DecimalField(max_digits=5, decimal_places=2)
-    date_assigned = models.DateField(default=date.today)
+    name = models.CharField(max_length=100)
+    teacher = models.ForeignKey(
+        Staff,                      # Links course to the teacher who created it
+        on_delete=models.CASCADE, 
+        related_name="courses"
+    )
 
     def __str__(self):
-        return f" - {self.course.course_name}: {self.score}"
+        return f"{self.name}"
+
+class Enrollment(models.Model):
+    """
+    Represents a student's enrollment in a course.
+    """
+    student = models.ForeignKey(
+        Student, 
+        on_delete=models.CASCADE, 
+        related_name="enrollments"
+    )
+    course = models.ForeignKey(
+        Course, 
+        on_delete=models.CASCADE, 
+        related_name="enrollments"
+    )
+
+    class Meta:
+        unique_together = ("student", "course")  # Prevent duplicate enrollments
+
+    def __str__(self):
+        return f"{self.student.user.first_name} {self.student.user.last_name} - {self.course.name}"
+    
+class Grade(models.Model):
+    """
+    Represents a grade assigned to a student for a specific course.
+    """
+    enrollment = models.ForeignKey(
+        Enrollment, 
+        on_delete=models.CASCADE, 
+        related_name="grades"
+    )
+    score = models.DecimalField(max_digits=5, decimal_places=2)
+    date_assigned = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.enrollment.student.user.first_name} - {self.enrollment.course.name}: {self.score}"
