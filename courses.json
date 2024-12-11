@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Kurs 1",
+    "participants": [
+      "kamil",
+      "piotrek"
+    ]
+  },
+  {
+    "name": "Kurs2",
+    "participants": [
+      "kamil1",
+      "kamil2"
+    ]
+  },
+  {
+    "name": "Test3",
+    "participants": [
+      "kamil",
+      "piotrek",
+      "marcin"
+    ]
+  }
+]
