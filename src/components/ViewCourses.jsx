@@ -42,23 +42,23 @@ function ViewCourses() {
     };
 
     return (
-        <div>
-            <h2>View Courses</h2>
+        <div className="view-courses">
+            <h2>Przeglądanie kursów</h2>
             <ul>
                 {courses.map((course, index) => (
                     <li key={index}>
-                        <strong>{course.name}</strong> - Participants: {course.participants.join(", ")}
-                        <button onClick={() => setConfirmDelete(course.name)}>Delete</button>
+                        <strong>{course.name}</strong> - uczestnicy: {course.participants.join(", ")}
+                        <button onClick={() => setConfirmDelete(course.name)}>Usuń</button>
                     </li>
                 ))}
             </ul>
 
             {/* Okienko potwierdzenia */}
             {confirmDelete && (
-                <div style={{ border: "1px solid black", padding: "1em", marginTop: "1em" }}>
-                    <p>Are you sure you want to delete the course '{confirmDelete}'?</p>
-                    <button onClick={() => handleDeleteCourse(confirmDelete)}>Yes</button>
-                    <button onClick={() => setConfirmDelete(null)}>No</button>
+                <div className="confirmation-dialog">
+                    <p>Czy na pewno chcesz usunąć kurs '{confirmDelete}'?</p>
+                    <button onClick={() => handleDeleteCourse(confirmDelete)}>Tak</button>
+                    <button onClick={() => setConfirmDelete(null)}>Nie</button>
                 </div>
             )}
         </div>

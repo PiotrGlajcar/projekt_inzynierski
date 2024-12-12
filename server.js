@@ -44,7 +44,7 @@ app.post("/courses", (req, res) => {
 
 // Endpoint do usuwania kursu
 app.delete("/courses/:name", (req, res) => {
-    const courseName = req.params.courseName;
+    const courseName = req.params.name;
     console.log("Attempting to delete course:", courseName);
 
     fs.readFile(DATA_FILE, "utf8", (err, data) => {
@@ -54,10 +54,11 @@ app.delete("/courses/:name", (req, res) => {
         }
 
         let courses = JSON.parse(data);
+        console.log("Current courses:", courses.map((course) => course.name));
         const initialLength = courses.length;
 
-        courses = courses.filter((course) => course.name !== courseName);
-
+        courses = courses.filter((course) => course.name.trim().toLowerCase() !== courseName.trim().toLowerCase());
+        
         if (courses.length === initialLength) {
             console.log("Course not found:", courseName);
             return res.status(404).json({ error: "Course not found" });
@@ -65,13 +66,14 @@ app.delete("/courses/:name", (req, res) => {
 
         fs.writeFile(DATA_FILE, JSON.stringify(courses, null, 2), "utf8", (err) => {
             if (err) {
+                console.error("Error writing file:", err);
                 return res.status(500).json({ error: "Failed to delete course" });
             }
+            console.log("Course deleted successfully:", courseName);
             res.status(200).json({ message: `Course '${courseName}' deleted successfully` });
         });
     });
 });
-
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

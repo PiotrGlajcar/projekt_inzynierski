@@ -38,37 +38,37 @@ function CreateCourse() {
     };
 
     return (
-        <div>
-            <h2>Create a New Course</h2>
+        <div className="creator">
+            <h2>Dodaj nowy kurs:</h2>
             <div>
                 <label>
-                    Course Name:
+                    Nazwa kursu:
                     <input
                         type="text"
                         value={courseName}
                         onChange={(e) => setCourseName(e.target.value)}
-                        placeholder="Enter course name"
+                        placeholder="Ustaw nazwę kursu"
                     />
                 </label>
             </div>
-            <div>
+            <div className="creator">
                 <label>
-                    Participant Name:
+                    Uczestnik:
                     <input
                         type="text"
                         value={participantName}
                         onChange={(e) => setParticipantName(e.target.value)}
-                        placeholder="Enter participant name"
+                        placeholder="Imię i nazwisko"
                     />
                 </label>
-                <button onClick={handleAddParticipant}>Add Participant</button>
+                <button onClick={handleAddParticipant}>Dodaj uczestnika</button>
             </div>
             <ul>
                 {participants.map((participant, index) => (
                     <li key={index}>{participant}</li>
                 ))}
             </ul>
-            <button onClick={handleCreateCourse}>Create Course</button>
+            <button onClick={handleCreateCourse}>Utwórz</button>
         </div>
     );
 }
