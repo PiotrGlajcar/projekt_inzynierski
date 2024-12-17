@@ -1,0 +1,100 @@
+# ------------------------------------
+# Python Bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual Environments
+.venv/
+ENV/
+env/
+*.venv
+*.env
+
+# Django Specific
+db.sqlite3  # SQLite database file
+*.log       # Log files
+
+# Django Migrations
+**/migrations/*
+!**/migrations/__init__.py
+
+# Python Package Files
+*.egg
+*.egg-info/
+dist/
+build/
+*.egg-info/
+
+# Coverage Reports
+.coverage
+htmlcov/
+
+# ------------------------------------
+# Node.js / React Project
+
+# Node Modules
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Dependency Lockfiles
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+*.log
+
+# Vite Cache
+.vite/
+
+# React Testing
+coverage/
+
+# ------------------------------------
+# IDEs and Editors
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# IntelliJ / PyCharm
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Sublime
+*.sublime-workspace
+*.sublime-project
+
+# Mac System Files
+.DS_Store
+
+# Windows System Files
+Thumbs.db
+desktop.ini
+
+# ------------------------------------
+# Miscellaneous
+
+# Backup files
+*.bak
+*.swp
+*.tmp
+*.old
+
+# Config files
+*.cfg
+*.ini
