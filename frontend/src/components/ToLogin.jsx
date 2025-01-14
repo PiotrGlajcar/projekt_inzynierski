@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import backend from "../api";
 
 const ToLogin = () => {
     const navigate = useNavigate();
@@ -8,8 +9,8 @@ const ToLogin = () => {
         navigate("/home");
     };
 
-    const handleLoginAsParticipant = () => {
-        navigate("/home-student");
+    const handleLoginAsParticipant = async () => {
+        window.location.href = "http://localhost:8000/oauth/start/";
     };
 
     return (

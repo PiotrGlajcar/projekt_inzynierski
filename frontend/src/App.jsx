@@ -19,7 +19,7 @@ function App() {
         <Routes>
           <Route path="/" element={<ToLogin />} />
           <Route path='/home' element={<Home />} />
-          <Route path='home-student' element={<HomeStudent />} />
+          <Route path='/home-student' element={<HomeStudent />} />
           <Route path='/about' element={<About />} />
           <Route path='/contact' element={<Contact />} />
           <Route path="/create-course" element={<CreateCourse />} />

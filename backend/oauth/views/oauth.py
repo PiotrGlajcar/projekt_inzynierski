@@ -83,13 +83,14 @@ def process_oauth_callback(request):
 
         # Log the user in to associate the session with the User object
         login(request, user)
-
-        return(api_response(  
-            status="success",
-            message="User data retrieved successfully",
-            data=user_info,
-            status_code=200)
-        )
+        
+        return redirect("http://localhost:5173/home-student")
+        # (api_response(  
+        #     status="success",
+        #     message="User data retrieved successfully",
+        #     data=user_info,
+        #     status_code=200)
+        # )
 
     except Exception as e:
         return api_response(

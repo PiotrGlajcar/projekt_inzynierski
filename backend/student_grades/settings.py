@@ -56,6 +56,20 @@ MIDDLEWARE = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "PUT",
+    "DELETE",
+]
+
+CORS_ALLOW_HEADERS = [
+    "content-type",
+    "authorization",
+]
+
 ROOT_URLCONF = 'student_grades.urls'
 
 REST_FRAMEWORK = {
@@ -112,6 +126,7 @@ USOS_ACCESS_TOKEN_URL = "https://usosapi.polsl.pl/services/oauth/access_token"
 USOS_CALLBACK_URL = "http://localhost:8000/oauth/callback/"
                   # Replace with your frontend callback if needed
 
+FRONTEND_URL = "http://localhost:5137"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

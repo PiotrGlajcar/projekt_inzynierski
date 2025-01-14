@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import API from '../api';
+import backend from '../api';
 
 const StudentList = () => {
   const [students, setStudents] = useState([]);
 
   useEffect(() => {
-    API.get('/students/')
+    backend.get('/students/')
       .then((response) => setStudents(response.data))
       .catch((error) => console.error('Error fetching students:', error));
   }, []);
