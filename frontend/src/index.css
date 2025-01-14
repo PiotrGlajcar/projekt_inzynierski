@@ -345,3 +345,18 @@ footer p:hover {
     outline: 2px solid #0056b3;
     outline-offset: 2px;
 }
+
+.back-button {
+    margin: 10px;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}

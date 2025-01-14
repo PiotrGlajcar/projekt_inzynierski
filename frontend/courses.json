@@ -1,25 +1,62 @@
 [
   {
-    "name": "Kurs 1",
+    "name": "Kurs1",
     "participants": [
       "kamil",
-      "piotrek"
+      "piotr"
+    ],
+    "grades": [
+      {
+        "student": "kamil",
+        "scores": [
+          5,
+          4,
+          3
+        ]
+      },
+      {
+        "student": "piotr",
+        "scores": [
+          3,
+          2,
+          4
+        ]
+      }
     ]
   },
   {
-    "name": "Kurs2",
+    "name": "Kurs 2",
     "participants": [
-      "kamil1",
-      "kamil2"
+      "kamil",
+      "kamil 2"
+    ],
+    "grades": [
+      {
+        "student": "kamil",
+        "scores": [
+          4,
+          5
+        ]
+      },
+      {
+        "student": "kamil 2",
+        "scores": [
+          2,
+          3
+        ]
+      }
     ]
   },
   {
-    "name": "kurs8",
+    "name": "test",
     "participants": [
-      "kolega1",
-      "kolezanka1",
-      "kolega2",
-      "kolega8"
+      "test"
+    ],
+    "grades": [
+      {
+        "student": "test",
+        "scores": []
+      }
     ]
   }
 ]

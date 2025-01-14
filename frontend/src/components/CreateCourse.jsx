@@ -1,20 +1,24 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function CreateCourse() {
     const [courseName, setCourseName] = useState("");
     const [participants, setParticipants] = useState([]);
+    const [grades, setGrades] = useState([]);
     const [participantName, setParticipantName] = useState("");
+    const navigate = useNavigate(); // Hook do nawigacji
 
     const handleAddParticipant = () => {
         if (participantName) {
             setParticipants([...participants, participantName]);
+            setGrades([...grades, { student: participantName, scores: [] }]);
             setParticipantName("");
         }
     };
 
     const handleCreateCourse = async () => {
         if (courseName && participants.length > 0) {
-            const newCourse = { name: courseName, participants };
+            const newCourse = { name: courseName, participants, grades };
             try {
                 const response = await fetch("http://localhost:5000/courses", {
                     method: "POST",
@@ -22,18 +26,22 @@ function CreateCourse() {
                     body: JSON.stringify(newCourse),
                 });
                 if (response.ok) {
-                    alert(`Course "${courseName}" created successfully!`);
+                    alert(`Kurs "${courseName}" został pomyślnie utworzony!`);
                     setCourseName("");
                     setParticipants([]);
+                    setGrades([]);
+
+                    // Przekierowanie na stronę zarządzania kursem
+                    navigate(`/manage-course/${encodeURIComponent(courseName)}`);
                 } else {
-                    alert("Failed to create course.");
+                    alert("Nie udało się utworzyć kursu.");
                 }
             } catch (error) {
-                console.error("Error creating course:", error);
-                alert("An error occurred while creating the course.");
+                console.error("Błąd podczas tworzenia kursu:", error);
+                alert("Wystąpił błąd podczas tworzenia kursu.");
             }
         } else {
-            alert("Please provide a course name and at least one participant.");
+            alert("Podaj nazwę kursu i dodaj przynajmniej jednego uczestnika.");
         }
     };
 
@@ -51,7 +59,7 @@ function CreateCourse() {
                     />
                 </label>
             </div>
-            <div className="creator">
+            <div>
                 <label>
                     Uczestnik:
                     <input
@@ -65,7 +73,9 @@ function CreateCourse() {
             </div>
             <ul>
                 {participants.map((participant, index) => (
-                    <li key={index}>{participant}</li>
+                    <li key={index}>
+                        {participant} - Oceny: {grades.find(g => g.student === participant)?.scores.join(", ") || "Brak ocen"}
+                    </li>
                 ))}
             </ul>
             <button onClick={handleCreateCourse}>Utwórz</button>

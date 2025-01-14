@@ -75,6 +75,34 @@ app.delete("/courses/:name", (req, res) => {
     });
 });
 
+app.put("/courses/:name", (req, res) => {
+    const courseName = req.params.name;
+    const updatedCourse = req.body;
+
+    fs.readFile(DATA_FILE, "utf8", (err, data) => {
+        if (err) {
+            return res.status(500).json({ error: "Failed to read courses" });
+        }
+
+        let courses = JSON.parse(data);
+        const courseIndex = courses.findIndex((course) => course.name === courseName);
+
+        if (courseIndex === -1) {
+            return res.status(404).json({ error: "Course not found" });
+        }
+
+        courses[courseIndex] = updatedCourse;
+
+        fs.writeFile(DATA_FILE, JSON.stringify(courses, null, 2), "utf8", (err) => {
+            if (err) {
+                return res.status(500).json({ error: "Failed to update course" });
+            }
+            res.status(200).json(updatedCourse);
+        });
+    });
+});
+
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });

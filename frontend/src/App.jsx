@@ -5,10 +5,9 @@ import HomeStudent from './components/HomeStudent.jsx'
 import About from './components/About.jsx'
 import Contact from './components/Contact.jsx'
 import ToLogin from './components/ToLogin.jsx'
-import StudentDetail from './components/StudentDetail.jsx'
-import UserGreeting from './components/UserGreeting.jsx'
-import CreateCourse from "./components/CreateCourse";
-import ViewCourses from "./components/ViewCourses";
+import ManageCourse from "./components/ManageCourse.jsx";
+import CreateCourse from "./components/CreateCourse.jsx";
+import ViewCourses from "./components/ViewCourses.jsx";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 
 function App() {
@@ -25,6 +24,7 @@ function App() {
           <Route path='/contact' element={<Contact />} />
           <Route path="/create-course" element={<CreateCourse />} />
           <Route path="/view-courses" element={<ViewCourses />} />
+          <Route path="/manage-course/:courseName" element={<ManageCourse />} />
         </Routes>
         <Footer />
       </div>
