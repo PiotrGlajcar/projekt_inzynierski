@@ -3,11 +3,11 @@ import React from "react";
 function Contact() {
     return (
         <div>
-            <h2>Contact Us</h2>
-            <p>Feel free to reach out via email or phone:</p>
+            <h2>Skontaktuj się z nami!</h2>
+            <p>Jeśli masz wątpliwości skontaktuj się z nami poprzez email lub telefon:</p>
             <ul>
-                <li>Email: contact@example.com</li>
-                <li>Phone: +123 456 789</li>
+                <li>Email: kontakcik@example.com</li>
+                <li>Telefon: +123 456 789</li>
             </ul>
         </div>
     );

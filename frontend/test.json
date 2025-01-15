@@ -1,0 +1,13 @@
+{
+    "name": "Kurs 2",
+    "participants": [
+      "kamil",
+      "kamil 2"
+    ],
+    "grades": [
+      {
+        "student": "kamil",
+        "scores": []
+      }
+    ]
+}

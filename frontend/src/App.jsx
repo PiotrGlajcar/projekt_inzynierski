@@ -24,6 +24,7 @@ function App() {
           <Route path='/contact' element={<Contact />} />
           <Route path="/create-course" element={<CreateCourse />} />
           <Route path="/view-courses" element={<ViewCourses />} />
+          <Route path="/manage-course/" element={<ManageCourse />} />
           <Route path="/manage-course/:courseName" element={<ManageCourse />} />
         </Routes>
         <Footer />

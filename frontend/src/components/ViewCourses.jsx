@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import CourseDetails from "./CourseDetails";
 import { useNavigate } from "react-router-dom";
 
 function ViewCourses() {
     const [courses, setCourses] = useState([]);
-    const [selectedCourse, setSelectedCourse] = useState(null);
     const [confirmDelete, setConfirmDelete] = useState(null);
     const navigate = useNavigate();
 
@@ -19,10 +17,10 @@ function ViewCourses() {
                 const data = await response.json();
                 setCourses(data);
             } else {
-                alert("Failed to fetch courses.");
+                alert("Nie udało się pobrać listy kursów.");
             }
         } catch (error) {
-            console.error("Error fetching courses:", error);
+            console.error("Błąd podczas pobierania kursów:", error);
         }
     };
 
@@ -38,7 +36,7 @@ function ViewCourses() {
                 alert("Nie udało się usunąć kursu.");
             }
         } catch (error) {
-            console.error("Error deleting course:", error);
+            console.error("Błąd podczas usuwania kursu:", error);
         } finally {
             setConfirmDelete(null);
         }
@@ -51,14 +49,15 @@ function ViewCourses() {
                 {courses.map((course) => (
                     <li key={course.name} className="course-item">
                         <div>
-                            <strong>{course.name} ‎ ‎</strong>
+                            <strong>{course.name}</strong>
+                            ‎ ‎
                             <button
                                 className="details-button"
-                                onClick={() => setSelectedCourse(course)}
+                                onClick={() => navigate(`/manage-course/${encodeURIComponent(course.name)}`)}
                             >
                                 Zobacz szczegóły
                             </button>
-                            ‎ ‎ ‎ ‎ {/* spacje :D */}
+                            ‎ ‎
                             <button
                                 className="delete-button"
                                 onClick={() => setConfirmDelete(course.name)}
@@ -68,18 +67,12 @@ function ViewCourses() {
                         </div>
                     </li>
                 ))}
-                <button className="back-button" onClick={() => navigate("/home")}>
-                Wróć do strony głównej
-                </button>
             </ul>
 
-            {/* Okienko szczegółów */}
-            {selectedCourse && (
-                <CourseDetails
-                    course={selectedCourse}
-                    onBack={() => setSelectedCourse(null)}
-                />
-            )}
+            {/* Przycisk powrotu */}
+            <button className="back-button" onClick={() => navigate("/home")}>
+                Wróć do strony głównej
+            </button>
 
             {/* Okienko potwierdzenia usunięcia */}
             {confirmDelete && (

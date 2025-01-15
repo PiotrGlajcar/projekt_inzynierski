@@ -11,7 +11,9 @@
         "scores": [
           5,
           4,
-          3
+          6,
+          1,
+          1
         ]
       },
       {
@@ -19,7 +21,8 @@
         "scores": [
           3,
           2,
-          4
+          4,
+          7
         ]
       }
     ]
@@ -48,14 +51,126 @@
     ]
   },
   {
-    "name": "test",
+    "name": "Budownictwo - Matematyka, sem. IV, st. 1",
     "participants": [
-      "test"
+      "Kamil Żebrok",
+      "Kamil Żebrak",
+      "Andrzej Żebrok",
+      "Jędrzej Żebrak",
+      "Borys Żuber",
+      "Wacław Żołądź",
+      "Mieczysław Żyrandol",
+      "Żanklod Wandam",
+      "Testowy Tester",
+      "Adrian Żuk"
     ],
     "grades": [
       {
-        "student": "test",
-        "scores": []
+        "student": "Kamil Żebrok",
+        "scores": [
+          6
+        ]
+      },
+      {
+        "student": "Kamil Żebrak",
+        "scores": [
+          3
+        ]
+      },
+      {
+        "student": "Andrzej Żebrok",
+        "scores": [
+          5
+        ]
+      },
+      {
+        "student": "Jędrzej Żebrak",
+        "scores": [
+          1
+        ]
+      },
+      {
+        "student": "Borys Żuber",
+        "scores": [
+          3,
+          2,
+          1
+        ]
+      },
+      {
+        "student": "Wacław Żołądź",
+        "scores": [
+          6,
+          6,
+          6,
+          6,
+          6
+        ]
+      },
+      {
+        "student": "Mieczysław Żyrandol",
+        "scores": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "student": "Żanklod Wandam",
+        "scores": [
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "student": "Testowy Tester",
+        "scores": [
+          -1,
+          -1000000000000,
+          1,
+          1,
+          -2,
+          -2,
+          -123456789
+        ]
+      },
+      {
+        "student": "Adrian Żuk",
+        "scores": [
+          3,
+          4,
+          1,
+          6
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Sieci Komputerowe i Internet - MS Informatyka sem. III st. I",
+    "participants": [
+      "Kamil Żebrok",
+      "Piotr Glajcar"
+    ],
+    "grades": [
+      {
+        "student": "Kamil Żebrok",
+        "scores": [
+          null,
+          1,
+          null,
+          1
+        ]
+      },
+      {
+        "student": "Piotr Glajcar",
+        "scores": [
+          5,
+          5
+        ]
       }
     ]
   }

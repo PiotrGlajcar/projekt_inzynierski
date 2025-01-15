@@ -360,3 +360,149 @@ footer p:hover {
 .back-button:hover {
     background-color: #0056b3;
 }
+
+/* Ogólne */
+.view-courses,
+.manage-course {
+    margin: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.manage-course h2 {
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.course-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.course-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Dostosowanie liczby kolumn */
+    gap: 15px; /* Odstępy między kafelkami */
+}
+
+.course-item strong {
+    font-size: 16px;
+    color: #555;
+}
+
+/* Przyciski */
+button {
+    padding: 5px 10px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.course-tile {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.course-tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.course-tile h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.course-tile ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+    text-align: center;
+}
+
+.course-tile button {
+    margin-top: 10px;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.course-tile button:hover {
+    background-color: #0056b3;
+}
+
+.details-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.details-button:hover {
+    background-color: #0056b3;
+}
+
+.delete-button {
+    background-color: #dc3545;
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: #a71d2a;
+}
+
+.back-button {
+    margin-top: 20px;
+    background-color: #6c757d;
+    color: white;
+}
+
+.back-button:hover {
+    background-color: #495057;
+}
+
+/* Dialog potwierdzenia */
+.confirmation-dialog {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    border-radius: 4px;
+}
+
+.confirmation-dialog p {
+    margin: 0 0 10px 0;
+    color: #856404;
+}
+
+.confirmation-dialog button {
+    margin-right: 10px;
+}
