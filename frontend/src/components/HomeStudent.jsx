@@ -1,23 +1,17 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useUser } from "../context/useUser";
 
 function HomeStudent() {
-    /*
-    const navigate = useNavigate();
-    const goToCreateCourse = () => {
-        navigate("/create-course");
-    };
-    */
+
+    const { user } = useUser();
+
     return (
         <div>
-            <h2>Witaj Studencie</h2>
-            <p>Przeglądaj swoje kursy i postępy w jednym miejscu!</p>
-            {/*
-            <button onClick={goToCreateCourse}>Create a Course</button>
-            <button onClick={() => navigate("/view-courses")}>View Courses</button>
-            */}
+             {user ? (
+                <p>Welcome, {user.first_name} {user.last_name}!</p>
+            ) : (
+                <p>Loading user data...</p>
+            )}
         </div>
     );
-
 }
 export default HomeStudent

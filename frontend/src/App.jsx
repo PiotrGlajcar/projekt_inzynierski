@@ -13,25 +13,31 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 function App() {
 
   return (
-    <Router>
-      <div>
-        <Header />
-        <Routes>
-          <Route path="" element={<ToLogin />} /> 
-          <Route path="/home" element={<ToLogin />} />
-          <Route path='/home-staff' element={<Home />} />
-          <Route path='/home-student' element={<HomeStudent />} />
-          <Route path='/about' element={<About />} />
-          <Route path='/contact' element={<Contact />} />
-          <Route path="/create-course" element={<CreateCourse />} />
-          <Route path="/view-courses" element={<ViewCourses />} />
-          <Route path="/manage-course/" element={<ManageCourse />} />
-          <Route path="/manage-course/:courseName" element={<ManageCourse />} />
-        </Routes>
-        <Footer />
-      </div>
-    </Router>
-
+      <Router>
+        <div>
+          <Header />
+          <Routes>
+            <Route path="" element={<ToLogin />} />
+            <Route path="/home" element={<ToLogin />} />
+            <Route path="/redirect" element={<RedirectPage />} />
+            <Route path='/home-staff' element={<Home />} />
+            <Route path='/home-student' element={
+              <ProtectedRoute role="student">
+                <HomeStudent />
+              </ProtectedRoute> }/>
+            <Route path='/about' element={<About />} />
+            <Route path='/contact' element={<Contact />} />
+            <Route path="/create-course" element={<CreateCourse />} />
+              {/* // <ProtectedRoute role="staff">
+              //     <CreateCourse />
+              // </ProtectedRoute> */}
+            <Route path="/view-courses" element={<ViewCourses />} />
+            <Route path="/manage-course/" element={<ManageCourse />} />
+            <Route path="/manage-course/:courseName" element={<ManageCourse />} />
+          </Routes>
+          <Footer />
+        </div>
+      </Router>
   )
 }
 
