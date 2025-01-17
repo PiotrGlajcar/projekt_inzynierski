@@ -1,177 +1,361 @@
 [
   {
-    "name": "Kurs1",
+    "name": "Kurs Matematyka, sem. IV",
+    "description": "Zaawansowane zagadnienia z matematyki",
+    "requiredElements": [
+      {
+        "name": "Egzamin końcowy",
+        "description": "Egzamin na zakończenie kursu",
+        "weight": 50
+      },
+      {
+        "name": "Projekt grupowy",
+        "description": "Praca w grupach nad wybranym problemem",
+        "weight": 30
+      },
+      {
+        "name": "Zadania domowe",
+        "description": "Regularne zadania do samodzielnego rozwiązania",
+        "weight": 20
+      }
+    ],
     "participants": [
-      "kamil",
-      "piotr"
+      {
+        "id": "S1",
+        "name": "Kamil Żebrok",
+        "group": 1
+      },
+      {
+        "id": "S2",
+        "name": "Anna Kowalska",
+        "group": 2
+      },
+      {
+        "id": "S4",
+        "name": "Kamil Żebrok",
+        "group": 1
+      },
+      {
+        "id": "S5",
+        "name": "Anna Kowalska",
+        "group": 2
+      },
+      {
+        "id": "S7",
+        "name": "Kamil Żebrok",
+        "group": 1
+      },
+      {
+        "id": "S8",
+        "name": "Anna Kowalska",
+        "group": 2
+      },
+      {
+        "id": "S11",
+        "name": "Kamil Żebrok",
+        "group": 1
+      },
+      {
+        "id": "S12",
+        "name": "Anna Kowalska",
+        "group": 2
+      },
+      {
+        "name": "Jędrzej Jędrys",
+        "group": 3,
+        "id": "hi640103"
+      }
     ],
     "grades": [
       {
-        "student": "kamil",
+        "studentId": "S1",
         "scores": [
-          5,
-          4,
-          6,
-          1,
-          1
+          {
+            "name": "Egzamin końcowy",
+            "value": 5,
+            "weight": 50,
+            "comment": ""
+          },
+          {
+            "name": "Projekt grupowy",
+            "value": 4,
+            "weight": 30,
+            "comment": ""
+          }
         ]
       },
       {
-        "student": "piotr",
+        "studentId": "S2",
         "scores": [
-          3,
-          2,
-          4,
-          7
+          {
+            "name": "Egzamin końcowy",
+            "value": 3,
+            "weight": 50,
+            "comment": ""
+          }
+        ]
+      },
+      {
+        "studentId": "S3",
+        "scores": [
+          {
+            "name": "Zadania domowe",
+            "value": 5,
+            "weight": 20,
+            "comment": ""
+          },
+          {
+            "name": "Zadania domowe",
+            "value": 4,
+            "weight": 20,
+            "comment": ""
+          }
+        ]
+      },
+      {
+        "studentId": "S4",
+        "scores": [
+          {
+            "name": "Egzamin końcowy",
+            "value": 1,
+            "weight": 50,
+            "comment": ""
+          },
+          {
+            "name": "Projekt grupowy",
+            "value": 2,
+            "weight": 30,
+            "comment": ""
+          },
+          {
+            "name": "Zadania domowe",
+            "value": 3,
+            "weight": 20,
+            "comment": ""
+          }
+        ]
+      },
+      {
+        "studentId": "hi640103",
+        "scores": [
+          {
+            "name": "Egzamin końcowy",
+            "value": 5,
+            "weight": 50,
+            "comment": ""
+          },
+          {
+            "name": "Projekt grupowy",
+            "value": 5,
+            "weight": 30,
+            "comment": ""
+          },
+          {
+            "name": "Zadania domowe",
+            "value": 5,
+            "weight": 20,
+            "comment": ""
+          }
         ]
       }
     ]
   },
   {
-    "name": "Kurs 2",
-    "participants": [
-      "kamil",
-      "kamil 2"
-    ],
-    "grades": [
+    "name": "2023/2024-Z Zastosowanie metod sztucznej inteligencji w problemach inżynierskich InfPMS>SI5ZMSI21POI",
+    "description": "AI jest super, kocham AI. To takie mądre i wogule, fajna matma - matematyke też bardzo lubie i cieszę się, że ten opis może tutaj być i że każdy se go może przeczytać. Edit 2: Jeszcze trochę tekstu żeby zobaczyć jak co wyglada: ctrl+a -> ctrl+c -> ctrl+v. AI jest super, kocham AI. To takie mądre i wogule, fajna matma - matematyke też bardzo lubie i cieszę się, że ten opis może tutaj być i że każdy se go może przeczytać. Edit 2: Jeszcze trochę tekstu żeby zobaczyć jak co wyglada: ctrl+a -> ctrl+c -> ctrl+v. AI jest super, kocham AI. To takie mądre i wogule, fajna matma - matematyke też bardzo lubie i cieszę się, że ten opis może tutaj być i że każdy se go może przeczytać. Edit 2: Jeszcze trochę tekstu żeby zobaczyć jak co wyglada: ctrl+a -> ctrl+c -> ctrl+v. AI jest super, kocham AI. To takie mądre i wogule, fajna matma - matematyke też bardzo lubie i cieszę się, że ten opis może tutaj być i że każdy se go może przeczytać. Edit 2: Jeszcze trochę tekstu żeby zobaczyć jak co wyglada: ctrl+a -> ctrl+c -> ctrl+v. AI jest super, kocham AI. To takie mądre i wogule, fajna matma - matematyke też bardzo lubie i cieszę się, że ten opis może tutaj być i że każdy se go może przeczytać. Edit 2: Jeszcze trochę tekstu żeby zobaczyć jak co wyglada: ctrl+a -> ctrl+c -> ctrl+v. AI jest super, kocham AI. To takie mądre i wogule, fajna matma - matematyke też bardzo lubie i cieszę się, że ten opis może tutaj być i że każdy se go może przeczytać. Edit 2: Jeszcze trochę tekstu żeby zobaczyć jak co wyglada: ctrl+a -> ctrl+c -> ctrl+v. ",
+    "requiredElements": [
       {
-        "student": "kamil",
-        "scores": [
-          4,
-          5
-        ]
+        "name": "Projekt",
+        "description": "",
+        "weight": 48
       },
       {
-        "student": "kamil 2",
-        "scores": [
-          2,
-          3
-        ]
+        "name": "Kolokwium",
+        "description": "",
+        "weight": 20
+      },
+      {
+        "name": "Egzamin",
+        "description": "",
+        "weight": 32
       }
-    ]
+    ],
+    "participants": [
+      {
+        "name": "Adrian Adi",
+        "group": 1
+      },
+      {
+        "name": "Bogdan Bogi",
+        "group": 1
+      },
+      {
+        "name": "Cezary Czaro",
+        "group": 2
+      },
+      {
+        "name": "Daniel Daniła",
+        "group": 3
+      },
+      {
+        "name": "Eustachy Eusti",
+        "group": 1
+      },
+      {
+        "name": "Alfons Fiodorowicz",
+        "group": 2
+      },
+      {
+        "name": "Grzegorz Abazy",
+        "group": 3
+      },
+      {
+        "name": "Horacy Dodo",
+        "group": 2
+      },
+      {
+        "name": "Ignacy Jan Paderewski",
+        "group": 2
+      },
+      {
+        "name": "Żamil Żebrok",
+        "group": 2
+      },
+      {
+        "name": "Amił Żebrik",
+        "group": 1
+      },
+      {
+        "name": "Żamil Aebrok",
+        "group": 1
+      }
+    ],
+    "grades": []
   },
   {
-    "name": "Budownictwo - Matematyka, sem. IV, st. 1",
-    "participants": [
-      "Kamil Żebrok",
-      "Kamil Żebrak",
-      "Andrzej Żebrok",
-      "Jędrzej Żebrak",
-      "Borys Żuber",
-      "Wacław Żołądź",
-      "Mieczysław Żyrandol",
-      "Żanklod Wandam",
-      "Testowy Tester",
-      "Adrian Żuk"
-    ],
-    "grades": [
+    "name": "Laboratorium techniki mikroprocesorowej InfPMS>SI7LTM",
+    "description": "Laboratorium techniki mikroprocesorowej InfPMS>SI7LTMGrupy dla przedmiotu\nlaboratorium",
+    "requiredElements": [
       {
-        "student": "Kamil Żebrok",
-        "scores": [
-          6
-        ]
+        "name": "Projekt",
+        "description": "",
+        "weight": 70
       },
       {
-        "student": "Kamil Żebrak",
-        "scores": [
-          3
-        ]
+        "name": "Prezentacja",
+        "description": "",
+        "weight": 20
       },
       {
-        "student": "Andrzej Żebrok",
-        "scores": [
-          5
-        ]
-      },
-      {
-        "student": "Jędrzej Żebrak",
-        "scores": [
-          1
-        ]
-      },
-      {
-        "student": "Borys Żuber",
-        "scores": [
-          3,
-          2,
-          1
-        ]
-      },
-      {
-        "student": "Wacław Żołądź",
-        "scores": [
-          6,
-          6,
-          6,
-          6,
-          6
-        ]
-      },
-      {
-        "student": "Mieczysław Żyrandol",
-        "scores": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
-        ]
-      },
-      {
-        "student": "Żanklod Wandam",
-        "scores": [
-          2,
-          3,
-          4
-        ]
-      },
-      {
-        "student": "Testowy Tester",
-        "scores": [
-          -1,
-          -1000000000000,
-          1,
-          1,
-          -2,
-          -2,
-          -123456789
-        ]
-      },
-      {
-        "student": "Adrian Żuk",
-        "scores": [
-          3,
-          4,
-          1,
-          6
-        ]
+        "name": "Aktywności przeruzne",
+        "description": "przeruzne aktywnosci - miłe slowa do prowadzoncego itp.",
+        "weight": 10
       }
-    ]
-  },
-  {
-    "name": "Sieci Komputerowe i Internet - MS Informatyka sem. III st. I",
-    "participants": [
-      "Kamil Żebrok",
-      "Piotr Glajcar"
     ],
-    "grades": [
+    "participants": [
       {
-        "student": "Kamil Żebrok",
-        "scores": [
-          null,
-          1,
-          null,
-          1
-        ]
+        "name": "1",
+        "group": 1,
+        "id": "pc598626"
       },
       {
-        "student": "Piotr Glajcar",
-        "scores": [
-          5,
-          5
-        ]
+        "name": "10",
+        "group": 1,
+        "id": "ek871146"
+      },
+      {
+        "name": "11",
+        "group": 1,
+        "id": "vm904154"
+      },
+      {
+        "name": "12",
+        "group": 1,
+        "id": "cj875442"
+      },
+      {
+        "name": "13",
+        "group": 1,
+        "id": "oa883519"
+      },
+      {
+        "name": "14",
+        "group": 1,
+        "id": "ia513630"
+      },
+      {
+        "name": "15",
+        "group": 1,
+        "id": "ia904839"
+      },
+      {
+        "name": "2",
+        "group": 1,
+        "id": "va531225"
+      },
+      {
+        "name": "3",
+        "group": 1,
+        "id": "sa485767"
+      },
+      {
+        "name": "4",
+        "group": 1,
+        "id": "xc383925"
+      },
+      {
+        "name": "5",
+        "group": 1,
+        "id": "vk825318"
+      },
+      {
+        "name": "6",
+        "group": 1,
+        "id": "ef844527"
+      },
+      {
+        "name": "7",
+        "group": 1,
+        "id": "mj256064"
+      },
+      {
+        "name": "8",
+        "group": 1,
+        "id": "ev284048"
+      },
+      {
+        "name": "9",
+        "group": 1,
+        "id": "oc362929"
+      },
+      {
+        "name": "ĄĄĄĄĄ ĘĘĘĘĘĘ",
+        "group": 1
+      },
+      {
+        "name": "Aoioa Euiua",
+        "group": 1,
+        "id": "nn224641"
+      },
+      {
+        "name": "0 Kamil",
+        "group": 1,
+        "id": "wg391567"
+      },
+      {
+        "name": "Bogumił Niemiły",
+        "group": 1
+      },
+      {
+        "name": "Kamil Żebrok",
+        "group": 2
+      },
+      {
+        "name": "Kamil 0",
+        "group": 1,
+        "id": "pg151381"
       }
-    ]
+    ],
+    "grades": []
   }
 ]

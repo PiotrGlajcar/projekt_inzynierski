@@ -8,9 +8,11 @@ function Header(){
             <nav>
                 <ul>
                     <li><Link to='/'>Home</Link></li>
-                    <li><Link to='/about'>About</Link></li>
-                    <li><a href="#">Services</a></li>
-                    <li><Link to='/contact'>Contact</Link></li>
+                    <li><Link to='/about'>O nas</Link></li>
+                    {//<li><a href="#">Services</a></li>
+                    }       
+                    <li><Link to='/contact'>Kontakt</Link></li>
+                    <li><Link to='/'>Wyloguj</Link></li>
                 </ul>
             </nav>
         </header>

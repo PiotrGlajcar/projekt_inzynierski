@@ -6,7 +6,7 @@ const ToLogin = () => {
     const navigate = useNavigate();
 
     const handleLoginAsLecturer = () => {
-        navigate("/home");
+        navigate("/home-staff");
     };
 
     const handleLoginAsParticipant = async () => {

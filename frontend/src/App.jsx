@@ -9,37 +9,29 @@ import ManageCourse from "./components/ManageCourse.jsx";
 import CreateCourse from "./components/CreateCourse.jsx";
 import ViewCourses from "./components/ViewCourses.jsx";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import { UserProvider } from './context/UserContext.jsx'
-import RedirectPage from './components/RedirectPage.jsx'
-import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 function App() {
 
   return (
-      <Router>
-        <div>
-          <Header />
-          <Routes>
-            <Route path="/" element={<ToLogin />} />
-            <Route path="/redirect" element={<RedirectPage />} />
-            <Route path='/home' element={<Home />} />
-            <Route path='/home-student' element={
-              <ProtectedRoute role="student">
-                <HomeStudent />
-              </ProtectedRoute> }/>
-            <Route path='/about' element={<About />} />
-            <Route path='/contact' element={<Contact />} />
-            <Route path="/create-course" element={
-              <ProtectedRoute role="staff">
-                  <CreateCourse />
-              </ProtectedRoute> } />
-            <Route path="/view-courses" element={<ViewCourses />} />
-            <Route path="/manage-course/" element={<ManageCourse />} />
-            <Route path="/manage-course/:courseName" element={<ManageCourse />} />
-          </Routes>
-          <Footer />
-        </div>
-      </Router>
+    <Router>
+      <div>
+        <Header />
+        <Routes>
+          <Route path="" element={<ToLogin />} /> 
+          <Route path="/home" element={<ToLogin />} />
+          <Route path='/home-staff' element={<Home />} />
+          <Route path='/home-student' element={<HomeStudent />} />
+          <Route path='/about' element={<About />} />
+          <Route path='/contact' element={<Contact />} />
+          <Route path="/create-course" element={<CreateCourse />} />
+          <Route path="/view-courses" element={<ViewCourses />} />
+          <Route path="/manage-course/" element={<ManageCourse />} />
+          <Route path="/manage-course/:courseName" element={<ManageCourse />} />
+        </Routes>
+        <Footer />
+      </div>
+    </Router>
+
   )
 }
 
