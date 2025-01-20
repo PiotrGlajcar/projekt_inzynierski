@@ -7,7 +7,10 @@ function HomeStudent() {
     return (
         <div>
              {user ? (
-                <p>Welcome, {user.first_name} {user.last_name}!</p>
+                <>
+                <h1>Welcome, {user.first_name} {user.last_name}!</h1>
+                <p>{user.id}</p>
+                </>
             ) : (
                 <p>Loading user data...</p>
             )}

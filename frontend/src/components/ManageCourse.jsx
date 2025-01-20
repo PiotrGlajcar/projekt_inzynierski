@@ -15,6 +15,7 @@ function ManageCourse() {
     const [editingDescription, setEditingDescription] = useState(false);
     const [updatedDescription, setUpdatedDescription] = useState("");
     const editFormRef = useRef(null);
+    const [newElement, setNewElement] = useState("");
 
     const generateUniqueId = () => {
         const letters = "abcdefghijklmnopqrstuvwxyz";
@@ -76,6 +77,27 @@ function ManageCourse() {
         }
     };
 
+    const handleDeleteCourse = async (name) => {
+        const isConfirmed = window.confirm(`Czy na pewno chcesz usunąć kurs '${name}'?`);
+        if (!isConfirmed) {
+            return; // Jeśli użytkownik anulował, zakończ funkcję
+        }
+        try {
+            const response = await fetch(`http://localhost:5000/courses/${encodeURIComponent(name)}`, {
+                method: "DELETE",
+            });
+            if (response.ok) {
+                alert(`Kurs '${name}' został usunięty.`);
+                navigate("/manage-course");
+                setCourses(courses.filter((course) => course.name !== name));
+            } else {
+                alert("Nie udało się usunąć kursu.");
+            }
+        } catch (error) {
+            console.error("Błąd podczas usuwania kursu:", error);
+        }
+    };
+
     const handleAddParticipant = async () => {
         if (!newParticipant.name.trim()) {
             alert("Podaj nazwę uczestnika.");
@@ -117,6 +139,8 @@ function ManageCourse() {
             const updatedCourse = { ...selectedCourse };
             updatedCourse.participants = updatedCourse.participants.filter((p) => p.id !== participantId);
 
+            updatedCourse.grades = updatedCourse.grades.filter((g) => g.studentId !== participantId);
+
             const response = await fetch(`http://localhost:5000/courses/${encodeURIComponent(courseName)}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
@@ -147,18 +171,33 @@ function ManageCourse() {
 
     const handleAddScore = () => {
         if (!newGrade || !selectedElement) return;
+    
         const element = selectedCourse.requiredElements.find((el) => el.name === selectedElement);
-        if (!element) return;
-
         const newScore = {
-            name: element.name,
+            name: element ? element.name : "Inne", // nazwa elementu lub "Inne"
             value: parseFloat(newGrade),
-            weight: element.weight,
+            weight: element ? element.weight : 0, // waga dla istniejących elementów, 0 dla "Inne"
             comment: "",
         };
-        setEditingScores([...editingScores, newScore]);
+    
+        if (newScore.name === "Inne") {
+            // dla innej zawsze dodaje nową ocenę
+            setEditingScores([...editingScores, newScore]);
+        } else {
+            // sprawdzanie czy element istnieje na liście ocen
+            const existingIndex = editingScores.findIndex((score) => score.name === newScore.name);
+    
+            if (existingIndex !== -1) {
+                editingScores[existingIndex] = newScore;
+                setEditingScores([...editingScores]);
+            } else {
+                setEditingScores([...editingScores, newScore]);
+            }
+        }
+
         setNewGrade("");
     };
+    
 
     const handleSaveScores = async () => {
         try {
@@ -206,99 +245,123 @@ function ManageCourse() {
                                 <button onClick={() => navigate(`/manage-course/${encodeURIComponent(course.name)}`)}>
                                     Zobacz szczegóły
                                 </button>
+                                <button onClick={() => handleDeleteCourse(course.name)}>Usuń kurs</button>
                             </div>
                         ))}
                     </div>
                 </>
             ) : (
                 <>
-                    <h2>Zarządzanie kursem: {selectedCourse?.name}</h2>
+                <div className="containermng">
+                    <div className="course-details">
+                        <h2>Zarządzanie kursem: {selectedCourse?.name}</h2>
 
-                    {notification && <div className="notification">{notification}</div>}
+                        {notification && <div className="notification">{notification}</div>}
 
-                    <h3>Opis kursu:</h3>
-                    {editingDescription ? (
-                        <div>
-                            <textarea
-                                value={updatedDescription}
-                                onChange={(e) => setUpdatedDescription(e.target.value)}
+                        <h3>Opis kursu:</h3>
+                        {editingDescription ? (
+                            <div>
+                                <textarea
+                                    value={updatedDescription}
+                                    onChange={(e) => setUpdatedDescription(e.target.value)}
+                                />
+                                <button onClick={handleUpdateDescription}>Zapisz opis</button>
+                                <button onClick={() => setEditingDescription(false)}>Anuluj</button>
+                            </div>
+                        ) : (
+                            <div>
+                                <p>{selectedCourse?.description || "Brak opisu."}</p>
+                                <button onClick={() => {
+                                    setEditingDescription(true);
+                                    setUpdatedDescription(selectedCourse?.description || "");
+                                }}>Edytuj opis</button>
+                            </div>
+                        )}
+
+                        <div className="add-participant">
+                            <h3>Dodawanie uczestników:</h3>
+                            <input
+                                type="text"
+                                placeholder="Imię i nazwisko uczestnika"
+                                value={newParticipant.name}
+                                onChange={(e) => setNewParticipant({ ...newParticipant, name: e.target.value })}
                             />
-                            <button onClick={handleUpdateDescription}>Zapisz opis</button>
-                            <button onClick={() => setEditingDescription(false)}>Anuluj</button>
-                        </div>
-                    ) : (
-                        <div>
-                            <p>{selectedCourse?.description || "Brak opisu."}</p>
-                            <button onClick={() => {
-                                setEditingDescription(true);
-                                setUpdatedDescription(selectedCourse?.description || "");
-                            }}>Edytuj opis</button>
-                        </div>
-                    )}
-
-                    <h3>Uczestnicy:</h3>
-                    <ul>
-                        {selectedCourse?.participants.map((participant) => (
-                            <li key={participant.id}>
-                                {participant.name} (Grupa {participant.group})
-                                <button onClick={() => handleEditScores(participant.id)}>Edytuj oceny</button>
-                                <button onClick={() => handleRemoveParticipant(participant.name)}>Usuń</button>
-                            </li>
-                        ))}
-                    </ul>
-
-                    {editingStudent && (
-                        <div className="edit-scores" ref={editFormRef}>
-                            <h3>Edytuj oceny dla uczestnika {selectedCourse?.participants.find(p => p.id === editingStudent)?.name}</h3>
-                            <ul>
-                                {editingScores.map((score, index) => (
-                                    <li key={index}>
-                                        {score.name}: {score.value} (Waga: {score.weight}%)
-                                    </li>
-                                ))}
-                            </ul>
-                            <select
-                                onChange={(e) => setSelectedElement(e.target.value)}
-                                value={selectedElement}
-                            >
-                                <option value="">Wybierz element</option>
-                                {selectedCourse.requiredElements.map((element, index) => (
-                                    <option key={index} value={element.name}>
-                                        {element.name} (Waga: {element.weight}%)
-                                    </option>
-                                ))}
-                            </select>
                             <input
                                 type="number"
-                                placeholder="Podaj ocenę"
-                                value={newGrade}
-                                onChange={(e) => setNewGrade(e.target.value)}
+                                placeholder="Grupa"
+                                value={newParticipant.group}
+                                onChange={(e) => setNewParticipant({ ...newParticipant, group: parseInt(e.target.value) || 1 })}
                             />
-                            <button onClick={handleAddScore}>Dodaj ocenę</button>
-                            <button onClick={handleSaveScores}>Zapisz zmiany</button>
-                            <button onClick={() => setEditingStudent(null)}>Anuluj</button>
-                            <p></p>
+                            <button onClick={handleAddParticipant}>Dodaj uczestnika</button>
                         </div>
-                    )}
-
-                    <div className="add-participant">
-                        <h3>Dodawanie uczestników:</h3>
-                        <input
-                            type="text"
-                            placeholder="Nazwa uczestnika"
-                            value={newParticipant.name}
-                            onChange={(e) => setNewParticipant({ ...newParticipant, name: e.target.value })}
-                        />
-                        <input
-                            type="number"
-                            placeholder="Grupa"
-                            value={newParticipant.group}
-                            onChange={(e) => setNewParticipant({ ...newParticipant, group: parseInt(e.target.value) || 1 })}
-                        />
-                        <button onClick={handleAddParticipant}>Dodaj uczestnika</button>
+                        <p></p>
+                        <button onClick={() => navigate("/manage-course")}>Wróć do listy kursów</button>
                     </div>
-
-                    <button onClick={() => navigate("/manage-course")}>Wróć do listy kursów</button>
+                    <div className="participants-list">
+                        <h3>Uczestnicy:</h3>
+                        <ul>
+                            {selectedCourse?.participants.map((participant) => (
+                                <li key={participant.id}>
+                                    <span className="participant-info">
+                                        {participant.name} (Grupa {participant.group})
+                                    </span>
+                                    <div className="participant-actions">
+                                        <button onClick={() => handleEditScores(participant.id)}>Edytuj oceny</button>
+                                        <button onClick={() => handleRemoveParticipant(participant.id)}>Usuń</button>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                        {editingStudent && (
+                            <div className="edit-scores" ref={editFormRef}>
+                                <h3>Edytuj oceny dla uczestnika {selectedCourse?.participants.find(p => p.id === editingStudent)?.name}</h3>
+                                <ul>
+                                    {editingScores.map((score, index) => (
+                                        <li key={index}>
+                                            {score.name}: {score.value} (Waga: {score.weight}%)
+                                        </li>
+                                    ))}
+                                </ul>
+                                <select
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setSelectedElement(value);
+                                        if (value === "other") {
+                                            setNewElement("");
+                                        }
+                                    }}
+                                    value={selectedElement}
+                                >
+                                    <option value="">Wybierz element</option>
+                                    {selectedCourse.requiredElements.map((element, index) => (
+                                        <option key={index} value={element.name}>
+                                            {element.name} (Waga: {element.weight}%)
+                                        </option>
+                                    ))}
+                                    <option value="other">Inne</option>
+                                </select>
+                                {selectedElement === "other" && (
+                                    <input
+                                        type="text"
+                                        placeholder="Podaj nowy element"
+                                        value={newElement}
+                                        onChange={(e) => setNewElement(e.target.value)}
+                                    />
+                                )}
+                                <input
+                                    type="number"
+                                    placeholder="Podaj ocenę"
+                                    value={newGrade}
+                                    onChange={(e) => setNewGrade(e.target.value)}
+                                />
+                                <button onClick={handleAddScore}>Dodaj ocenę</button>
+                                <button onClick={handleSaveScores}>Zapisz zmiany</button>
+                                <button onClick={() => setEditingStudent(null)}>Anuluj</button>
+                                <p></p>
+                            </div>
+                        )}
+                    </div>
+                </div>
                 </>
             )}
         </div>

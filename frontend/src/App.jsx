@@ -8,6 +8,8 @@ import ToLogin from './components/ToLogin.jsx'
 import ManageCourse from "./components/ManageCourse.jsx";
 import CreateCourse from "./components/CreateCourse.jsx";
 import ViewCourses from "./components/ViewCourses.jsx";
+import RedirectPage from "./components/RedirectPage.jsx";
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 
 function App() {
@@ -23,7 +25,7 @@ function App() {
             <Route path='/home-staff' element={<Home />} />
             <Route path='/home-student' element={
               <ProtectedRoute role="student">
-                <HomeStudent />
+                path=<HomeStudent />
               </ProtectedRoute> }/>
             <Route path='/about' element={<About />} />
             <Route path='/contact' element={<Contact />} />

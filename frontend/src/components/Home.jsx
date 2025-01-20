@@ -37,7 +37,7 @@ function Home() {
             <p>Wybierz co chesz zrobić:</p>
             <div className="buttons">
                 <button className="button" onClick={goToCreateCourse}>Utwórz nowy kurs</button>
-                <button className="button" onClick={() => navigate("/view-courses")}>Przeglądaj kursy</button>
+                <button className="button" onClick={() => navigate("/manage-course")}>Przeglądaj kursy</button>
             </div>
         </div>
     );

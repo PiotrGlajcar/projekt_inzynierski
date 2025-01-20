@@ -11,7 +11,15 @@ function CreateCourse() {
     const [elementWeight, setElementWeight] = useState("");
     const [participantName, setParticipantName] = useState("");
     const [participantGroup, setParticipantGroup] = useState("");
+    const [participantId, setParticipantId] = useState("");
     const navigate = useNavigate();
+
+    const generateUniqueId = () => {
+        const letters = "abcdefghijklmnopqrstuvwxyz";
+        const randomLetters = Array.from({ length: 2 }, () => letters[Math.floor(Math.random() * letters.length)]).join("");
+        const randomNumbers = Math.floor(100000 + Math.random() * 900000).toString();
+        return randomLetters + randomNumbers;
+    };
 
     const handleAddRequiredElement = () => {
         if (elementName && elementWeight > 0) {
@@ -38,17 +46,20 @@ function CreateCourse() {
                 {
                     name: participantName,
                     group: parseInt(participantGroup, 10),
+                    id: generateUniqueId(),
                 },
             ]);
             setParticipantName("");
             setParticipantGroup("");
+            setParticipantId("");
+            
         } else {
             alert("Podaj poprawne dane dla uczestnika.");
         }
     };
 
     const handleCreateCourse = async () => {
-        if (courseName && courseDescription && requiredElements.length > 0 && participants.length > 0) {
+        if (courseName && requiredElements.length > 0 && participants.length > 0) {
             const newCourse = {
                 name: courseName,
                 description: courseDescription,
@@ -102,14 +113,14 @@ function CreateCourse() {
                     <textarea
                         value={courseDescription}
                         onChange={(e) => setCourseDescription(e.target.value)}
-                        placeholder="Wprowadź opis kursu"
+                        placeholder="Można zostawić to pole puste"
                     />
                 </label>
             </div>
             <div>
                 <h3>Elementy wymagane:</h3>
                 <label>
-                    Nazwa elementu:
+                    Obligatoryjne do zaliczenia przez uczestników kursu
                     <input
                         type="text"
                         value={elementName}
@@ -122,7 +133,7 @@ function CreateCourse() {
                     <textarea
                         value={elementDescription}
                         onChange={(e) => setElementDescription(e.target.value)}
-                        placeholder="Opis elementu"
+                        placeholder="Można zostawić puste"
                     />
                 </label>
                 <label>
