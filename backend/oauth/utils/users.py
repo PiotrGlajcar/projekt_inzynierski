@@ -1,9 +1,9 @@
-from grades.models import Student, Staff, User
+from grades.models import Student, Teacher, User
 from django.conf import settings
 
 def process_usos_user(user_info):
     """
-    Processes the data fetched from USOS API and updates/creates User.
+    Process data from USOS API and create/update User.
 
     Args:
         user_info (dict): Data fetched from USOS API.
@@ -11,19 +11,17 @@ def process_usos_user(user_info):
     Returns:
         User: The Django User object linked to the USOS user.
     """
-    usos_id = user_info.get("id")
+    email = user_info.get("email")
     first_name = user_info.get("first_name", "")
     last_name = user_info.get("last_name", "")
-    email = user_info.get("email")
     student_number = user_info.get("student_number")
     student_status = user_info.get("student_status")
     staff_status = user_info.get("staff_status")
 
     # Create or update User record
     user, created = User.objects.get_or_create(
-        username=usos_id,
+        email=email,
         defaults={
-            "email": email,
             "first_name": first_name,
             "last_name": last_name,
             "role": "unknown",
@@ -33,7 +31,6 @@ def process_usos_user(user_info):
     # Update common fields if necessary
     user.first_name = first_name
     user.last_name = last_name
-    user.email = email
 
     # Set role based on status
     if staff_status == 2:
@@ -58,6 +55,6 @@ def process_usos_user(user_info):
 
     # Handle Staff role
     elif user.role == "staff":
-        Staff.objects.get_or_create(user=user)
+        Teacher.objects.get_or_create(user=user)
 
     return user

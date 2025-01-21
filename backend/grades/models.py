@@ -1,34 +1,57 @@
-from datetime import date
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+
+class UserManager(BaseUserManager):
+    """
+    Custom manager for User model where email is the unique identifier.
+    """
+
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError("The Email field must be set")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+
+        if not extra_fields.get("is_staff"):
+            raise ValueError("Superuser must have is_staff=True.")
+        if not extra_fields.get("is_superuser"):
+            raise ValueError("Superuser must have is_superuser=True.")
+
+        return self.create_user(email, password, **extra_fields)
 
 class User(AbstractUser):
     """
-    Represents a user in the system.
-
-    Extends the Django AbstractUser model to include additional fields for role,
-    USOS ID, and email.
-
-    Attributes:
-        role (str): The role of the user ('student', 'staff', or 'unknown').
-        usos_id (str): The unique identifier for the user from the USOS system.
-        email (str): The user's email address, which must be unique.
-
-    Methods:
-        __str__: Returns a string representation of the user.
-        set_role: Sets the user's role based on their student_status and staff_status.
+    Custom User model that uses email instead of username.
     """
+    username = None  # Remove the username field
+    email = models.EmailField(unique=True, db_index=True)
 
-    ROLE_CHOICES = (
-        ('student', 'Student'),
-        ('staff', 'Staff'),
-        ('unknown', 'Unknown'),
-    )
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='unknown')
-    email = models.EmailField(unique=True, null=False)
+    ROLE_STUDENT = "student"
+    ROLE_TEACHER = "teacher"
+    ROLE_UNKNOWN = "unknown"
+
+    ROLE_CHOICES = [
+        (ROLE_STUDENT, "Student"),
+        (ROLE_TEACHER, "Teacher"),
+        (ROLE_UNKNOWN, "Unknown"),
+    ]
+    
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+
+    USERNAME_FIELD = "email"  # Use email to log in
+    REQUIRED_FIELDS = ["first_name", "last_name"]  # Fields required in createsuperuser
+
+    objects = UserManager()  # Attach custom UserManager
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} - {self.email})"
+        return f"{self.first_name} {self.last_name} - {self.email}"
 
 class Student(models.Model):
     """
@@ -36,34 +59,24 @@ class Student(models.Model):
 
     Attributes:
         user (User): The associated User object.
-        name (str): The student's first name.
-        last_name (str): The student's last name.
         student_number (str): The student's unique number.
-
-    Methods:
-        __str__: Returns a string representation of the student using their USOS ID.
     """
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="student")
-    student_number = models.CharField(max_length=10, unique=True)
+    student_number = models.CharField(max_length=10, unique=True, db_index=True)
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name} - {self.student_number}"
 
-class Staff(models.Model):
+class Teacher(models.Model):
     """
-    Represents a staff member in the system.
+    Represents a teacher in the system.
 
     Attributes:
         user (User): The associated User object.
-        name (str): The staff member's first name.
-        last_name (str): The staff member's last name.
-
-    Methods:
-        __str__: Returns a string representation of the staff member using their USOS ID.
     """
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="staff")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="teacher")
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
@@ -72,48 +85,66 @@ class Course(models.Model):
     """
     Represents a course in the system.
     """
-    name = models.CharField(max_length=100)
-    teacher = models.ForeignKey(
-        Staff,                      # Links course to the teacher who created it
-        on_delete=models.CASCADE, 
-        related_name="courses"
-    )
+    name = models.CharField(max_length=100, db_index=True)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name="courses")
 
     def __str__(self):
         return f"{self.name}"
 
+class Assignment(models.Model):
+    name = models.CharField(max_length=100, db_index=True)
+    description = models.TextField(blank=True, null=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="assignments")
+    is_mandatory = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.course.name})"
+    
 class Enrollment(models.Model):
     """
     Represents a student's enrollment in a course.
     """
-    student = models.ForeignKey(
-        Student, 
-        on_delete=models.CASCADE, 
-        related_name="enrollments"
-    )
-    course = models.ForeignKey(
-        Course, 
-        on_delete=models.CASCADE, 
-        related_name="enrollments"
-    )
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="enrollments")
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="enrollments")
 
     class Meta:
         unique_together = ("student", "course")  # Prevent duplicate enrollments
 
     def __str__(self):
-        return f"{self.student.user.first_name} {self.student.user.last_name} - {self.course.name}"
+        return f"{self.student} enrolled in {self.course}" # f"{self.student.user.first_name} {self.student.user.last_name} - {self.course.name}"
     
 class Grade(models.Model):
     """
     Represents a grade assigned to a student for a specific course.
     """
-    enrollment = models.ForeignKey(
-        Enrollment, 
-        on_delete=models.CASCADE, 
-        related_name="grades"
-    )
+    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE, related_name="grades")
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, related_name="grades")
     score = models.DecimalField(max_digits=5, decimal_places=2)
     date_assigned = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.enrollment.student.user.first_name} - {self.enrollment.course.name}: {self.score}"
+        return f"{self.enrollment.student.user.first_name} - {self.assignment.name}: {self.score}"
+    
+class RequiredGrade(models.Model):
+    """
+    Represents a required assignment for a student's enrollment.
+    """
+    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE, related_name="required_grades")
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, related_name="required_grades")
+
+    class Meta:
+        unique_together = ("enrollment", "assignment")
+
+    def __str__(self):
+        return f"{self.enrollment.student} - {self.assignment.name}"
+
+class Group(models.Model):
+    """
+    Represents a group of students within a course.
+    """
+    name = models.CharField(max_length=100, db_index=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="groups")
+    students = models.ManyToManyField(Student, related_name="groups")
+
+    def __str__(self):
+        return f"Group {self.name} in {self.course.name}"

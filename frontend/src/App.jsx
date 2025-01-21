@@ -11,6 +11,8 @@ import ViewCourses from "./components/ViewCourses.jsx";
 import RedirectPage from "./components/RedirectPage.jsx";
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import RedirectPage from './components/RedirectPage.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 function App() {
 

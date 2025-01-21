@@ -1,282 +1,31 @@
+from rest_framework import generics
+from rest_framework.views import APIView
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from rest_framework.request import Request
-from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from .models import User, Student, Teacher, Course, Enrollment, Grade, Assignment, RequiredGrade, Group
+from .serializers import (
+    UserSerializer,
+    StudentSerializer,
+    TeacherSerializer,
+    CourseSerializer,
+    EnrollmentSerializer,
+    GradeSerializer,
+    AssignmentSerializer,
+    RequiredGradeSerializer,
+    GroupSerializer,
+)
 from oauth.utils.responses import api_response
-from .models import Student, Course, Grade, Enrollment
-from .serializers import StudentSerializer, CourseSerializer, GradeSerializer, UserSerializer, EnrollmentSerializer
 
-@api_view(['GET', 'POST'])
-def student_list(request):
-    """
-    Handles listing all students (GET) or creating a new student (POST).
-    """
-    if request.method == 'GET':
-        students = Student.objects.all()
-        serializer = StudentSerializer(students, many=True)
-        return api_response(
-            status="success",
-            message="Students retrieved successfully",
-            data=serializer.data,
-            status_code=200
-        )
+def handle_options(request):
+    response = JsonResponse({})
+    response["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response
 
-    elif request.method == 'POST':
-        serializer = StudentSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return api_response(
-                status="success",
-                message="Student created successfully",
-                data=serializer.data,
-                status_code=201
-            )
-        return api_response(
-            status="error",
-            message="Invalid student data",
-            error_code="INVALID_STUDENT_DATA",
-            data=serializer.errors,
-            status_code=400
-        )
-
-@api_view(['GET', 'PUT', 'DELETE'])
-def student_detail(request: Request, pk: int):
-    """
-    Handles retrieving (GET), updating (PUT), or deleting (DELETE) a specific student.
-    """
-    try:
-        student = Student.objects.get(pk=pk)
-    except Student.DoesNotExist:
-        return api_response(
-            status="error",
-            message="Student not found",
-            error_code="STUDENT_NOT_FOUND",
-            status_code=404
-        )
-
-    if request.method == 'GET':
-        serializer = StudentSerializer(student)
-        return api_response(
-            status="success",
-            message="Student retrieved successfully",
-            data=serializer.data,
-            status_code=200
-        )
-
-    elif request.method == 'PUT':
-        serializer = StudentSerializer(student, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return api_response(
-                status="success",
-                message="Student updated successfully",
-                data=serializer.data,
-                status_code=200
-            )
-        return api_response(
-            status="error",
-            message="Invalid student data",
-            error_code="INVALID_STUDENT_DATA",
-            data=serializer.errors,
-            status_code=400
-        )
-
-    elif request.method == 'DELETE':
-        student.delete()
-        return api_response(
-            status="success",
-            message="Student deleted successfully",
-            status_code=204
-        )
-
-@api_view(['GET', 'POST'])
-def course_list(request: Request):
-    """
-    Handles listing all courses (GET) or creating a new course (POST).
-    """
-    if request.method == 'GET':
-        courses = Course.objects.all()
-        serializer = CourseSerializer(courses, many=True)
-        return api_response(
-            status="success",
-            message="Courses retrieved successfully",
-            data=serializer.data,
-            status_code=200
-        )
-
-    elif request.method == 'POST':
-        serializer = CourseSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return api_response(
-                status="success",
-                message="Course created successfully",
-                data=serializer.data,
-                status_code=201
-            )
-        return api_response(
-            status="error",
-            message="Invalid course data",
-            error_code="INVALID_COURSE_DATA",
-            data=serializer.errors,
-            status_code=400
-        )
-
-@api_view(['GET', 'PUT', 'DELETE'])
-def course_detail(request: Request, pk: int):
-    """
-    Handles retrieving (GET), updating (PUT), or deleting (DELETE) a specific course.
-    """
-    try:
-        course = Course.objects.get(pk=pk)
-    except Course.DoesNotExist:
-        return api_response(
-            status="error",
-            message="Course not found",
-            error_code="COURSE_NOT_FOUND",
-            status_code=404
-        )
-
-    if request.method == 'GET':
-        serializer = CourseSerializer(course)
-        return api_response(
-            status="success",
-            message="Course retrieved successfully",
-            data=serializer.data,
-            status_code=200
-        )
-
-    elif request.method == 'PUT':
-        serializer = CourseSerializer(course, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return api_response(
-                status="success",
-                message="Course updated successfully",
-                data=serializer.data,
-                status_code=200
-            )
-        return api_response(
-            status="error",
-            message="Invalid course data",
-            error_code="INVALID_COURSE_DATA",
-            data=serializer.errors,
-            status_code=400
-        )
-
-    elif request.method == 'DELETE':
-        course.delete()
-        return api_response(
-            status="success",
-            message="Course deleted successfully",
-            status_code=204
-        )
-
-# @api_view(['GET', 'POST'])
-# def grade_list(request):
-#     """
-#     Handles listing all grades (GET) or creating a new grade (POST).
-#     """
-#     if request.method == 'GET':
-#         grades = Grade.objects.all()
-#         serializer = GradeSerializer(grades, many=True)
-#         return api_response(
-#             status="success",
-#             message="Grades retrieved successfully",
-#             data=serializer.data,
-#             status_code=200
-#         )
-
-#     elif request.method == 'POST':
-#         serializer = GradeSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return api_response(
-#                 status="success",
-#                 message="Grade created successfully",
-#                 data=serializer.data,
-#                 status_code=201
-#             )
-#         return api_response(
-#             status="error",
-#             message="Invalid grade data",
-#             error_code="INVALID_GRADE_DATA",
-#             data=serializer.errors,
-#             status_code=400
-#         )
-
-@api_view(['GET', 'PUT', 'DELETE'])
-def grade_detail(request, pk: int):
-    """
-    Handles retrieving (GET), updating (PUT), or deleting (DELETE) a specific grade.
-    """
-    try:
-        grade = Grade.objects.get(pk=pk)
-    except Grade.DoesNotExist:
-        return api_response(
-            status="error",
-            message="Grade not found",
-            error_code="GRADE_NOT_FOUND",
-            status_code=404
-        )
-
-    if request.method == 'GET':
-        serializer = GradeSerializer(grade)
-        return api_response(
-            status="success",
-            message="Grade retrieved successfully",
-            data=serializer.data,
-            status_code=200
-        )
-
-    elif request.method == 'PUT':
-        serializer = GradeSerializer(grade, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return api_response(
-                status="success",
-                message="Grade updated successfully",
-                data=serializer.data,
-                status_code=200
-            )
-        return api_response(
-            status="error",
-            message="Invalid grade data",
-            error_code="INVALID_GRADE_DATA",
-            data=serializer.errors,
-            status_code=400
-        )
-
-    elif request.method == 'DELETE':
-        grade.delete()
-        return api_response(
-            status="success",
-            message="Grade deleted successfully",
-            status_code=204
-        )
-
-@api_view(['POST'])
-#@permission_classes([IsTeacher])
-def create_grade(request):
-    """
-    Handles grade creation.
-    Only accessible by users with the 'teacher' role.
-    """
-    serializer = GradeSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return api_response(
-            status="success",
-            message="Grade created successfully",
-            data=serializer.data,
-            status_code=201
-        )
-    return api_response(
-        status="error",
-        message="Invalid grade data",
-        error_code="INVALID_GRADE_DATA",
-        data=serializer.errors,
-        status_code=400
-    )
+# User Views
 
 @api_view(['GET'])
 def users_me(request):
@@ -292,153 +41,787 @@ def users_me(request):
         status_code=200,
     )
 
-@api_view(['POST'])
-def enroll_in_course(request):
+class UserListCreateView(generics.ListCreateAPIView):
     """
-    Allows a student to enroll in a course.
+    List all users.
     """
-    print(f"User: {request.user}, Authenticated: {request.user.is_authenticated}")
-    # Ensure the user is authenticated
-    if not request.user.is_authenticated:
-        return api_response(
-            status="error",
-            message="Permission denied.",
-            error_code="PERMISSION_DENIED",
-            status_code=403
-        )
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
-    try:
-        # Ensure the logged-in user is a student
-        student = request.user.student
-    except Student.DoesNotExist:
-        return api_response(
-            status="error",
-            message="You must be a student to enroll in a course.",
-            error_code="NOT_A_STUDENT",
-            status_code=403
-        )
-
-    # Add the student's ID to the request data
-    data = request.data.copy()
-    data['student'] = student.id
-
-    # Use the EnrollmentSerializer to validate and save the data
-    serializer = EnrollmentSerializer(data=data)
-    if serializer.is_valid():
-        serializer.save()  # Save the new enrollment
+    def list(self, request, *args, **kwargs):
+        """
+        List all users.
+        """
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
         return api_response(
             status="success",
-            message="Enrolled in course successfully.",
+            message="Users retrieved successfully.",
             data=serializer.data,
-            status_code=201
+            status_code=200
         )
 
-    # Return validation errors
-    return api_response(
-        status="error",
-        message="Enrollment failed.",
-        error_code="INVALID_ENROLLMENT",
-        data=serializer.errors,
-        status_code=400
-    )
-
-@api_view(['GET'])
-def get_enrollments(request):
-    """
-    Fetch all enrollments for the logged-in student.
-    """
-    try:
-        # Get the logged-in student
-        student = request.user.student
-    except Student.DoesNotExist:
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new user.
+        """
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                status="success",
+                message="User created successfully.",
+                data=serializer.data,
+                status_code=201
+            )
         return api_response(
             status="error",
-            message="You must be a student to view enrollments.",
-            error_code="NOT_A_STUDENT",
-            status_code=403
+            message="Invalid user data.",
+            data=serializer.errors,
+            status_code=400
         )
 
-    # Query enrollments for the logged-in student
-    enrollments = Enrollment.objects.filter(student=student)
-
-    # Serialize the data
-    serializer = EnrollmentSerializer(enrollments, many=True)
-    return api_response(
-        status="success",
-        message="Enrollments retrieved successfully.",
-        data=serializer.data,
-        status_code=200
-    )
-
-@api_view(['GET'])
-def list_grades(request):
+class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
-    Retrieve grades for the logged-in student or all enrollments if staff.
+    Retrieve details of a specific user.
     """
-    user = request.user
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
-    # Check if the user is authenticated
-    if not user.is_authenticated:
-        return api_response(
-            status="error",
-            message="Permission denied.",
-            error_code="PERMISSION_DENIED",
-            status_code=403
-        )
-
-    if hasattr(user, 'student'):
-        # If the user is a student, return only their grades
-        grades = Grade.objects.filter(enrollment__student=user.student)
-    elif hasattr(user, 'staff'):
-        # If the user is staff, return all grades
-        grades = Grade.objects.all()
-    else:
-        return api_response(
-            status="error",
-            message="You must be a student or staff to view grades.",
-            error_code="NOT_AUTHORIZED",
-            status_code=403
-        )
-
-    serializer = GradeSerializer(grades, many=True)
-    return api_response(
-        status="success",
-        message="Grades retrieved successfully.",
-        data=serializer.data,
-        status_code=200
-    )
-
-@api_view(['POST'])
-def assign_grade(request):
-    """
-    Assign a grade to a student for a specific course enrollment.
-    """
-    user = request.user
-
-    # Ensure the user is staff
-    if not hasattr(user, 'staff'):
-        return api_response(
-            status="error",
-            message="Only staff members can assign grades.",
-            error_code="NOT_AUTHORIZED",
-            status_code=403
-        )
-
-    # Serialize and validate the incoming data
-    serializer = GradeSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
         return api_response(
             status="success",
-            message="Grade assigned successfully.",
+            message="User retrieved successfully.",
             data=serializer.data,
-            status_code=201
+            status_code=200
+        )
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                status="success",
+                message="User updated successfully.",
+                data=serializer.data,
+                status_code=200
+            )
+        return api_response(
+            status="error",
+            message="Invalid user data.",
+            data=serializer.errors,
+            status_code=400
+        )
+    def destroy(self, request, *args, **kwargs):
+        """
+        Delete a specific user.
+        """
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return api_response(
+            status="success",
+            message="User deleted successfully.",
+            status_code=204
         )
 
-    return api_response(
-        status="error",
-        message="Grade assignment failed.",
-        error_code="INVALID_GRADE",
-        data=serializer.errors,
-        status_code=400
-    )
+# Student Views
+class StudentListCreateView(generics.ListCreateAPIView):
+    """
+    List all students or create a new student.
+    """
+    queryset = Student.objects.select_related('user').all()
+    serializer_class = StudentSerializer
+
+    def list(self, request, *args, **kwargs):
+        """
+        List all students with a standardized response.
+        """
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return api_response(
+            status="success",
+            message="Students retrieved successfully.",
+            data=serializer.data,
+            status_code=200
+        )
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new student with a standardized response.
+        """
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                status="success",
+                message="Student created successfully.",
+                data=serializer.data,
+                status_code=201
+            )
+        return api_response(
+            status="error",
+            message="Invalid student data.",
+            data=serializer.errors,
+            status_code=400
+        )   
+
+class StudentDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieve, update, or delete a specific student.
+    """
+    queryset = Student.objects.select_related('user').all()
+    serializer_class = StudentSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return api_response(
+            status="success",
+            message="Student retrieved successfully.",
+            data=serializer.data,
+            status_code=200
+        )
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', True)  # Support partial updates
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                status="success",
+                message="Student updated successfully.",
+                data=serializer.data,
+                status_code=200
+            )
+        return api_response(
+            status="error",
+            message="Invalid student data.",
+            data=serializer.errors,
+            status_code=400
+        )
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return api_response(
+            status="success",
+            message="Student deleted successfully.",
+            status_code=204
+        )
+
+# Teacher Views
+class TeacherListView(generics.ListAPIView):
+    """
+    List all teachers with search and filtering functionality.
+    """
+    queryset = Teacher.objects.select_related('user').all()
+    serializer_class = TeacherSerializer
+    
+    def list(self, request, *args, **kwargs):
+        """
+        List all teachers with a standardized response.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return api_response(
+            status="success",
+            message="Teachers retrieved successfully.",
+            data=serializer.data,
+            status_code=200
+        )
+
+class TeacherDetailView(generics.RetrieveUpdateAPIView):
+    """
+    Retrieve, update, or delete a specific teacher.
+    """
+    queryset = Teacher.objects.select_related('user').all()
+    serializer_class = TeacherSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Retrieve details of a specific teacher.
+        """
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return api_response(
+            status="success",
+            message="Teacher retrieved successfully.",
+            data=serializer.data,
+            status_code=200
+        )
+
+    def update(self, request, *args, **kwargs):
+        """
+        Update a specific teacher.
+        """
+        partial = kwargs.pop('partial', True)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                status="success",
+                message="Teacher updated successfully.",
+                data=serializer.data,
+                status_code=200
+            )
+        return api_response(
+            status="error",
+            message="Invalid teacher data.",
+            data=serializer.errors,
+            status_code=400
+        )
+
+# Course Views
+class CourseListCreateView(generics.ListCreateAPIView):
+    """
+    List all courses or create a new course.
+    """
+    queryset = Course.objects.select_related('teacher').all()
+    serializer_class = CourseSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return api_response(
+            status="success",
+            message="Courses retrieved successfully.",
+            data=serializer.data,
+            status_code=200
+        )
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new course with a standardized response.
+        """
+        serializer = self.get_serializer(data=request.data)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                status="success",
+                message="Course created successfully.",
+                data=serializer.data,
+                status_code=201
+            )
+        return api_response(
+            status="error",
+            message="Invalid course data.",
+            data=serializer.errors,
+            status_code=400
+        )
+
+class CourseDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieve, update, or delete a specific course.
+    """
+    queryset = Course.objects.select_related('teacher').all()
+    serializer_class = CourseSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Retrieve a specific course with a standardized response.
+        """
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return api_response(
+            status="success",
+            message="Course retrieved successfully.",
+            data=serializer.data,
+            status_code=200
+        )
+
+    def update(self, request, *args, **kwargs):
+        """
+        Update a specific course with a standardized response.
+        """
+        partial = kwargs.pop('partial', True)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                status="success",
+                message="Course updated successfully.",
+                data=serializer.data,
+                status_code=200
+            )
+
+            
+            serializer.save()
+            return api_response(
+                status="success",
+                message="Course updated successfully.",
+                data=serializer.data,
+                status_code=200
+            )
+        return api_response(
+            status="error",
+            message="Invalid course data.",
+            data=serializer.errors,
+            status_code=400
+        )
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Delete a specific course with a standardized response.
+        """
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return api_response(
+            status="success",
+            message="Course deleted successfully.",
+            status_code=204
+        )
+
+# Grade Views
+class GradeListCreateView(generics.ListCreateAPIView):
+    """
+    List all grades or create a new grade.
+    """
+    queryset = Grade.objects.select_related('enrollment', 'assignment').all()
+    serializer_class = GradeSerializer
+
+    def list(self, request, *args, **kwargs):
+        """
+        List all grades with detailed information.
+        """
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return api_response(
+            status="success",
+            message="Grades retrieved successfully.",
+            data=serializer.data,
+            status_code=200
+        )
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new grade with error handling.
+        """
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                serializer.save()
+                return api_response(
+                    status="success",
+                    message="Grade created successfully.",
+                    data=serializer.data,
+                    status_code=201
+                )
+            except Exception as e:
+                return api_response(
+                    status="error",
+                    message="Failed to create grade.",
+                    data={"error": str(e)},
+                    status_code=400
+                )
+        return api_response(
+            status="error",
+            message="Invalid grade data.",
+            data=serializer.errors,
+            status_code=400
+        )
+
+class GradeDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieve, update, or delete a specific grade.
+    """
+    queryset = Grade.objects.select_related('enrollment', 'assignment').all()
+    serializer_class = GradeSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Retrieve a specific grade.
+        """
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return api_response(
+            status="success",
+            message="Grade retrieved successfully.",
+            data=serializer.data,
+            status_code=200
+        )
+
+    def update(self, request, *args, **kwargs):
+        """
+        Update a specific grade.
+        """
+        partial = kwargs.pop('partial', True)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                status="success",
+                message="Grade updated successfully.",
+                data=serializer.data,
+                status_code=200
+            )
+        return api_response(
+            status="error",
+            message="Invalid grade data.",
+            data=serializer.errors,
+            status_code=400
+        )
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Delete a specific grade.
+        """
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return api_response(
+            status="success",
+            message="Grade deleted successfully.",
+            status_code=204
+        )
+
+# Assignment Views
+class AssignmentListCreateView(generics.ListCreateAPIView):
+    """
+    List all assignments or create a new assignment.
+    """
+    queryset = Assignment.objects.select_related('course').all()
+    serializer_class = AssignmentSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return api_response(
+            status="success",
+            message="Assignments retrieved successfully.",
+            data=serializer.data,
+            status_code=200
+        )
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                status="success",
+                message="Assignment created successfully.",
+                data=serializer.data,
+                status_code=201
+            )
+        return api_response(
+            status="error",
+            message="Invalid assignment data.",
+            data=serializer.errors,
+            status_code=400
+        )
+
+
+class AssignmentDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieve, update, or delete a specific assignment.
+    """
+    queryset = Assignment.objects.select_related('course').all()
+    serializer_class = AssignmentSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return api_response(
+            status="success",
+            message="Assignment retrieved successfully.",
+            data=serializer.data,
+            status_code=200
+        )
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', True)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                status="success",
+                message="Assignment updated successfully.",
+                data=serializer.data,
+                status_code=200
+            )
+        return api_response(
+            status="error",
+            message="Invalid assignment data.",
+            data=serializer.errors,
+            status_code=400
+        )
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return api_response(
+            status="success",
+            message="Assignment deleted successfully.",
+            status_code=204
+        )
+
+# Enrollment Views
+class EnrollmentListCreateView(generics.ListCreateAPIView):
+    """
+    List all enrollments or create a new enrollment.
+    """
+    queryset = Enrollment.objects.all()
+    serializer_class = EnrollmentSerializer
+
+    def list(self, request, *args, **kwargs):
+        """
+        List all enrollments with a standardized response.
+        """
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return api_response(
+            status="success",
+            message="Enrollments retrieved successfully.",
+            data=serializer.data,
+            status_code=200
+        )
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new enrollment with a standardized response.
+        """
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                status="success",
+                message="Enrollment created successfully.",
+                data=serializer.data,
+                status_code=201
+            )
+        return api_response(
+            status="error",
+            message="Invalid enrollment data.",
+            data=serializer.errors,
+            status_code=400
+        )
+
+
+class EnrollmentDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieve, update, or delete a specific enrollment.
+    """
+    queryset = Enrollment.objects.select_related('student', 'course').all()
+    serializer_class = EnrollmentSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return api_response(
+            status="success",
+            message="Enrollment retrieved successfully.",
+            data=serializer.data,
+            status_code=200
+        )
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', True)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                status="success",
+                message="Enrollment updated successfully.",
+                data=serializer.data,
+                status_code=200
+            )
+        return api_response(
+            status="error",
+            message="Invalid enrollment data.",
+            data=serializer.errors,
+            status_code=400
+        )
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return api_response(
+            status="success",
+            message="Enrollment deleted successfully.",
+            status_code=204
+        )
+
+# Required Grade Views
+class RequiredGradeListCreateView(generics.ListCreateAPIView):
+    """
+    List all required grades or create a new required grade.
+    """
+    queryset = RequiredGrade.objects.select_related('enrollment', 'assignment').all()
+    serializer_class = RequiredGradeSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return api_response(
+            status="success",
+            message="Required grades retrieved successfully.",
+            data=serializer.data,
+            status_code=200
+        )
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            # Validate enrollment and assignment exist
+            enrollment_id = serializer.validated_data['enrollment'].id
+            assignment_id = serializer.validated_data['assignment'].id
+
+            if not Enrollment.objects.filter(id=enrollment_id).exists():
+                return api_response(
+                    status="error",
+                    message="The specified enrollment does not exist.",
+                    status_code=400
+                )
+            if not Assignment.objects.filter(id=assignment_id).exists():
+                return api_response(
+                    status="error",
+                    message="The specified assignment does not exist.",
+                    status_code=400
+                )
+
+            serializer.save()
+            return api_response(
+                status="success",
+                message="Required grade created successfully.",
+                data=serializer.data,
+                status_code=201
+            )
+        return api_response(
+            status="error",
+            message="Invalid required grade data.",
+            data=serializer.errors,
+            status_code=400
+        )
+
+class RequiredGradeDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieve, update, or delete a specific required grade.
+    """
+    queryset = RequiredGrade.objects.select_related('enrollment', 'assignment').all()
+    serializer_class = RequiredGradeSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return api_response(
+            status="success",
+            message="Required grade retrieved successfully.",
+            data=serializer.data,
+            status_code=200
+        )
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', True)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                status="success",
+                message="Required grade updated successfully.",
+                data=serializer.data,
+                status_code=200
+            )
+        return api_response(
+            status="error",
+            message="Invalid required grade data.",
+            data=serializer.errors,
+            status_code=400
+        )
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return api_response(
+            status="success",
+            message="Required grade deleted successfully.",
+            status_code=204
+        )
+
+# Group Views
+class GroupListCreateView(generics.ListCreateAPIView):
+    """
+    List all groups or create a new group.
+    """
+    queryset = Group.objects.select_related('course').prefetch_related('students').all()
+    serializer_class = GroupSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return api_response(
+            status="success",
+            message="Groups retrieved successfully.",
+            data=serializer.data,
+            status_code=200
+        )
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                status="success",
+                message="Group created successfully.",
+                data=serializer.data,
+                status_code=201
+            )
+        return api_response(
+            status="error",
+            message="Invalid group data.",
+            data=serializer.errors,
+            status_code=400
+        )
+
+
+class GroupDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieve, update, or delete a specific group.
+    """
+    queryset = Group.objects.select_related('course').prefetch_related('students').all()
+    serializer_class = GroupSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return api_response(
+            status="success",
+            message="Group retrieved successfully.",
+            data=serializer.data,
+            status_code=200
+        )
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                status="success",
+                message="Group updated successfully.",
+                data=serializer.data,
+                status_code=200
+            )
+        return api_response(
+            status="error",
+            message="Invalid group data.",
+            data=serializer.errors,
+            status_code=400
+        )
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return api_response(
+            status="success",
+            message="Group deleted successfully.",
+            status_code=204
+        )
