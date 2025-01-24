@@ -1,7 +1,7 @@
 [
   {
-    "name": "Matematyka",
-    "description": "Analiza funkcjonalna, topologia, teoria mnogości, szeregi ortogonalne, teoria funkcji rzeczywistych, teoria gier, Analiza funkcjonalna, topologia, teoria mnogości, szeregi ortogonalne, teoria funkcji rzeczywistych, teoria gier",
+    "name": "Analiza funkcjonalna - Matematyka MS, st. II, sem. 3",
+    "description": "Analiza funkcjonalna, topologia, teoria mnogości, szeregi ortogonalne, teoria funkcji rzeczywistych, teoria gier",
     "requiredElements": [
       {
         "name": "Egzamin",
@@ -78,12 +78,12 @@
       {
         "name": "Kamil Żebrok",
         "group": 1,
-        "id": "aq749980"
+        "id": "303281"
       }
     ],
     "grades": [
       {
-        "studentId": "aq749980",
+        "studentId": "303281",
         "scores": [
           {
             "name": "Egzamin",
@@ -193,98 +193,246 @@
     ]
   },
   {
-    "name": "2",
-    "description": "",
+    "name": "Algebra liniowa - Matematyka MS, st. I, sem. 1",
+    "description": "Wprowadzenie do przestrzeni wektorowych, macierzy, wyznaczników oraz układów równań liniowych",
     "requiredElements": [
       {
-        "name": "2",
+        "name": "Egzamin",
         "description": "",
-        "weight": 2
+        "weight": 60
+      },
+      {
+        "name": "Kolokwium",
+        "description": "",
+        "weight": 30
+      },
+      {
+        "name": "Ćwiczenia",
+        "description": "",
+        "weight": 10
       }
     ],
     "participants": [
       {
-        "name": "2",
+        "name": "Jan Kowalski",
+        "group": 1,
+        "id": "ab123456"
+      },
+      {
+        "name": "Anna Nowak",
+        "group": 1,
+        "id": "cd789012"
+      },
+      {
+        "name": "Marek Wiśniewski",
         "group": 2,
-        "id": "nt239188"
-      }
-    ],
-    "grades": []
-  },
-  {
-    "name": "3",
-    "description": "",
-    "requiredElements": [
+        "id": "ef345678"
+      },
       {
-        "name": "3",
-        "description": "",
-        "weight": 3
-      }
-    ],
-    "participants": [
-      {
-        "name": "3",
+        "name": "Ewa Zalewska",
         "group": 3,
-        "id": "rn162222"
+        "id": "gh901234"
+      },
+      {
+        "name": "Kamil Żebrok",
+        "group": 1,
+        "id": "303281"
+      }
+    ],
+    "grades": [
+      {
+        "studentId": "ab123456",
+        "scores": [
+          {
+            "name": "Egzamin",
+            "value": 4,
+            "weight": 60,
+            "comment": ""
+          },
+          {
+            "name": "Kolokwium",
+            "value": 3.5,
+            "weight": 30,
+            "comment": ""
+          }
+        ]
+      },
+      {
+        "studentId": "cd789012",
+        "scores": [
+          {
+            "name": "Ćwiczenia",
+            "value": 5,
+            "weight": 10,
+            "comment": ""
+          }
+        ]
+      },
+      {
+        "studentId": "303281",
+        "scores": [
+          {
+            "name": "Egzamin",
+            "value": 5,
+            "weight": 60,
+            "comment": ""
+          },
+          {
+            "name": "Kolokwium",
+            "value": 4,
+            "weight": 30,
+            "comment": ""
+          },
+          {
+            "name": "Ćwiczenia",
+            "value": 3,
+            "weight": 10,
+            "comment": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Analiza matematyczna I - Matematyka MS, st. I, sem. 1",
+    "description": "Funkcje jednej zmiennej, różniczkowanie, całkowanie, granice i ciągi",
+    "requiredElements": [
+      {
+        "name": "Egzamin końcowy",
+        "description": "",
+        "weight": 50
+      },
+      {
+        "name": "Kolokwium I",
+        "description": "",
+        "weight": 25
+      },
+      {
+        "name": "Kolokwium II",
+        "description": "",
+        "weight": 25
+      }
+    ],
+    "participants": [
+      {
+        "name": "Piotr Wiatr",
+        "group": 1,
+        "id": "ij567890"
+      },
+      {
+        "name": "Kasia Nowicka",
+        "group": 1,
+        "id": "kl123890"
+      },
+      {
+        "name": "Magdalena Lis",
+        "group": 2,
+        "id": "mn890123"
+      },
+      {
+        "name": "Kamil Żebrok",
+        "group": 1,
+        "id": "303281"
+      }
+    ],
+    "grades": [
+      {
+        "studentId": "ij567890",
+        "scores": [
+          {
+            "name": "Egzamin końcowy",
+            "value": 4.5,
+            "weight": 50,
+            "comment": ""
+          },
+          {
+            "name": "Kolokwium I",
+            "value": 3.5,
+            "weight": 25,
+            "comment": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Metody obliczeniowe - Informatyka, st. I, sem. 3",
+    "description": "Rozwiązywanie równań różniczkowych i algebraicznych przy użyciu metod numerycznych",
+    "requiredElements": [
+      {
+        "name": "Projekt",
+        "description": "Indywidualny projekt programistyczny",
+        "weight": 40
+      },
+      {
+        "name": "Kolokwium",
+        "description": "",
+        "weight": 40
+      },
+      {
+        "name": "Zadania domowe",
+        "description": "",
+        "weight": 20
+      }
+    ],
+    "participants": [
+      {
+        "name": "Tomasz Lewandowski",
+        "group": 1,
+        "id": "op567123"
+      },
+      {
+        "name": "Karolina Jaskółka",
+        "group": 2,
+        "id": "qr890456"
       }
     ],
     "grades": []
   },
   {
-    "name": "4",
-    "description": "",
+    "name": "Podstawy fizyki - Fizyka, st. I, sem. 1",
+    "description": "Mechanika klasyczna, prawa Newtona, energia, praca, zachowanie pędu",
     "requiredElements": [
       {
-        "name": "4",
+        "name": "Egzamin",
         "description": "",
-        "weight": 4
+        "weight": 60
+      },
+      {
+        "name": "Ćwiczenia laboratoryjne",
+        "description": "",
+        "weight": 20
+      },
+      {
+        "name": "Kolokwium",
+        "description": "",
+        "weight": 20
       }
     ],
     "participants": [
       {
-        "name": "4",
-        "group": 4,
-        "id": "vn130211"
-      }
-    ],
-    "grades": []
-  },
-  {
-    "name": "5",
-    "description": "",
-    "requiredElements": [
+        "name": "Zofia Górecka",
+        "group": 1,
+        "id": "st789123"
+      },
       {
-        "name": "5",
-        "description": "",
-        "weight": 5
+        "name": "Janusz Kwiatkowski",
+        "group": 2,
+        "id": "uv456789"
       }
     ],
-    "participants": [
+    "grades": [
       {
-        "name": "5",
-        "group": 5,
-        "id": "fq157097"
+        "studentId": "st789123",
+        "scores": [
+          {
+            "name": "Ćwiczenia laboratoryjne",
+            "value": 5,
+            "weight": 20,
+            "comment": ""
+          }
+        ]
       }
-    ],
-    "grades": []
-  },
-  {
-    "name": "6",
-    "description": "",
-    "requiredElements": [
-      {
-        "name": "6",
-        "description": "",
-        "weight": 6
-      }
-    ],
-    "participants": [
-      {
-        "name": "6",
-        "group": 6,
-        "id": "dv975576"
-      }
-    ],
-    "grades": []
+    ]
   }
 ]

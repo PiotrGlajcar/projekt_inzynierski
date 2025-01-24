@@ -7,6 +7,7 @@ const ToLogin = () => {
 
     const handleLoginAsLecturer = () => {
         navigate("/home-staff");
+        {/*window.location.href = "http://localhost:8000/oauth/start/";*/}
     };
 
     const handleLoginAsParticipant = async () => {

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-
 function Home() {
     const navigate = useNavigate();
 
-    // const [loading, setLoading] = useState(true);
+    const [data, setUser] = useState(true);
     // const [error, setError] = useState(null); 
 
     useEffect(() => {
@@ -33,7 +32,7 @@ function Home() {
 
     return (
         <div className="container">
-            <h2>Witamy na stronie głównej</h2>
+            <h2>Witamy na stronie głównej {data.first_name}</h2>
             <p>Wybierz co chesz zrobić:</p>
             <div className="buttons">
                 <button className="button" onClick={goToCreateCourse}>Utwórz nowy kurs</button>

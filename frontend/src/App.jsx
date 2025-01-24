@@ -7,12 +7,12 @@ import Contact from './components/Contact.jsx'
 import ToLogin from './components/ToLogin.jsx'
 import ManageCourse from "./components/ManageCourse.jsx";
 import CreateCourse from "./components/CreateCourse.jsx";
-import ViewCourses from "./components/ViewCourses.jsx";
+import CourseRegister from './components/CourseRegister.jsx'
 import RedirectPage from "./components/RedirectPage.jsx";
-import ProtectedRoute from './components/ProtectedRoute.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import RedirectPage from './components/RedirectPage.jsx'
-import ProtectedRoute from './components/ProtectedRoute.jsx'
+import MyCourses from './components/MyCourses.jsx'
+import MyCourseDetails from './components/MyCourseDetails.jsx'
 
 function App() {
 
@@ -27,7 +27,7 @@ function App() {
             <Route path='/home-staff' element={<Home />} />
             <Route path='/home-student' element={
               <ProtectedRoute role="student">
-                path=<HomeStudent />
+                <HomeStudent />
               </ProtectedRoute> }/>
             <Route path='/about' element={<About />} />
             <Route path='/contact' element={<Contact />} />
@@ -35,9 +35,12 @@ function App() {
               {/* // <ProtectedRoute role="staff">
               //     <CreateCourse />
               // </ProtectedRoute> */}
-            <Route path="/view-courses" element={<ViewCourses />} />
             <Route path="/manage-course/" element={<ManageCourse />} />
             <Route path="/manage-course/:courseName" element={<ManageCourse />} />
+            <Route path="/course-register/" element={<CourseRegister />} />
+            <Route path="/course-register/:courseName" element={<CourseRegister />} />
+            <Route path="/my-courses" element={<MyCourses />} />
+            <Route path="/my-course/:courseName" element={<MyCourseDetails />} />
           </Routes>
           <Footer />
         </div>

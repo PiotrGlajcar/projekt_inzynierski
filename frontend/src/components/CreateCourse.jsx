@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function CreateCourse() {
@@ -14,12 +14,23 @@ function CreateCourse() {
     const [participantId, setParticipantId] = useState("");
     const navigate = useNavigate();
 
-    const generateUniqueId = () => {
-        const letters = "abcdefghijklmnopqrstuvwxyz";
-        const randomLetters = Array.from({ length: 2 }, () => letters[Math.floor(Math.random() * letters.length)]).join("");
-        const randomNumbers = Math.floor(100000 + Math.random() * 900000).toString();
-        return randomLetters + randomNumbers;
-    };
+    const [data, setUser] = useState(true);
+    // const [error, setError] = useState(null); 
+
+    useEffect(() => {
+        fetch('http://localhost:8000/users/me', {
+            credentials: 'include'  // Important for session cookies
+        })
+        .then(response => response.json())
+        .then(user_data => {
+            if (user_data.status === 'success') {
+                console.log("User role:", user_data.data.role);
+                setUser(user_data.data);  // Save user data
+            } else {
+                console.log("Failed to fetch user data");
+            }
+        });
+    }, []);
 
     const handleAddRequiredElement = () => {
         if (elementName && elementWeight > 0) {
@@ -153,6 +164,8 @@ function CreateCourse() {
                         </li>
                     ))}
                 </ul>
+                <p>Prowadzący kurs: {data.first_name} {data.last_name}</p>
+                <p>Zapisuje id w bazie: {data.id}</p>
             </div>
             <div>
                 <h3>Uczestnicy:</h3>
