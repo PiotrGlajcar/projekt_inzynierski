@@ -51,7 +51,7 @@ class User(AbstractUser):
     objects = UserManager()  # Attach custom UserManager
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} - {self.email}"
+        return f"{self.first_name} {self.last_name}"
 
 class Student(models.Model):
     """
@@ -86,6 +86,7 @@ class Course(models.Model):
     Represents a course in the system.
     """
     name = models.CharField(max_length=100, db_index=True)
+    description = models.TextField(default="No description provided.") 
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name="courses")
 
     def __str__(self):
@@ -94,11 +95,12 @@ class Course(models.Model):
 class Assignment(models.Model):
     name = models.CharField(max_length=100, db_index=True)
     description = models.TextField(blank=True, null=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="assignments")
+    weight = models.CharField(max_length=5, default="100") 
     is_mandatory = models.BooleanField(default=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="assignments")
 
     def __str__(self):
-        return f"{self.name} ({self.course.name})"
+        return f"{self.name}"        
     
 class Enrollment(models.Model):
     """
@@ -111,7 +113,7 @@ class Enrollment(models.Model):
         unique_together = ("student", "course")  # Prevent duplicate enrollments
 
     def __str__(self):
-        return f"{self.student} enrolled in {self.course}" # f"{self.student.user.first_name} {self.student.user.last_name} - {self.course.name}"
+        return f"{self.student} - {self.course}" # f"{self.student.user.first_name} {self.student.user.last_name} - {self.course.name}"
     
 class Grade(models.Model):
     """
@@ -124,27 +126,4 @@ class Grade(models.Model):
 
     def __str__(self):
         return f"{self.enrollment.student.user.first_name} - {self.assignment.name}: {self.score}"
-    
-class RequiredGrade(models.Model):
-    """
-    Represents a required assignment for a student's enrollment.
-    """
-    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE, related_name="required_grades")
-    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, related_name="required_grades")
 
-    class Meta:
-        unique_together = ("enrollment", "assignment")
-
-    def __str__(self):
-        return f"{self.enrollment.student} - {self.assignment.name}"
-
-class Group(models.Model):
-    """
-    Represents a group of students within a course.
-    """
-    name = models.CharField(max_length=100, db_index=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="groups")
-    students = models.ManyToManyField(Student, related_name="groups")
-
-    def __str__(self):
-        return f"Group {self.name} in {self.course.name}"

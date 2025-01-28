@@ -15,10 +15,6 @@ from .views import (
     GradeDetailView,
     AssignmentListCreateView,
     AssignmentDetailView,
-    RequiredGradeListCreateView,
-    RequiredGradeDetailView,
-    GroupListCreateView,
-    GroupDetailView,
 )
 
 
@@ -43,6 +39,7 @@ urlpatterns = [
 
     # Enrollments
     path('enrollments/', EnrollmentListCreateView.as_view(), name='enrollment_list_create'),
+    path('enrollments/detail/', EnrollmentDetailView.as_view(), name='enrollment-detail'),
     path('enrollments/<int:pk>/', EnrollmentDetailView.as_view(), name='enrollment_detail'),
 
     # Grades
@@ -52,12 +49,4 @@ urlpatterns = [
     # Assignments
     path('assignments/', AssignmentListCreateView.as_view(), name='assignment_list_create'),
     path('assignments/<int:pk>/', AssignmentDetailView.as_view(), name='assignment_detail'),
-
-    # Required Grades
-    path('required-grades/', RequiredGradeListCreateView.as_view(), name='required_grade_list_create'),
-    path('required-grades/<int:pk>/', RequiredGradeDetailView.as_view(), name='required_grade_detail'),
-
-    # Groups
-    path('groups/', GroupListCreateView.as_view(), name='group-list-create'),
-    path('groups/<int:pk>/', GroupDetailView.as_view(), name='group-detail'),
 ]

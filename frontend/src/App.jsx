@@ -35,7 +35,7 @@ function App() {
               {/* // <ProtectedRoute role="staff">
               //     <CreateCourse />
               // </ProtectedRoute> */}
-            <Route path="/manage-course/" element={<ManageCourse />} />
+            <Route path="/manage-course/" element={<ListCourses />} />
             <Route path="/manage-course/:courseName" element={<ManageCourse />} />
             <Route path="/course-register/" element={<CourseRegister />} />
             <Route path="/course-register/:courseName" element={<CourseRegister />} />

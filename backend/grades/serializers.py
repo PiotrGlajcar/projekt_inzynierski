@@ -1,12 +1,11 @@
 from rest_framework import serializers
-from .models import User, Student, Teacher, Course, Enrollment, Grade, Assignment, RequiredGrade, Group
+from .models import User, Student, Teacher, Course, Enrollment, Grade, Assignment
 
 class UserSerializer(serializers.ModelSerializer):
-    student_number = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ["id", "email", "role", "first_name", "last_name", "student_number"]
+        fields = ["id", "first_name", "last_name",  "email", "role"]
         
     def get_student_number(self, obj):
         if obj.role == "student" and hasattr(obj, "student"):
@@ -14,19 +13,39 @@ class UserSerializer(serializers.ModelSerializer):
         return None
 
 class StudentSerializer(serializers.ModelSerializer):
-    first_name = serializers.CharField(source='user.first_name', required=False)
-    last_name = serializers.CharField(source='user.last_name', required=False)
-    email = serializers.EmailField(source='user.email', required=False)
-    student_number = serializers.CharField(required=False)
+    user = UserSerializer()
+    grades = serializers.SerializerMethodField()
 
     class Meta:
         model = Student
-        fields = ['id', 'first_name', 'last_name', 'email', 'student_number']
+        fields = ['id', 'student_number', 'user', 'grades']
 
+    def get_grades(self, obj):
+        """
+        Retrieve grades for the student's enrollment in the course.
+        """
+        course = self.context.get('course')
+        if not course:
+            return None
+        
+        enrollments = obj.enrollments.filter(course=course).prefetch_related("grades__assignment")
+        grades = []
+
+        for enrollment in enrollments:
+            for grade in enrollment.grades.filter(assignment__course=course):
+                grades.append({
+                    "grade_id": grade.id,
+                    "assignment_id": grade.assignment.id,
+                    "assignment_name": grade.assignment.name,
+                    "score": grade.score,
+                })
+        
+        return grades
+    
     def create(self, validated_data):
         user_data = validated_data.pop('user', {})
-        user = User.objects.create(**user_data)  # Create the User instance
-        student = Student.objects.create(user=user, **validated_data)  # Create the Student instance
+        user = User.objects.create(**user_data)
+        student = Student.objects.create(user=user, **validated_data)
         return student
 
     def update(self, instance, validated_data):
@@ -83,37 +102,73 @@ class TeacherSerializer(serializers.ModelSerializer):
         return instance
 
 class CourseSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Course model.
+    """
     teacher = serializers.PrimaryKeyRelatedField(queryset=Teacher.objects.all())
+    assignments = serializers.SerializerMethodField()
+    students = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
-        fields = ['id', 'name', 'teacher']
+        fields = ['id', 'name', 'description', 'teacher', 'assignments', 'students']
 
+    def get_assignments(self, obj):
+        """
+        Dynamically include assignments based on the context.
+        """
+        include = self.context.get("include", [])
+        if "assignments" in include:
+            assignments = obj.assignments.all()
+            return AssignmentSerializer(assignments, many=True).data
+        return None
+    
+    def get_students(self, obj):
+        """
+        Dynamically include students and their grades based on the context.
+        """
+        include = self.context.get("include", [])
+        if "students" in include:
+            enrollments = obj.enrollments.prefetch_related("student__user", "grades__assignment").all()
+            students = [enrollment.student for enrollment in enrollments]
+            return StudentSerializer(students, many=True, context={"course": obj}).data
+        return None
+    
     def create(self, validated_data):
         """
-        Create a new course, ensuring the teacher exists.
+        Create a new course instance.
         """
-        teacher = validated_data.get("teacher")
-        if not Teacher.objects.filter(id=teacher.id).exists():
-            raise serializers.ValidationError("The specified teacher does not exist.")
         return Course.objects.create(**validated_data)
+    
+    def update(self, instance, validated_data):
+        # Update the fields dynamically
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()  # Save to the database
+        return instance
+    
     
 
 class AssignmentSerializer(serializers.ModelSerializer):
-    course_name = serializers.CharField(source="course.name", read_only=True)
+    """
+    Serializer for the Assignment model.
+    """
+    #course_id = serializers.IntegerField(write_only=True)
     class Meta:
         model = Assignment
-        fields = ['id', 'name', 'description', 'course', 'course_name', 'is_mandatory']
+        fields = ['id', 'name', 'description', 'weight', 'is_mandatory']
 
-    def validate_course(self, value):
-        if not Course.objects.filter(id=value.id).exists():
-            raise serializers.ValidationError("The specified course does not exist.")
-        return value
-
+    def create(self, validated_data):
+        course_id = validated_data.pop('course_id')  # Retrieve the course_id
+        course = Course.objects.get(id=course_id)    # Get the Course object
+        return Assignment.objects.create(course=course, **validated_data)
+    
 class EnrollmentSerializer(serializers.ModelSerializer):
-    course_id = serializers.IntegerField(write_only=True)
+    course_id = serializers.IntegerField()
+    course_id = serializers.IntegerField()
     course_name = serializers.CharField(source='course.name', read_only=True)
-    student_id = serializers.IntegerField(write_only=True)
+    student_id = serializers.IntegerField()
+    student_id = serializers.IntegerField()
     student_name = serializers.SerializerMethodField()
 
     class Meta:
@@ -181,8 +236,8 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 
 
 class GradeSerializer(serializers.ModelSerializer):
-    enrollment_id = serializers.IntegerField(write_only=True)
-    assignment_id = serializers.IntegerField(write_only=True)
+    enrollment_id = serializers.IntegerField(required=False)
+    assignment_id = serializers.IntegerField(required=False)
     student_name = serializers.SerializerMethodField(read_only=True)
     course_name = serializers.SerializerMethodField(read_only=True)
     assignment_name = serializers.CharField(source='assignment.name', read_only=True)
@@ -201,112 +256,36 @@ class GradeSerializer(serializers.ModelSerializer):
         enrollment_id = data.get('enrollment_id')
         assignment_id = data.get('assignment_id')
 
-        enrollment = Enrollment.objects.filter(id=enrollment_id).first()
-        assignment = Assignment.objects.filter(id=assignment_id).first()
+        # Only validate enrollment_id if it is provided
+        if enrollment_id:
+            enrollment = Enrollment.objects.filter(id=enrollment_id).first()
+            if not enrollment:
+                raise serializers.ValidationError({"enrollment_id": "The specified enrollment does not exist."})
 
-        if not enrollment:
-            raise serializers.ValidationError({"enrollment_id": "The specified enrollment does not exist."})
-        if not assignment:
-            raise serializers.ValidationError({"assignment_id": "The specified assignment does not exist."})
+        # Only validate assignment_id if it is provided
+        if assignment_id:
+            assignment = Assignment.objects.filter(id=assignment_id).first()
+            if not assignment:
+                raise serializers.ValidationError({"assignment_id": "The specified assignment does not exist."})
 
-        if assignment.course != enrollment.course:
-            raise serializers.ValidationError("The assignment does not belong to the course in the enrollment.")
-
-        # Attach objects to validated data
-        data['enrollment'] = enrollment
-        data['assignment'] = assignment
+        # Ensure the assignment belongs to the same course as the enrollment
+        if enrollment_id and assignment_id:
+            enrollment = Enrollment.objects.get(id=enrollment_id)
+            assignment = Assignment.objects.get(id=assignment_id)
+            if assignment.course != enrollment.course:
+                raise serializers.ValidationError("The assignment does not belong to the course in the enrollment.")
 
         return data
 
     def create(self, validated_data):
-        enrollment = validated_data.pop('enrollment')
-        assignment = validated_data.pop('assignment')
+        # Fetch and attach the Enrollment object
+        enrollment_id = validated_data.pop('enrollment_id')
+        enrollment = Enrollment.objects.get(id=enrollment_id)
+
+        # Fetch and attach the Assignment object
+        assignment_id = validated_data.pop('assignment_id')
+        assignment = Assignment.objects.get(id=assignment_id)
+
+        # Create the Grade object
         return Grade.objects.create(enrollment=enrollment, assignment=assignment, **validated_data)
     
-class RequiredGradeSerializer(serializers.ModelSerializer):
-    enrollment_id = serializers.IntegerField(source='enrollment.id', write_only=True)
-    assignment_id = serializers.IntegerField(source='assignment.id', write_only=True)
-    enrollment = EnrollmentSerializer(read_only=True)
-    assignment = AssignmentSerializer(read_only=True)
-
-    class Meta:
-        model = RequiredGrade
-        fields = ['id', 'enrollment_id', 'assignment_id', 'enrollment', 'assignment']
-
-    def create(self, validated_data):
-        enrollment_id = validated_data.pop('enrollment')['id']
-        assignment_id = validated_data.pop('assignment')['id']
-
-        # Fetch the related enrollment and assignment
-        enrollment = Enrollment.objects.filter(id=enrollment_id).first()
-        assignment = Assignment.objects.filter(id=assignment_id).first()
-
-        if not enrollment:
-            raise serializers.ValidationError("The specified enrollment does not exist.")
-        if not assignment:
-            raise serializers.ValidationError("The specified assignment does not exist.")
-
-        return RequiredGrade.objects.create(enrollment=enrollment, assignment=assignment)
-        
-class GroupSerializer(serializers.ModelSerializer):
-    course_id = serializers.IntegerField(write_only=True)
-    student_ids = serializers.ListField(
-        child=serializers.IntegerField(), write_only=True
-    )
-    course = CourseSerializer(read_only=True)
-    students = StudentSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Group
-        fields = ['id', 'name', 'course_id', 'student_ids', 'course', 'students']
-
-    def validate(self, data):
-        course_id = data.get('course_id')
-        student_ids = data.get('student_ids')
-
-        # Validate course existence
-        course = Course.objects.filter(id=course_id).first()
-        if not course:
-            raise serializers.ValidationError({"course_id": "The specified course does not exist."})
-
-        # Validate students in bulk
-        students = Student.objects.filter(id__in=student_ids)
-        if students.count() != len(student_ids):
-            non_existent = set(student_ids) - set(students.values_list('id', flat=True))
-            raise serializers.ValidationError({
-                "student_ids": f"The following students do not exist: {list(non_existent)}"
-            })
-
-        # Attach validated objects to data
-        data['course'] = course
-        data['students'] = students
-
-        return data
-
-    def create(self, validated_data):
-        course = validated_data.pop('course')
-        students = validated_data.pop('students')
-
-        group = Group.objects.create(course=course, **validated_data)
-        group.students.set(students)
-        return group
-
-    def update(self, instance, validated_data):
-        # Update course if provided
-        course = validated_data.pop('course', None)
-        if course:
-            instance.course = course
-
-        # Update students if provided
-        students = validated_data.pop('students', None)
-        if students is not None:
-            instance.students.set(students)
-
-        # Update non-relational fields (only if explicitly provided)
-        for attr, value in validated_data.items():
-            if value is not None:  # Avoid overwriting fields with None
-                setattr(instance, attr, value)
-
-        # Save and return the updated instance
-        instance.save()
-        return instance

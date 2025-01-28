@@ -2,8 +2,9 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 function ManageCourse() {
-    const { courseName } = useParams();
+    const { courseId } = useParams();
     const navigate = useNavigate();
+
     const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedElement, setSelectedElement] = useState("");
@@ -16,140 +17,76 @@ function ManageCourse() {
     const [updatedDescription, setUpdatedDescription] = useState("");
     const editFormRef = useRef(null);
     const [newElement, setNewElement] = useState("");
+    const [editingEnrollmentId, setEditingEnrollmentId] = useState(null);
 
-    const generateUniqueId = () => {
-        const letters = "abcdefghijklmnopqrstuvwxyz";
-        const randomLetters = Array.from({ length: 2 }, () => letters[Math.floor(Math.random() * letters.length)]).join("");
-        const randomNumbers = Math.floor(100000 + Math.random() * 900000).toString();
-        return randomLetters + randomNumbers;
-    };
 
     useEffect(() => {
-        const fetchCourses = async () => {
+        const fetchCourse = async () => {
             try {
-                const response = await fetch("http://localhost:5000/courses");
+                const response = await fetch(
+                    `http://localhost:8000/courses/${courseId}?include=assignments&include=students`
+                );
                 if (response.ok) {
-                    const data = await response.json();
-                    setCourses(data);
+                    const result = await response.json();
+                    setSelectedCourse(result.data);
                 } else {
-                    console.error("Błąd podczas pobierania listy kursów.");
+                    console.error(selectedCourse.message);
                 }
             } catch (error) {
-                console.error("Błąd podczas pobierania kursów:", error);
+                console.error("Error fetching course details:", error);
             }
         };
-
-        fetchCourses();
-    }, []);
-
-    useEffect(() => {
-        if (courseName && courses.length > 0) {
-            const course = courses.find((c) => c.name === courseName);
-            setSelectedCourse(course || null);
+    
+        if (courseId) {
+            fetchCourse();
         }
-    }, [courseName, courses]);
+    }, [courseId]);
 
     const handleUpdateDescription = async () => {
+
         if (!updatedDescription.trim()) {
             alert("Opis nie może być pusty.");
             return;
         }
 
         try {
-            const updatedCourse = { ...selectedCourse, description: updatedDescription };
-
-            const response = await fetch(`http://localhost:5000/courses/${encodeURIComponent(courseName)}`, {
+            const response = await fetch(`http://localhost:8000/courses/${courseId}/`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(updatedCourse),
+                body: JSON.stringify({ description: updatedDescription }),
             });
 
             if (response.ok) {
-                setSelectedCourse(updatedCourse);
+                const updatedCourse = await response.json();
+                setSelectedCourse((prev) => ({
+                    ...prev,
+                    description: updatedCourse.data.description,
+                }));
                 setEditingDescription(false);
-                setNotification("Opis został zaktualizowany.");
+                setNotification(updatedCourse.message);
                 setTimeout(() => setNotification(""), 3000);
             } else {
-                alert("Nie udało się zaktualizować opisu.");
+                alert(selectedCourse.message);
             }
-        } catch (error) {
+        } 
+        catch (error) {
             console.error("Błąd podczas aktualizacji opisu:", error);
         }
     };
 
-    const handleDeleteCourse = async (name) => {
-        const isConfirmed = window.confirm(`Czy na pewno chcesz usunąć kurs '${name}'?`);
-        if (!isConfirmed) {
-            return; // Jeśli użytkownik anulował, zakończ funkcję
-        }
+    const handleRemoveParticipant = async (studentId) => {
         try {
-            const response = await fetch(`http://localhost:5000/courses/${encodeURIComponent(name)}`, {
-                method: "DELETE",
-            });
+            const response = await fetch(
+                `http://localhost:8000/enrollments/detail/?student_id=${studentId}&course_id=${courseId}`,
+                { method: "DELETE" }
+            );
+    
             if (response.ok) {
-                alert(`Kurs '${name}' został usunięty.`);
-                navigate("/manage-course");
-                setCourses(courses.filter((course) => course.name !== name));
-            } else {
-                alert("Nie udało się usunąć kursu.");
-            }
-        } catch (error) {
-            console.error("Błąd podczas usuwania kursu:", error);
-        }
-    };
-
-    const handleAddParticipant = async () => {
-        if (!newParticipant.name.trim()) {
-            alert("Podaj nazwę uczestnika.");
-            return;
-        }
-
-        try {
-            const updatedCourse = { ...selectedCourse };
-
-            // Dodanie uczestnika z ID do participants
-            updatedCourse.participants.push({ ...newParticipant, id: generateUniqueId() });
-
-            const response = await fetch(`http://localhost:5000/courses/${encodeURIComponent(courseName)}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(updatedCourse),
-            });
-
-            if (response.ok) {
-                updatedCourse.participants.sort((a, b) => {
-                    const lastNameA = a.name.split(" ").slice(-1)[0].toLowerCase();
-                    const lastNameB = b.name.split(" ").slice(-1)[0].toLowerCase();
-                    return lastNameA.localeCompare(lastNameB);
-                });
-                setSelectedCourse(updatedCourse);
-                setNewParticipant({ name: "", group: 1 });
-                setNotification("Uczestnik został dodany.");
-                setTimeout(() => setNotification(""), 3000);
-            } else {
-                alert("Nie udało się dodać uczestnika.");
-            }
-        } catch (error) {
-            console.error("Błąd podczas dodawania uczestnika:", error);
-        }
-    };
-
-    const handleRemoveParticipant = async (participantId) => {
-        try {
-            const updatedCourse = { ...selectedCourse };
-            updatedCourse.participants = updatedCourse.participants.filter((p) => p.id !== participantId);
-
-            updatedCourse.grades = updatedCourse.grades.filter((g) => g.studentId !== participantId);
-
-            const response = await fetch(`http://localhost:5000/courses/${encodeURIComponent(courseName)}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(updatedCourse),
-            });
-
-            if (response.ok) {
-                setSelectedCourse(updatedCourse);
-                setNotification(`Uczestnik został usunięty.`);
+                setSelectedCourse((prev) => ({
+                    ...prev,
+                    students: prev.students.filter((student) => student.id !== studentId),
+                }));
+                setNotification("Uczestnik został usunięty z kursu.");
                 setTimeout(() => setNotification(""), 3000);
             } else {
                 alert("Nie udało się usunąć uczestnika.");
@@ -158,11 +95,28 @@ function ManageCourse() {
             console.error("Błąd podczas usuwania uczestnika:", error);
         }
     };
-
-    const handleEditScores = (studentId) => {
-        const studentGrades = selectedCourse.grades.find((g) => g.studentId === studentId);
+    
+    const handleEditScores = async (studentId) => {
+        const student = selectedCourse.students.find((s) => s.id === studentId);
+        const studentGrades = student ? student.grades : [];
         setEditingStudent(studentId);
-        setEditingScores(studentGrades ? [...studentGrades.scores] : []);
+        setEditingScores([...studentGrades]);
+
+        // Fetch enrollment_id dynamically
+        try {
+            const response = await fetch(
+                `http://localhost:8000/enrollments/detail/?student_id=${studentId}&course_id=${courseId}`
+            );
+
+            if (response.ok) {
+                const result = await response.json();
+                setEditingEnrollmentId(result.data?.id);
+            } else {
+                console.error("Failed to fetch enrollment ID.");
+            }
+        } catch (error) {
+            console.error("Error fetching enrollment ID:", error);
+        }
 
         if (editFormRef.current) {
             editFormRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -172,198 +126,314 @@ function ManageCourse() {
     const handleAddScore = () => {
         if (!newGrade || !selectedElement) return;
     
-        const element = selectedCourse.requiredElements.find((el) => el.name === selectedElement);
+        if (selectedElement === "other") {
+            const newScore = {
+                id: null,
+                assignment_id: null,
+                assignment_name: "Inne",
+                score: parseFloat(newGrade),
+                weight: 0,
+            };
+    
+            setEditingScores([...editingScores, newScore]);
+            setNewGrade("");
+            return;
+        }
+    
+        const assignment = selectedCourse.assignments.find((a) => a.id === parseInt(selectedElement));
+    
+        if (!assignment) {
+            console.error("Assignment not found.");
+            return;
+        }
+    
         const newScore = {
-            name: element ? element.name : "Inne", // nazwa elementu lub "Inne"
-            value: parseFloat(newGrade),
-            weight: element ? element.weight : 0, // waga dla istniejących elementów, 0 dla "Inne"
-            comment: "",
+            id: null,
+            assignment_id: assignment.id,
+            assignment_name: assignment.name,
+            score: parseFloat(newGrade),
+            weight: assignment.weight,
         };
     
-        if (newScore.name === "Inne") {
-            // dla innej zawsze dodaje nową ocenę
-            setEditingScores([...editingScores, newScore]);
+        const existingIndex = editingScores.findIndex(
+            (score) => score.assignment_id === newScore.assignment_id
+        );
+    
+        if (existingIndex !== -1) {
+            const updatedScores = [...editingScores];
+            updatedScores[existingIndex] = {
+                ...updatedScores[existingIndex],
+                score: newScore.score,
+            };
+            setEditingScores(updatedScores);
         } else {
-            // sprawdzanie czy element istnieje na liście ocen
-            const existingIndex = editingScores.findIndex((score) => score.name === newScore.name);
-    
-            if (existingIndex !== -1) {
-                editingScores[existingIndex] = newScore;
-                setEditingScores([...editingScores]);
-            } else {
-                setEditingScores([...editingScores, newScore]);
-            }
+            setEditingScores([...editingScores, newScore]);
         }
-
-        setNewGrade("");
-    };
     
+        setNewGrade("");
+    };    
 
     const handleSaveScores = async () => {
         try {
-            const updatedCourse = { ...selectedCourse };
-            const studentGrades = updatedCourse.grades.find((g) => g.studentId === editingStudent);
+            for (const score of editingScores) {
+                console.log("Updating grade with ID:", score.grade_id, "Score:", score.score);
 
-            if (studentGrades) {
-                studentGrades.scores = [...editingScores];
-            } else {
-                updatedCourse.grades.push({
-                    studentId: editingStudent,
-                    scores: [...editingScores],
+                if (score.grade_id) {
+                    // Update existing grade
+                    const response = await fetch(`http://localhost:8000/grades/${score.grade_id}/`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ score: score.score }),
+                    });
+    
+                    if (!response.ok) {
+                        throw new Error(`Failed to update grade with ID: ${score.grade_id}`);
+                    }
+                } else {
+                    // Add new grade
+                    if (!editingEnrollmentId) {
+                        throw new Error("Enrollment ID is missing.");
+                    }
+                    const response = await fetch(`http://localhost:8000/grades/`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            enrollment_id: editingEnrollmentId,
+                            assignment_id: score.assignment_id,
+                            score: score.score,
+                        }),
+                    });
+    
+                    if (!response.ok) {
+                        throw new Error("Failed to create new grade.");
+                    }
+    
+                    const newGrade = await response.json();
+                    score.id = newGrade.data.id;
+                }
+            }
+    
+            // Update local state with the latest scores
+            setSelectedCourse((prevCourse) => {
+                const updatedStudents = prevCourse.students.map((student) => {
+                    if (student.id === editingStudent) {
+                        return {
+                            ...student,
+                            grades: editingScores,
+                        };
+                    }
+                    return student;
                 });
-            }
-
-            const response = await fetch(`http://localhost:5000/courses/${encodeURIComponent(courseName)}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(updatedCourse),
+    
+                return { ...prevCourse, students: updatedStudents };
             });
-
-            if (response.ok) {
-                setSelectedCourse(updatedCourse);
-                setEditingStudent(null);
-                setEditingScores([]);
-                setNotification("Oceny zostały zaktualizowane.");
-                setTimeout(() => setNotification(""), 3000);
-            } else {
-                alert("Nie udało się zapisać zmian w ocenach.");
-            }
+    
+            // Reset editing state and notify the user
+            setEditingStudent(null);
+            setEditingScores([]);
+            setEditingEnrollmentId(null);
+            setNotification("Oceny zostały zaktualizowane.");
+            setTimeout(() => setNotification(""), 3000);
         } catch (error) {
             console.error("Błąd podczas zapisywania ocen:", error);
+            alert("Nie udało się zapisać zmian w ocenach.");
         }
     };
 
+    // const handleAddParticipant = async () => {
+    //     if (!newParticipant.name.trim()) {
+    //         alert("Podaj nazwę uczestnika.");
+    //         return;
+    //     }
+
+    //     try {
+    //         const updatedCourse = { ...selectedCourse };
+
+    //         // Dodanie uczestnika z ID do participants
+    //         updatedCourse.participants.push({ ...newParticipant, id: generateUniqueId() });
+
+    //         const response = await fetch(`http://localhost:5000/courses/${encodeURIComponent(courseName)}`, {
+    //             method: "PUT",
+    //             headers: { "Content-Type": "application/json" },
+    //             body: JSON.stringify(updatedCourse),
+    //         });
+
+    //         if (response.ok) {
+    //             updatedCourse.participants.sort((a, b) => {
+    //                 const lastNameA = a.name.split(" ").slice(-1)[0].toLowerCase();
+    //                 const lastNameB = b.name.split(" ").slice(-1)[0].toLowerCase();
+    //                 return lastNameA.localeCompare(lastNameB);
+    //             });
+    //             setSelectedCourse(updatedCourse);
+    //             setNewParticipant({ name: "", group: 1 });
+    //             setNotification("Uczestnik został dodany.");
+    //             setTimeout(() => setNotification(""), 3000);
+    //         } else {
+    //             alert("Nie udało się dodać uczestnika.");
+    //         }
+    //     } catch (error) {
+    //         console.error("Błąd podczas dodawania uczestnika:", error);
+    //     }
+    // };
+
     return (
         <div className="manage-course">
-            {!courseName ? (
-                <>
-                    <h2>Zarządzanie kursami</h2>
-                    <div className="course-grid">
-                        {courses.map((course) => (
-                            <div key={course.name} className="course-tile">
-                                <h3>{course.name}</h3>
-                                <button onClick={() => navigate(`/manage-course/${encodeURIComponent(course.name)}`)}>
-                                    Zobacz szczegóły
-                                </button>
-                                <button onClick={() => handleDeleteCourse(course.name)}>Usuń kurs</button>
-                            </div>
-                        ))}
-                    </div>
-                </>
-            ) : (
-                <>
-                <div className="containermng">
-                    <div className="course-details">
-                        <h2>Zarządzanie kursem: {selectedCourse?.name}</h2>
+            <div className="containermng">
+                <div className="course-details">
+                    <h2>Zarządzanie kursem: {selectedCourse?.name}</h2>
+                    {notification && <div className="notification">{notification}</div>}
 
-                        {notification && <div className="notification">{notification}</div>}
-
-                        <h3>Opis kursu:</h3>
-                        {editingDescription ? (
-                            <div>
-                                <textarea
-                                    value={updatedDescription}
-                                    onChange={(e) => setUpdatedDescription(e.target.value)}
-                                />
-                                <button onClick={handleUpdateDescription}>Zapisz opis</button>
-                                <button onClick={() => setEditingDescription(false)}>Anuluj</button>
-                            </div>
-                        ) : (
-                            <div>
-                                <p>{selectedCourse?.description || "Brak opisu."}</p>
-                                <button onClick={() => {
+                    {/* Course Description Section */}
+                    <h3>Opis kursu:</h3>
+                    {editingDescription ? (
+                        <div>
+                            <textarea
+                                value={updatedDescription}
+                                onChange={(e) => setUpdatedDescription(e.target.value)}
+                            />
+                            <button onClick={handleUpdateDescription}>Zapisz opis</button>
+                            <button onClick={() => setEditingDescription(false)}>Anuluj</button>
+                        </div>
+                    ) : (
+                        <div>
+                            <p>{selectedCourse?.description || "Brak opisu."}</p>
+                            <button onClick={() => {
                                     setEditingDescription(true);
                                     setUpdatedDescription(selectedCourse?.description || "");
                                 }}>Edytuj opis</button>
-                            </div>
-                        )}
-
-                        <div className="add-participant">
-                            <h3>Dodawanie uczestników:</h3>
-                            <input
-                                type="text"
-                                placeholder="Imię i nazwisko uczestnika"
-                                value={newParticipant.name}
-                                onChange={(e) => setNewParticipant({ ...newParticipant, name: e.target.value })}
-                            />
-                            <input
-                                type="number"
-                                placeholder="Grupa"
-                                value={newParticipant.group}
-                                onChange={(e) => setNewParticipant({ ...newParticipant, group: parseInt(e.target.value) || 1 })}
-                            />
-                            <button onClick={handleAddParticipant}>Dodaj uczestnika</button>
                         </div>
-                        <p></p>
-                        <button onClick={() => navigate("/manage-course")}>Wróć do listy kursów</button>
+                    )}
+
+                    {/* Assignments Section */}
+                    <div className="assignments-list">
+                        <h3>Lista zadań:</h3>
+                        {selectedCourse?.assignments?.length > 0 ? (
+                            <ul>
+                                {selectedCourse.assignments.map((assignment) => (
+                                    <li key={assignment.id}>
+                                        <strong>{assignment.name}</strong>
+                                        <p>{assignment.description || "Brak opisu"}</p>
+                                        <p>Waga: {assignment.weight}%</p>
+                                        <p>
+                                            {assignment.is_mandatory
+                                                ? "Obowiązkowe"
+                                                : "Nieobowiązkowe"}
+                                        </p>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>Brak zadań w tym kursie.</p>
+                        )}
                     </div>
-                    <div className="participants-list">
-                        <h3>Uczestnicy:</h3>
-                        <ul>
-                            {selectedCourse?.participants.map((participant) => (
-                                <li key={participant.id}>
-                                    <span className="participant-info">
-                                        {participant.name} (Grupa {participant.group})
-                                    </span>
-                                    <div className="participant-actions">
-                                        <button onClick={() => handleEditScores(participant.id)}>Edytuj oceny</button>
-                                        <button onClick={() => handleRemoveParticipant(participant.id)}>Usuń</button>
+
+                    <button onClick={() => navigate("/manage-course")}>Wróć do listy kursów</button>
+                </div>
+
+                {/* Students List Section */}
+                <div className="participants-list">
+                    <h3>Uczestnicy:</h3>
+                    <ul className="students-list">
+                        {selectedCourse?.students?.length > 0 ? (
+                            selectedCourse.students.map((student) => (
+                                <li key={student.id} className="student-item">
+                                    <div>
+                                        <strong>
+                                            {student.user.first_name} {student.user.last_name}
+                                        </strong>{" "}
+                                        (Numer studenta: {student.student_number})
+                                    </div>
+
+                                    <ul className="grades-list">
+                                        {student.grades?.length > 0 ? (
+                                            student.grades.map((grade) => (
+                                                <li key={grade.assignment_id}>
+                                                    {grade.assignment_name}: {grade.score}%
+                                                    (Przyznano: {grade.date_assigned})
+                                                </li>
+                                            ))
+                                        ) : (
+                                            <li>Brak ocen</li>
+                                        )}
+                                    </ul>
+                                    <div className="student-actions">
+                                        <button onClick={() => handleEditScores(student.id)}>
+                                            Edytuj oceny
+                                        </button>
+                                        <button onClick={() => handleRemoveParticipant(student.id)}>
+                                            Usuń uczestnika tego kursu
+                                        </button>
                                     </div>
                                 </li>
-                            ))}
-                        </ul>
-                        {editingStudent && (
-                            <div className="edit-scores" ref={editFormRef}>
-                                <h3>Edytuj oceny dla uczestnika {selectedCourse?.participants.find(p => p.id === editingStudent)?.name}</h3>
-                                <ul>
-                                    {editingScores.map((score, index) => (
-                                        <li key={index}>
-                                            {score.name}: {score.value} (Waga: {score.weight}%)
-                                        </li>
-                                    ))}
-                                </ul>
-                                <select
-                                    onChange={(e) => {
-                                        const value = e.target.value;
-                                        setSelectedElement(value);
-                                        if (value === "other") {
-                                            setNewElement("");
-                                        }
-                                    }}
-                                    value={selectedElement}
-                                >
-                                    <option value="">Wybierz element</option>
-                                    {selectedCourse.requiredElements.map((element, index) => (
-                                        <option key={index} value={element.name}>
-                                            {element.name} (Waga: {element.weight}%)
-                                        </option>
-                                    ))}
-                                    <option value="other">Inne</option>
-                                </select>
-                                {selectedElement === "other" && (
-                                    <input
-                                        type="text"
-                                        placeholder="Podaj nowy element"
-                                        value={newElement}
-                                        onChange={(e) => setNewElement(e.target.value)}
-                                    />
-                                )}
-                                <input
-                                    type="number"
-                                    placeholder="Podaj ocenę"
-                                    value={newGrade}
-                                    onChange={(e) => setNewGrade(e.target.value)}
-                                />
-                                <button onClick={handleAddScore}>Dodaj ocenę</button>
-                                <button onClick={handleSaveScores}>Zapisz zmiany</button>
-                                <button onClick={() => setEditingStudent(null)}>Anuluj</button>
-                                <p></p>
-                            </div>
+                            ))
+                        ) : (
+                            <p>Brak uczestników w tym kursie.</p>
                         )}
-                    </div>
+                    </ul>
+
+                    {/* Edit Grades Section */}
+                    {editingStudent && (
+                        <div className="edit-scores" ref={editFormRef}>
+                            <h3>
+                                Edytuj oceny dla uczestnika{" "}
+                                {
+                                    selectedCourse?.students.find(
+                                        (student) => student.id === editingStudent
+                                    )?.user.first_name
+                                }{" "}
+                                {
+                                    selectedCourse?.students.find(
+                                        (student) => student.id === editingStudent
+                                    )?.user.last_name
+                                }
+                            </h3>
+                            <ul>
+                                {editingScores.map((score, index) => (
+                                    <li key={index}>
+                                        {score.assignment_name}: {score.score} (Waga:{" "}
+                                        {score.weight}%)
+                                    </li>
+                                ))}
+                            </ul>
+                            <select
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    setSelectedElement(value);
+                                    if (value === "other") {
+                                        setNewElement("");
+                                    }
+                                }}
+                                value={selectedElement}
+                            >
+                                <option value="">Wybierz element</option>
+                                {selectedCourse.assignments.map((assignment, index) => (
+                                    <option key={index} value={assignment.id}>
+                                        {assignment.name} (Waga: {assignment.weight}%)
+                                    </option>
+                                ))}
+                                <option value="other">Inne</option>
+                            </select>
+                            {selectedElement === "other" && (
+                                <input
+                                    type="text"
+                                    placeholder="Podaj nowy element"
+                                    value={newElement}
+                                    onChange={(e) => setNewElement(e.target.value)}
+                                />
+                            )}
+                            <input
+                                type="number"
+                                placeholder="Podaj ocenę"
+                                value={newGrade}
+                                onChange={(e) => setNewGrade(e.target.value)}
+                            />
+                            <button onClick={handleAddScore}>Dodaj ocenę</button>
+                            <button onClick={handleSaveScores}>Zapisz zmiany</button>
+                            <button onClick={() => setEditingStudent(null)}>Anuluj</button>
+                        </div>
+                    )}
                 </div>
-                </>
-            )}
+            </div>
         </div>
     );
 }
