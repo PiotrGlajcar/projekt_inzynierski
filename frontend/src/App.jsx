@@ -6,6 +6,7 @@ import About from './components/About.jsx'
 import Contact from './components/Contact.jsx'
 import ToLogin from './components/ToLogin.jsx'
 import ManageCourse from "./components/ManageCourse.jsx";
+import ListCourses from './components/ListCourses.jsx'
 import CreateCourse from "./components/CreateCourse.jsx";
 import CourseRegister from './components/CourseRegister.jsx'
 import RedirectPage from "./components/RedirectPage.jsx";
@@ -36,7 +37,7 @@ function App() {
               //     <CreateCourse />
               // </ProtectedRoute> */}
             <Route path="/manage-course/" element={<ListCourses />} />
-            <Route path="/manage-course/:courseName" element={<ManageCourse />} />
+            <Route path="/manage-course/:courseId" element={<ManageCourse />} />
             <Route path="/course-register/" element={<CourseRegister />} />
             <Route path="/course-register/:courseName" element={<CourseRegister />} />
             <Route path="/my-courses" element={<MyCourses />} />
