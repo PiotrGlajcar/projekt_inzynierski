@@ -42,7 +42,7 @@ function App() {
             <Route path="/course-register/" element={<CourseRegister />} />
             <Route path="/course-register/:courseName" element={<CourseRegister />} />
             <Route path="/my-courses" element={<MyCourses />} />
-            <Route path="/my-course/:courseName" element={<MyCourseDetails />} />
+            <Route path="/my-course/:courseId" element={<MyCourseDetails />} />
           </Routes>
           </div>
           <Footer />

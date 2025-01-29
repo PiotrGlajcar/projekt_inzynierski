@@ -3,14 +3,20 @@ from .models import User, Student, Teacher, Course, Enrollment, Grade, Assignmen
 
 class UserSerializer(serializers.ModelSerializer):
     student_id = serializers.SerializerMethodField()
+    student_number = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ["id", "student_id", "first_name", "last_name",  "email", "role"]
+        fields = ["id", "student_id", "first_name", "last_name",  "email", "student_number", "role"]
         
     def get_student_id(self, obj):
         """Returns the student's ID if the user is a student."""
         if obj.role == "student" and hasattr(obj, "student"):
             return obj.student.id
+        return None
+    def get_student_number(self, obj):
+        """Returns the student's unique student number."""
+        if obj.role == "student" and hasattr(obj, "student"):
+            return obj.student.student_number
         return None
 
 class StudentSerializer(serializers.ModelSerializer):

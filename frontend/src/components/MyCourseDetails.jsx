@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 function MyCourseDetails() {
-    const { courseName } = useParams();
+    const { courseId } = useParams();
     const navigate = useNavigate();
     const [selectedCourse, setSelectedCourse] = useState(null);
+    const [enrollmentId, setEnrollmentId] = useState(null);
+    const [grades, setGrades] = useState([]);
     const [user, setUser] = useState(null);
     
 
@@ -25,58 +27,77 @@ function MyCourseDetails() {
 
     // Pobieranie danych kursu
     useEffect(() => {
-        const fetchCourse = async () => {
-            try {
-                const response = await fetch("http://localhost:5000/courses");
-                if (response.ok) {
-                    const data = await response.json();
-                    const course = data.find((c) => c.name === courseName);
-                    setSelectedCourse(course || null);
-                } else {
-                    console.error("Błąd podczas pobierania kursów.");
-                }
-            } catch (error) {
-                console.error("Błąd podczas pobierania kursu:", error);
-            }
-        };
+        if (courseId) {
+            fetch(`http://localhost:8000/courses/${courseId}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === "success") {
+                        setSelectedCourse(data.data);
+                    } else {
+                        console.error("Failed to fetch course details.");
+                    }
+                })
+                .catch((error) => console.error("Error fetching course details:", error));
+        }
+    }, [courseId]);
 
-        fetchCourse();
-    }, [courseName]);
+    useEffect(() => {
+        if (user && courseId) {
+            fetch("http://localhost:8000/enrollments")
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === "success") {
+                        const userEnrollment = data.data.find(
+                            (enrollment) => enrollment.student_id === user.student_id && enrollment.course_id === Number(courseId)
+                        );
+                        if (userEnrollment) {
+                            setEnrollmentId(userEnrollment.id); // Store enrollment_id
+                        }
+                    }
+                })
+                .catch((error) => console.error("Error fetching enrollments:", error));
+        }
+    }, [user, courseId]);
+
+    useEffect(() => {
+        if (enrollmentId) {
+            fetch("http://localhost:8000/grades")
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === "success") {
+                        // Filter grades based on enrollment_id
+                        const studentGrades = data.data.filter((grade) => grade.enrollment_id === enrollmentId);
+                        setGrades(studentGrades);
+                    }
+                })
+                .catch((error) => console.error("Error fetching grades:", error));
+        }
+    }, [enrollmentId]);
 
     if (!selectedCourse || !user) {
         return <p>Ładowanie szczegółów kursu...</p>;
     }
 
-    // Pobieranie ocen studenta
-    const studentGrades = selectedCourse.grades.find(
-        (grade) => grade.studentId === user.student_number
-    );
-
     return (
         <div className="course-details">
-            <h2>Szczegóły kursu: {selectedCourse.name}</h2>
-            <h3>Opis kursu:</h3>
-            <p>{selectedCourse.description || "Brak opisu."}</p>
+            <h2>Course Details: {selectedCourse.name}</h2>
+            <h3>Course Description:</h3>
+            <p>{selectedCourse.description || "No description available."}</p>
 
-            <h3>Twoje oceny:</h3>
+            <h3>Your Grades:</h3>
             <ul>
-                {selectedCourse?.requiredElements.map((element) => {
-                    const score = studentGrades?.scores.find((s) => s.name === element.name);
-
-                    return (
-                        <li key={element.name}>
-                            {element.name}:{" "}
-                            {score ? (
-                                `${score.value} (Waga: ${score.weight}%)`
-                            ) : (
-                                <span style={{ color: "red" }}>Brak oceny</span>
-                            )}
+                {grades.length > 0 ? (
+                    grades.map((grade) => (
+                        <li key={grade.id}>
+                            {grade.assignment_name}: {grade.score} (Assigned: {grade.date_assigned})
                         </li>
-                    );
-                })}
+                    ))
+                ) : (
+                    <p>No grades available for this course.</p>
+                )}
             </ul>
 
-            <button onClick={() => navigate("/my-courses")}>Wróć do moich kursów</button>
+            <button onClick={() => navigate("/my-courses")}>Back to My Courses</button>
         </div>
     );
 }

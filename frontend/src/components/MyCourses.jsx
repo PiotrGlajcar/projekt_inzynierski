@@ -63,7 +63,7 @@ function MyCourses() {
                             <h3>{enrollment.course_name}</h3>
                             <button
                                 onClick={() =>
-                                    navigate(`/my-course/${encodeURIComponent(enrollment.course_name)}`)
+                                    navigate(`/my-course/${encodeURIComponent(enrollment.course_id)}`)
                                 }
                             >
                                 View Details
