@@ -10,109 +10,121 @@ function CourseRegister() {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const fetchCourses = async () => {
-            try {
-                const response = await fetch("http://localhost:5000/courses");
-                if (response.ok) {
-                    const data = await response.json();
-                    setCourses(data);
+        fetch("http://localhost:8000/courses/")
+            .then((response) => response.json())
+            .then((result) => {
+                if (result.status === "success") {
+                    setCourses(Array.isArray(result.data) ? result.data : []);
                 } else {
-                    console.error("Błąd podczas pobierania listy kursów.");
+                    console.error("Failed to fetch courses");
                 }
-            } catch (error) {
-                console.error("Błąd podczas pobierania kursów:", error);
-            }
-        };
-
-        fetchCourses();
+            })
+            .catch((error) => console.error("Error fetching courses:", error));
     }, []);
 
     useEffect(() => {
-        fetch("http://localhost:8000/users/me", {
-            credentials: "include", // Ważne dla sesji
-        })
+        fetch("http://localhost:8000/users/me", { credentials: "include" })
             .then((response) => response.json())
             .then((user_data) => {
                 if (user_data.status === "success") {
-                    setUser(user_data.data); // Ustaw dane użytkownika
+                    setUser(user_data.data);
                 } else {
-                    console.log("Failed to fetch user data");
+                    console.error("Failed to fetch user data");
                 }
-            });
+            })
+            .catch((error) => console.error("Error fetching user:", error));
     }, []);
 
-    useEffect(() => {
-        if (courseName && courses.length > 0) {
-            const course = courses.find((c) => c.name === courseName);
-            setSelectedCourse(course || null);
-        }
-    }, [courseName, courses]);
+    // useEffect(() => {
+    //     if (courseName && courses.length > 0) {
+    //         const course = courses.find((c) => c.name === courseName);
+    //         setSelectedCourse(course || null);
+    //     }
+    // }, [courseName, courses]);
 
-    const handleRegister = async (courseName) => {
+    const handleRegister = async (courseId) => {
         if (!user) {
             alert("Nie udało się pobrać danych użytkownika.");
             return;
         }
-
         try {
-            const updatedCourses = [...courses];
-            const courseIndex = updatedCourses.findIndex((c) => c.name === courseName);
+            const response = await fetch("http://localhost:8000/enrollments/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    student_id: user.student_id, // Get student ID from logged-in user
+                    course_id: courseId, // Register for selected course
+                }),
+            });
 
-            if (courseIndex !== -1) {
-                const isAlreadyRegistered = updatedCourses[courseIndex].participants.some(
-                    (participant) => participant.id === user.student_number
-                );
-
-                if (isAlreadyRegistered) {
-                    setNotification(`Już jesteś zapisany na kurs: ${courseName}`);
-                    setTimeout(() => setNotification(""), 3000);
-                    return;
-                }
-
-                updatedCourses[courseIndex].participants.push({
-                    name: `${user.first_name} ${user.last_name}`,
-                    id: user.student_number, // ID użytkownika
-                });
-
-                const response = await fetch(`http://localhost:5000/courses/${encodeURIComponent(courseName)}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(updatedCourses[courseIndex]),
-                });
-
-                if (response.ok) {
-                    setCourses(updatedCourses);
-                    setNotification(`Zarejestrowano na kurs: ${courseName}`);
-                    setTimeout(() => setNotification(""), 3000);
-                } else {
-                    alert("Nie udało się zarejestrować na kurs.");
-                }
+            if (response.ok) {
+                setNotification(`Successfully registered for the course.`);
+                setTimeout(() => setNotification(""), 3000);
+            } else {
+                const errorData = await response.json();
+                setNotification(`Failed to register: ${errorData.message || "Unknown error"}`);
+                setTimeout(() => setNotification(""), 3000);
             }
         } catch (error) {
-            console.error("Błąd podczas rejestracji na kurs:", error);
+            console.error("Error registering for course:", error);
         }
+        // try {
+        //     const updatedCourses = [...courses];
+        //     const courseIndex = updatedCourses.findIndex((c) => c.name === courseName);
+
+        //     if (courseIndex !== -1) {
+        //         const isAlreadyRegistered = updatedCourses[courseIndex].participants.some(
+        //             (participant) => participant.id === user.student_number
+        //         );
+
+        //         if (isAlreadyRegistered) {
+        //             setNotification(`Już jesteś zapisany na kurs: ${courseName}`);
+        //             setTimeout(() => setNotification(""), 3000);
+        //             return;
+        //         }
+
+        //         updatedCourses[courseIndex].participants.push({
+        //             name: `${user.first_name} ${user.last_name}`,
+        //             id: user.student_number, // ID użytkownika
+        //         });
+
+        //         const response = await fetch(`http://localhost:5000/courses/${encodeURIComponent(courseName)}`, {
+        //             method: "PUT",
+        //             headers: { "Content-Type": "application/json" },
+        //             body: JSON.stringify(updatedCourses[courseIndex]),
+        //         });
+
+        //         if (response.ok) {
+        //             setCourses(updatedCourses);
+        //             setNotification(`Zarejestrowano na kurs: ${courseName}`);
+        //             setTimeout(() => setNotification(""), 3000);
+        //         } else {
+        //             alert("Nie udało się zarejestrować na kurs.");
+        //         }
+        //     }
+        // } catch (error) {
+        //     console.error("Błąd podczas rejestracji na kurs:", error);
+        // }
     };
 
     return (
         <div className="manage-course">
-            {!courseName ? (
+            
                 <>
                     <h2>Przeglądanie kursów</h2>
                     {notification && <div className="notification">{notification}</div>}
 
                     <div className="course-grid">
                         {courses.map((course) => (
-                            <div key={course.name} className="course-tile">
+                            <div key={course.id} className="course-tile">
                                 <h3>{course.name}</h3>
-                                <button onClick={() => navigate(`/course-register/${encodeURIComponent(course.name)}`)}>
-                                    Zobacz szczegóły
-                                </button>
-                                <button onClick={() => handleRegister(course.name)}>Zarejestruj się</button>
+                                <p>{course.description || "No description available."}</p> {/* Add this line */}
+                                <button onClick={() => handleRegister(course.id)}>Register</button>
                             </div>
                         ))}
                     </div>
                 </>
-            ) : (
+              {/*: (
                 <>
                     <div className="containermng">
                         <div className="course-details">
@@ -141,7 +153,7 @@ function CourseRegister() {
                         </div>
                     </div>
                 </>
-            )}
+            ) */}
         </div>
     );
 }
