@@ -21,6 +21,7 @@ function App() {
       <Router>
         <div className="app-container">
           <Header />
+          <div className='content-container'>
           <Routes>
             <Route path="" element={<ToLogin />} />
             <Route path="/home" element={<ToLogin />} />
@@ -43,6 +44,7 @@ function App() {
             <Route path="/my-courses" element={<MyCourses />} />
             <Route path="/my-course/:courseName" element={<MyCourseDetails />} />
           </Routes>
+          </div>
           <Footer />
         </div>
       </Router>
