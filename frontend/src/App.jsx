@@ -19,7 +19,7 @@ function App() {
 
   return (
       <Router>
-        <div>
+        <div className="app-container">
           <Header />
           <Routes>
             <Route path="" element={<ToLogin />} />

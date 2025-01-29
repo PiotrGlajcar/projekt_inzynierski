@@ -1,8 +1,9 @@
-import { useUser } from "../context/useUser";
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 
 function HomeStudent() {
+    
+    const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,18 +25,16 @@ function HomeStudent() {
         navigate("/course-register");
     };    
         
-    const { user } = useUser();
-
     return (
         <div className="container">
              {user ? (
                 <>
                 <h1>Witaj, {user.first_name} {user.last_name}!</h1>
                 <div className="buttons">
-                <button className="button" onClick={goToRegister}>Zarejestruj się na nowy kurs</button>
-                <button className="button" onClick={() => navigate("/my-courses")}>Przeglądaj swoje kursy</button>
-            </div>
-            <h3>id studenta: {user.student_number}</h3>
+                    <button className="button" onClick={goToRegister}>Zarejestruj się na nowy kurs</button>
+                    <button className="button" onClick={() => navigate("/my-courses")}>Przeglądaj swoje kursy</button>
+                </div>
+                <h3>id studenta: {user.student_number}</h3>
                 </>
             ) : (
                 <p>Loading user data...</p>

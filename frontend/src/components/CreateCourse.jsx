@@ -9,9 +9,6 @@ function CreateCourse() {
     const [elementName, setElementName] = useState("");
     const [elementDescription, setElementDescription] = useState("");
     const [elementWeight, setElementWeight] = useState("");
-    const [participantName, setParticipantName] = useState("");
-    const [participantGroup, setParticipantGroup] = useState("");
-    const [participantId, setParticipantId] = useState("");
     const navigate = useNavigate();
 
     const [data, setUser] = useState(true);
@@ -50,33 +47,15 @@ function CreateCourse() {
         }
     };
 
-    const handleAddParticipant = () => {
-        if (participantName && participantGroup > 0) {
-            setParticipants([
-                ...participants,
-                {
-                    name: participantName,
-                    group: parseInt(participantGroup, 10),
-                    id: generateUniqueId(),
-                },
-            ]);
-            setParticipantName("");
-            setParticipantGroup("");
-            setParticipantId("");
-            
-        } else {
-            alert("Podaj poprawne dane dla uczestnika.");
-        }
-    };
-
     const handleCreateCourse = async () => {
-        if (courseName && requiredElements.length > 0 && participants.length > 0) {
+        if (courseName && requiredElements.length > 0) {
             const newCourse = {
                 name: courseName,
                 description: courseDescription,
                 requiredElements,
                 participants,
                 grades: [], // Grades zostaną dodane później
+                teacher: data.id,
             };
 
             try {
@@ -91,6 +70,7 @@ function CreateCourse() {
                     setCourseDescription("");
                     setRequiredElements([]);
                     setParticipants([]);
+                    setUser("");
                     navigate(`/manage-course/${encodeURIComponent(courseName)}`);
                 } else {
                     alert("Nie udało się utworzyć kursu.");
@@ -119,9 +99,10 @@ function CreateCourse() {
                 </label>
             </div>
             <div>
-                <label>
+                <label className="element-label">
                     Opis kursu:
                     <textarea
+                        className="element-textarea"
                         value={courseDescription}
                         onChange={(e) => setCourseDescription(e.target.value)}
                         placeholder="Można zostawić to pole puste"
@@ -139,9 +120,10 @@ function CreateCourse() {
                         placeholder="Nazwa elementu"
                     />
                 </label>
-                <label>
+                <label className="element-label">
                     Opis elementu:
                     <textarea
+                        className="element-textarea"
                         value={elementDescription}
                         onChange={(e) => setElementDescription(e.target.value)}
                         placeholder="Można zostawić puste"
@@ -167,35 +149,7 @@ function CreateCourse() {
                 <p>Prowadzący kurs: {data.first_name} {data.last_name}</p>
                 <p>Zapisuje id w bazie: {data.id}</p>
             </div>
-            <div>
-                <h3>Uczestnicy:</h3>
-                <label>
-                    Imię i nazwisko:
-                    <input
-                        type="text"
-                        value={participantName}
-                        onChange={(e) => setParticipantName(e.target.value)}
-                        placeholder="Imię i nazwisko"
-                    />
-                </label>
-                <label>
-                    Grupa:
-                    <input
-                        type="number"
-                        value={participantGroup}
-                        onChange={(e) => setParticipantGroup(e.target.value)}
-                        placeholder="Numer grupy"
-                    />
-                </label>
-                <button onClick={handleAddParticipant}>Dodaj uczestnika</button>
-                <ul>
-                    {participants.map((participant, index) => (
-                        <li key={index}>
-                            {participant.name} (Grupa: {participant.group})
-                        </li>
-                    ))}
-                </ul>
-            </div>
+
             <button onClick={handleCreateCourse}>Utwórz kurs</button>
         </div>
     );

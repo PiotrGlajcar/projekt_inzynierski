@@ -1,7 +1,7 @@
 [
   {
-    "name": "Analiza funkcjonalna - Matematyka MS, st. II, sem. 3",
-    "description": "Analiza funkcjonalna, topologia, teoria mnogości, szeregi ortogonalne, teoria funkcji rzeczywistych, teoria gier",
+    "name": "Matematyka",
+    "description": "",
     "requiredElements": [
       {
         "name": "Egzamin",
@@ -14,70 +14,14 @@
         "weight": 30
       },
       {
-        "name": "Odpowiedź ustna",
+        "name": "Praca własna",
         "description": "",
         "weight": 20
       }
     ],
     "participants": [
       {
-        "name": "Bernard Arnault",
-        "group": 1,
-        "id": "wr762920"
-      },
-      {
-        "name": "Stefan Banach",
-        "group": 1,
-        "id": "ka939479"
-      },
-      {
-        "name": "Jeff Bezos",
-        "group": 1,
-        "id": "hl656582"
-      },
-      {
-        "name": "Warren Buffett",
-        "group": 1,
-        "id": "pw165546"
-      },
-      {
-        "name": "Walt Disney",
-        "group": 1,
-        "id": "zi351979"
-      },
-      {
-        "name": "Larry Ellison",
-        "group": 1,
-        "id": "hi701272"
-      },
-      {
-        "name": "Bill Gates",
-        "group": 1,
-        "id": "ca582417"
-      },
-      {
-        "name": "Piotr Glajcar",
-        "group": 1,
-        "id": "vq715778"
-      },
-      {
-        "name": "Elon Musk",
-        "group": 1,
-        "id": "hq208521"
-      },
-      {
-        "name": "Hugo Steinhaus",
-        "group": 1,
-        "id": "al779878"
-      },
-      {
-        "name": "Stanisław Ulam",
-        "group": 1,
-        "id": "ap123037"
-      },
-      {
         "name": "Kamil Żebrok",
-        "group": 1,
         "id": "303281"
       }
     ],
@@ -86,353 +30,49 @@
         "studentId": "303281",
         "scores": [
           {
-            "name": "Egzamin",
-            "value": 5,
-            "weight": 50,
-            "comment": ""
-          },
-          {
-            "name": "Kolokwium",
-            "value": 5,
-            "weight": 30,
-            "comment": ""
-          },
-          {
-            "name": "Odpowiedź ustna",
-            "value": 5,
-            "weight": 20,
-            "comment": ""
-          }
-        ]
-      },
-      {
-        "studentId": "ap123037",
-        "scores": [
-          {
-            "name": "Egzamin",
-            "value": 3,
-            "weight": 50,
-            "comment": ""
-          },
-          {
             "name": "Kolokwium",
             "value": 4,
             "weight": 30,
             "comment": ""
           },
           {
-            "name": "Odpowiedź ustna",
-            "value": 2,
-            "weight": 20,
-            "comment": ""
-          }
-        ]
-      },
-      {
-        "studentId": "vq715778",
-        "scores": [
-          {
-            "name": "Odpowiedź ustna",
-            "value": 5,
-            "weight": 20,
-            "comment": ""
-          },
-          {
-            "name": "Kolokwium",
-            "value": 5,
-            "weight": 30,
-            "comment": ""
-          },
-          {
             "name": "Egzamin",
             "value": 5,
-            "weight": 50,
-            "comment": ""
-          }
-        ]
-      },
-      {
-        "studentId": "al779878",
-        "scores": [
-          {
-            "name": "Kolokwium",
-            "value": 3,
-            "weight": 30,
-            "comment": ""
-          },
-          {
-            "name": "Odpowiedź ustna",
-            "value": 2,
-            "weight": 20,
-            "comment": ""
-          }
-        ]
-      },
-      {
-        "studentId": "ka939479",
-        "scores": [
-          {
-            "name": "Egzamin",
-            "value": 0,
-            "weight": 50,
-            "comment": ""
-          }
-        ]
-      },
-      {
-        "studentId": "pw165546",
-        "scores": [
-          {
-            "name": "Egzamin",
-            "value": 4,
             "weight": 50,
             "comment": ""
           }
         ]
       }
-    ]
+    ],
+    "teacher": 7
   },
   {
-    "name": "Algebra liniowa - Matematyka MS, st. I, sem. 1",
-    "description": "Wprowadzenie do przestrzeni wektorowych, macierzy, wyznaczników oraz układów równań liniowych",
+    "name": "Fizyka",
+    "description": "",
     "requiredElements": [
       {
         "name": "Egzamin",
-        "description": "",
-        "weight": 60
-      },
-      {
-        "name": "Kolokwium",
-        "description": "",
-        "weight": 30
-      },
-      {
-        "name": "Ćwiczenia",
-        "description": "",
-        "weight": 10
-      }
-    ],
-    "participants": [
-      {
-        "name": "Jan Kowalski",
-        "group": 1,
-        "id": "ab123456"
-      },
-      {
-        "name": "Anna Nowak",
-        "group": 1,
-        "id": "cd789012"
-      },
-      {
-        "name": "Marek Wiśniewski",
-        "group": 2,
-        "id": "ef345678"
-      },
-      {
-        "name": "Ewa Zalewska",
-        "group": 3,
-        "id": "gh901234"
-      },
-      {
-        "name": "Kamil Żebrok",
-        "group": 1,
-        "id": "303281"
-      }
-    ],
-    "grades": [
-      {
-        "studentId": "ab123456",
-        "scores": [
-          {
-            "name": "Egzamin",
-            "value": 4,
-            "weight": 60,
-            "comment": ""
-          },
-          {
-            "name": "Kolokwium",
-            "value": 3.5,
-            "weight": 30,
-            "comment": ""
-          }
-        ]
-      },
-      {
-        "studentId": "cd789012",
-        "scores": [
-          {
-            "name": "Ćwiczenia",
-            "value": 5,
-            "weight": 10,
-            "comment": ""
-          }
-        ]
-      },
-      {
-        "studentId": "303281",
-        "scores": [
-          {
-            "name": "Egzamin",
-            "value": 5,
-            "weight": 60,
-            "comment": ""
-          },
-          {
-            "name": "Kolokwium",
-            "value": 4,
-            "weight": 30,
-            "comment": ""
-          },
-          {
-            "name": "Ćwiczenia",
-            "value": 3,
-            "weight": 10,
-            "comment": ""
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "name": "Analiza matematyczna I - Matematyka MS, st. I, sem. 1",
-    "description": "Funkcje jednej zmiennej, różniczkowanie, całkowanie, granice i ciągi",
-    "requiredElements": [
-      {
-        "name": "Egzamin końcowy",
         "description": "",
         "weight": 50
       },
       {
-        "name": "Kolokwium I",
+        "name": "Sprawozdanie",
         "description": "",
-        "weight": 25
+        "weight": 30
       },
       {
-        "name": "Kolokwium II",
+        "name": "Praca",
         "description": "",
-        "weight": 25
+        "weight": 20
       }
     ],
     "participants": [
       {
-        "name": "Piotr Wiatr",
-        "group": 1,
-        "id": "ij567890"
-      },
-      {
-        "name": "Kasia Nowicka",
-        "group": 1,
-        "id": "kl123890"
-      },
-      {
-        "name": "Magdalena Lis",
-        "group": 2,
-        "id": "mn890123"
-      },
-      {
         "name": "Kamil Żebrok",
-        "group": 1,
         "id": "303281"
       }
     ],
-    "grades": [
-      {
-        "studentId": "ij567890",
-        "scores": [
-          {
-            "name": "Egzamin końcowy",
-            "value": 4.5,
-            "weight": 50,
-            "comment": ""
-          },
-          {
-            "name": "Kolokwium I",
-            "value": 3.5,
-            "weight": 25,
-            "comment": ""
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "name": "Metody obliczeniowe - Informatyka, st. I, sem. 3",
-    "description": "Rozwiązywanie równań różniczkowych i algebraicznych przy użyciu metod numerycznych",
-    "requiredElements": [
-      {
-        "name": "Projekt",
-        "description": "Indywidualny projekt programistyczny",
-        "weight": 40
-      },
-      {
-        "name": "Kolokwium",
-        "description": "",
-        "weight": 40
-      },
-      {
-        "name": "Zadania domowe",
-        "description": "",
-        "weight": 20
-      }
-    ],
-    "participants": [
-      {
-        "name": "Tomasz Lewandowski",
-        "group": 1,
-        "id": "op567123"
-      },
-      {
-        "name": "Karolina Jaskółka",
-        "group": 2,
-        "id": "qr890456"
-      }
-    ],
-    "grades": []
-  },
-  {
-    "name": "Podstawy fizyki - Fizyka, st. I, sem. 1",
-    "description": "Mechanika klasyczna, prawa Newtona, energia, praca, zachowanie pędu",
-    "requiredElements": [
-      {
-        "name": "Egzamin",
-        "description": "",
-        "weight": 60
-      },
-      {
-        "name": "Ćwiczenia laboratoryjne",
-        "description": "",
-        "weight": 20
-      },
-      {
-        "name": "Kolokwium",
-        "description": "",
-        "weight": 20
-      }
-    ],
-    "participants": [
-      {
-        "name": "Zofia Górecka",
-        "group": 1,
-        "id": "st789123"
-      },
-      {
-        "name": "Janusz Kwiatkowski",
-        "group": 2,
-        "id": "uv456789"
-      }
-    ],
-    "grades": [
-      {
-        "studentId": "st789123",
-        "scores": [
-          {
-            "name": "Ćwiczenia laboratoryjne",
-            "value": 5,
-            "weight": 20,
-            "comment": ""
-          }
-        ]
-      }
-    ]
+    "grades": [],
+    "teacher": 7
   }
 ]

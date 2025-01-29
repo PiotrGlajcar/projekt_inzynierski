@@ -54,7 +54,6 @@ nav ul li a:hover {
     border-radius: 5px;
 }
 
-/* Footer styles */
 footer {
     background-color: #574964;
     color: #fff;
@@ -63,7 +62,8 @@ footer {
 }
 
 footer p {
-    margin: 0;
+    margin-bottom: 0.2rem;
+    margin-top: 0.4rem;
     font-size: 0.9rem;
     color: #ccc;
 }
@@ -102,7 +102,7 @@ footer p:hover {
     border-radius: 5px;
     margin: 0;
 }
-/* Styl kontenera */
+
 .container {
     display: flex;
     flex-direction: column;
@@ -206,6 +206,7 @@ footer p:hover {
     display: flex;
     gap: 20px;
 }
+
 
 /* Styl dla głównego kontenera sekcji */
 .view-courses {
@@ -459,10 +460,18 @@ button {
     transition: background-color 0.2s;
 }
 
-.course-tile button:last-of-type {
+.course-tile button:last-of-type,
+.course-details button:first-of-type {
     background-color: rgb(110, 44, 50); /* Czerwony dla przycisku "Usuń kurs" */
 }
 
+.buttons button:last-of-type {
+    background-color: rgb(144, 80, 85);
+}
+.buttons button:last-of-type:hover,
+.course-details button:first-of-type:hover {
+    background-color: rgb(96, 41, 46);
+}
 .course-tile button:hover {
     background-color: #574964;
 }
@@ -667,3 +676,31 @@ button {
     background-color: #574964;
 }
 /*paleta częściowo pożyczona: https://colorhunt.co/palette/ffdab3c8aaaa9f8383574964
+*/
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .content-container {
+    flex: 1; /* Wypełnia dostępną przestrzeń */
+  }
+
+  
+  .element-label {
+    display: flex;
+    flex-direction: column; /*kolumnowy układ dla tekstu i pola */
+    margin-bottom: 16px;
+    margin-right:15px ;
+    color: #333;
+}
+
+.element-textarea {
+    margin-top: 8px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical; /* można zmieniać rozmiar tylko w pionie */
+    width: 100%; /* dopasowanie szerokości do rodzica */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

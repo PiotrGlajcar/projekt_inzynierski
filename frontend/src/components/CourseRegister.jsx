@@ -71,7 +71,6 @@ function CourseRegister() {
 
                 updatedCourses[courseIndex].participants.push({
                     name: `${user.first_name} ${user.last_name}`,
-                    group: 1, // Domyślna grupa; możesz zmienić
                     id: user.student_number, // ID użytkownika
                 });
 
@@ -123,7 +122,9 @@ function CourseRegister() {
 
                             <h3>Opis kursu:</h3>
                             <p>{selectedCourse?.description || "Brak opisu kursu."}</p>
-
+                            <p>ID prowadzącego: {user.id}</p>
+                            <button onClick={() => handleRegister(selectedCourse?.name)}>Zarejestruj się</button>
+                            <br></br>
                             <button onClick={() => navigate("/course-register")}>Wróć do listy kursów</button>
                         </div>
                         <div className="participants-list">
@@ -132,7 +133,7 @@ function CourseRegister() {
                                 {selectedCourse?.participants.map((participant) => (
                                     <li key={participant.id}>
                                         <span className="participant-info">
-                                            {participant.name} (Grupa {participant.group})
+                                            {participant.name}
                                         </span>
                                     </li>
                                 )) || <p>Brak uczestników.</p>}
