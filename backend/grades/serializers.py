@@ -2,14 +2,15 @@ from rest_framework import serializers
 from .models import User, Student, Teacher, Course, Enrollment, Grade, Assignment
 
 class UserSerializer(serializers.ModelSerializer):
-
+    student_id = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ["id", "first_name", "last_name",  "email", "role"]
+        fields = ["id", "student_id", "first_name", "last_name",  "email", "role"]
         
-    def get_student_number(self, obj):
+    def get_student_id(self, obj):
+        """Returns the student's ID if the user is a student."""
         if obj.role == "student" and hasattr(obj, "student"):
-            return obj.student.student_number
+            return obj.student.id
         return None
 
 class StudentSerializer(serializers.ModelSerializer):
