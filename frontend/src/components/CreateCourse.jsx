@@ -52,14 +52,12 @@ function CreateCourse() {
             const newCourse = {
                 name: courseName,
                 description: courseDescription,
-                requiredElements,
-                participants,
-                grades: [], // Grades zostaną dodane później
+                writable_assignments: requiredElements,
                 teacher: data.id,
             };
 
             try {
-                const response = await fetch("http://localhost:5000/courses", {
+                const response = await fetch("http://localhost:8000/courses/?include=assignments", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(newCourse),

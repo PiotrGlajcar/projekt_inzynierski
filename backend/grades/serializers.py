@@ -108,6 +108,19 @@ class TeacherSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+class AssignmentSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Assignment model.
+    """
+    class Meta:
+        model = Assignment
+        fields = ['id', 'name', 'description', 'weight', 'is_mandatory']
+
+    def create(self, validated_data):
+        course_id = validated_data.pop('course_id')
+        course = Course.objects.get(id=course_id)
+        return Assignment.objects.create(course=course, **validated_data)
+    
 class CourseSerializer(serializers.ModelSerializer):
     """
     Serializer for the Course model.
@@ -115,10 +128,11 @@ class CourseSerializer(serializers.ModelSerializer):
     teacher = serializers.PrimaryKeyRelatedField(queryset=Teacher.objects.all())
     assignments = serializers.SerializerMethodField()
     students = serializers.SerializerMethodField()
+    writable_assignments = AssignmentSerializer(many=True, required=False, write_only=True)
 
     class Meta:
         model = Course
-        fields = ['id', 'name', 'description', 'teacher', 'assignments', 'students']
+        fields = ['id', 'name', 'description', 'teacher', 'assignments', 'students', 'writable_assignments']
 
     def get_assignments(self, obj):
         """
@@ -140,36 +154,27 @@ class CourseSerializer(serializers.ModelSerializer):
             students = [enrollment.student for enrollment in enrollments]
             return StudentSerializer(students, many=True, context={"course": obj}).data
         return None
-    
+  
     def create(self, validated_data):
         """
-        Create a new course instance.
+        Create a new course with assignments while keeping old functionalities.
         """
-        return Course.objects.create(**validated_data)
+        assignments_data = validated_data.pop('writable_assignments', [])  # Get assignments from request
+        course = Course.objects.create(**validated_data)
+
+        # Create assignments linked to this course
+        for assignment_data in assignments_data:
+            Assignment.objects.create(course=course, **assignment_data)
+
+        return course
     
     def update(self, instance, validated_data):
         # Update the fields dynamically
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
-        instance.save()  # Save to the database
+        instance.save()
         return instance
-    
-    
 
-class AssignmentSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the Assignment model.
-    """
-    #course_id = serializers.IntegerField(write_only=True)
-    class Meta:
-        model = Assignment
-        fields = ['id', 'name', 'description', 'weight', 'is_mandatory']
-
-    def create(self, validated_data):
-        course_id = validated_data.pop('course_id')  # Retrieve the course_id
-        course = Course.objects.get(id=course_id)    # Get the Course object
-        return Assignment.objects.create(course=course, **validated_data)
-    
 class EnrollmentSerializer(serializers.ModelSerializer):
     course_id = serializers.IntegerField()
     course_id = serializers.IntegerField()
