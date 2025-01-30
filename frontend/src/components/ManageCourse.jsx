@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-
+import { useParams, useNavigate, Link } from "react-router-dom";
 function ManageCourse() {
     const { courseId } = useParams();
     const navigate = useNavigate();
@@ -314,11 +313,11 @@ function ManageCourse() {
                                         <strong>{assignment.name}</strong>
                                         <p>{assignment.description || "Brak opisu"}</p>
                                         <p>Waga: {assignment.weight}%</p>
-                                        <p>
+                                        {/*<p>
                                             {assignment.is_mandatory
                                                 ? "Obowiązkowe"
                                                 : "Nieobowiązkowe"}
-                                        </p>
+                                        </p>*/}
                                     </li>
                                 ))}
                             </ul>
@@ -340,16 +339,16 @@ function ManageCourse() {
                                     <div>
                                         <strong>
                                             {student.user.first_name} {student.user.last_name}
-                                        </strong>{" "}
-                                        (Numer studenta: {student.student_number})
+                                        </strong>{/*{" "}
+                                        (Numer studenta: {student.student_number})*/}
                                     </div>
 
                                     <ul className="grades-list">
                                         {student.grades?.length > 0 ? (
                                             student.grades.map((grade) => (
                                                 <li key={grade.assignment_id}>
-                                                    {grade.assignment_name}: {grade.score}%
-                                                    (Przyznano: {grade.date_assigned})
+                                                    {grade.assignment_name}: {grade.score}{/*%
+                                                    (Przyznano: {grade.date_assigned})*/}
                                                 </li>
                                             ))
                                         ) : (
@@ -433,8 +432,9 @@ function ManageCourse() {
                         </div>
                     )}
                 </div>
-            </div>
+            </div>         
         </div>
+        
     );
 }
 

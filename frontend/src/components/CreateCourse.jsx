@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function CreateCourse() {
     const [courseName, setCourseName] = useState("");
@@ -10,7 +11,7 @@ function CreateCourse() {
     const [elementDescription, setElementDescription] = useState("");
     const [elementWeight, setElementWeight] = useState("");
     const navigate = useNavigate();
-
+  
     const [data, setUser] = useState(true);
     // const [error, setError] = useState(null); 
 
@@ -84,6 +85,7 @@ function CreateCourse() {
 
     return (
         <div className="creator">
+            <Link to='/home-staff'>← Powrót</Link>
             <h2>Dodaj nowy kurs:</h2>
             <div>
                 <label>

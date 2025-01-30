@@ -83,7 +83,6 @@ function MyCourseDetails() {
             <h2>Course Details: {selectedCourse.name}</h2>
             <h3>Course Description:</h3>
             <p>{selectedCourse.description || "No description available."}</p>
-
             <h3>Your Grades:</h3>
             <ul>
                 {grades.length > 0 ? (

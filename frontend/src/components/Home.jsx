@@ -31,12 +31,14 @@ function Home() {
     //if (error) return <h2>{error}</h2>;
 
     return (
-        <div className="container">
-            <h2>Witamy na stronie głównej {data.first_name}</h2>
-            <p>Wybierz co chesz zrobić:</p>
-            <div className="buttons">
-                <button className="button" onClick={goToCreateCourse}>Utwórz nowy kurs</button>
-                <button className="button" onClick={() => navigate("/manage-course")}>Przeglądaj kursy</button>
+        <div className="centruj">
+            <div className="container">
+                <h2>Witamy na stronie głównej {data.first_name}</h2>
+                <p>Wybierz co chesz zrobić:</p>
+                <div className="buttons">
+                    <button className="button" onClick={goToCreateCourse}>Utwórz nowy kurs</button>
+                    <button className="button" onClick={() => navigate("/manage-course")}>Przeglądaj kursy</button>
+                </div>
             </div>
         </div>
     );

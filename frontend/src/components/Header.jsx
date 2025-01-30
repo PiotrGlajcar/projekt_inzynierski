@@ -12,7 +12,7 @@ function Header(){
                     {//<li><a href="#">Services</a></li>
                     }       
                     <li><Link to='/contact'>Kontakt</Link></li>
-                    <li><Link to='/'>Wyloguj</Link></li>
+                    <li><Link to='/logged-out'>Wyloguj</Link></li>
                 </ul>
             </nav>
         </header>

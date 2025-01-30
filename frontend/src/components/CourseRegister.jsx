@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function CourseRegister() {
     const { courseName } = useParams();
@@ -123,6 +124,8 @@ function CourseRegister() {
                             </div>
                         ))}
                     </div>
+                    
+                    <Link to='/home-student'>⇦ Powrót</Link>
                 </>
               {/*: (
                 <>

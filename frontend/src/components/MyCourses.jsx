@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function MyCourses() {
     const navigate = useNavigate();
@@ -53,8 +54,8 @@ function MyCourses() {
 
     return (
         <div className="my-courses">
-            <h2>My Courses</h2>
-            {user && <h3>Student ID: {user.student_number}</h3>}
+            <h2>Moje kursy</h2>
+            {user && <h3>ID studenta: {user.student_number}</h3>}
 
             <div className="course-grid">
                 {enrollments.length > 0 ? (
@@ -69,11 +70,13 @@ function MyCourses() {
                                 View Details
                             </button>
                         </div>
+                        
                     ))
                 ) : (
                     <p>You are not enrolled in any courses.</p>
                 )}
             </div>
+            <Link to='/'>⇦ Powrót</Link>
         </div>
     );
 }

@@ -26,19 +26,21 @@ function HomeStudent() {
     };    
         
     return (
-        <div className="container">
-             {user ? (
-                <>
-                <h1>Witaj, {user.first_name} {user.last_name}!</h1>
-                <div className="buttons">
-                    <button className="button" onClick={goToRegister}>Zarejestruj się na nowy kurs</button>
-                    <button className="button" onClick={() => navigate("/my-courses")}>Przeglądaj swoje kursy</button>
-                </div>
-                <h3>id studenta: {user.student_number}</h3>
-                </>
-            ) : (
-                <p>Loading user data...</p>
-            )}
+        <div className="centruj">
+            <div className="container">
+                {user ? (
+                    <>
+                    <h1>Witaj, {user.first_name} {user.last_name}!</h1>
+                    <div className="buttons">
+                        <button className="button" onClick={goToRegister}>Zarejestruj się na nowy kurs</button>
+                        <button className="button" onClick={() => navigate("/my-courses")}>Przeglądaj swoje kursy</button>
+                    </div>
+                    <p>email: {user.email}<br></br>nr albumu: {user.student_number}</p>
+                    </>
+                ) : (
+                    <p>Loading user data...</p>
+                )}
+            </div>
         </div>
     );
 }
