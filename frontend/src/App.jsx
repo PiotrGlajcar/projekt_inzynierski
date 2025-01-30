@@ -5,6 +5,8 @@ import HomeStudent from './components/HomeStudent.jsx'
 import About from './components/About.jsx'
 import Contact from './components/Contact.jsx'
 import ToLogin from './components/ToLogin.jsx'
+import Unauthorized from './components/Unauthorized.jsx'
+import LoggedOut from './components/LoggedOut.jsx'
 import ManageCourse from "./components/ManageCourse.jsx";
 import ListCourses from './components/ListCourses.jsx'
 import CreateCourse from "./components/CreateCourse.jsx";
@@ -14,6 +16,8 @@ import ProtectedRoute from './components/ProtectedRoute.jsx';
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import MyCourses from './components/MyCourses.jsx'
 import MyCourseDetails from './components/MyCourseDetails.jsx'
+import background from "./assets/images/background.jpg";
+
 
 function App() {
 
@@ -31,6 +35,8 @@ function App() {
               <ProtectedRoute role="student">
                 <HomeStudent />
               </ProtectedRoute> }/>
+            <Route path='/unauthorized' element={<Unauthorized />} />
+            <Route path='logged-out' element={<LoggedOut />} />
             <Route path='/about' element={<About />} />
             <Route path='/contact' element={<Contact />} />
             <Route path="/create-course" element={<CreateCourse />} />
