@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const ListCourses = () => {
     const navigate = useNavigate();
@@ -45,7 +45,7 @@ const ListCourses = () => {
 
     return (
         <div className="course-list">
-            <h2>Manage Courses</h2>
+            <h2>Zarządzanie kursami</h2>
             <div className="course-grid">
                 {courses.length > 0 ? (
                     courses.map((course) => (
@@ -54,17 +54,18 @@ const ListCourses = () => {
                             <button
                                 onClick={() => navigate(`/manage-course/${course.id}`)}
                             >
-                                View Details
+                                Szczegóły
                             </button>
                             <button onClick={() => handleDeleteCourse(course.id)}>
-                                Delete Course
+                                Usuń
                             </button>
                         </div>
                     ))
                 ) : (
-                    <p>No courses available.</p>
+                    <p>Brak dostępnych kursów.</p>
                 )}
             </div>
+            <div className="centruj"><Link to="/home-staff" >⇦ Wróć</Link></div>
         </div>
     );
 };

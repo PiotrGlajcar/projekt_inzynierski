@@ -79,24 +79,27 @@ function MyCourseDetails() {
     }
 
     return (
-        <div className="course-details">
-            <h2>Course Details: {selectedCourse.name}</h2>
-            <h3>Course Description:</h3>
-            <p>{selectedCourse.description || "No description available."}</p>
-            <h3>Your Grades:</h3>
-            <ul>
-                {grades.length > 0 ? (
-                    grades.map((grade) => (
-                        <li key={grade.id}>
-                            {grade.assignment_name}: {grade.score} (Assigned: {grade.date_assigned})
-                        </li>
-                    ))
-                ) : (
-                    <p>No grades available for this course.</p>
-                )}
-            </ul>
+        <div className="centruj">
+                <div className="course-details">
+                    <h2>Szczegóły kursu: {selectedCourse.name}</h2>
+                    <h3>Opis kursu:</h3>
+                    <p>{selectedCourse.description || "Brak opisu."}</p>
+                    <h3>Twoje oceny:</h3>
+                    <ul>
+                        {grades.length > 0 ? (
+                            grades.map((grade) => (
+                                <li key={grade.id}>
+                                    <strong>{grade.assignment_name}:</strong> {grade.score}
+                                    <p>(Dodano: {grade.date_assigned})</p>
+                                </li>
+                            ))
+                        ) : (
+                            <p>Na razie nie posiadasz ocen z tego kursu.</p>
+                        )}
+                    </ul>
 
-            <button onClick={() => navigate("/my-courses")}>Back to My Courses</button>
+                    <button onClick={() => navigate("/my-courses")}>Powrót</button>
+                </div>
         </div>
     );
 }

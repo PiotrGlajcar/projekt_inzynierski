@@ -67,16 +67,16 @@ function MyCourses() {
                                     navigate(`/my-course/${encodeURIComponent(enrollment.course_id)}`)
                                 }
                             >
-                                View Details
+                                Szczegóły
                             </button>
                         </div>
                         
                     ))
                 ) : (
-                    <p>You are not enrolled in any courses.</p>
+                    <p>Nie jesteś jeszcze zarejestrowany na żadne kursy.</p>
                 )}
             </div>
-            <Link to='/'>⇦ Powrót</Link>
+            <Link to='/home-student'>⇦ Powrót</Link>
         </div>
     );
 }

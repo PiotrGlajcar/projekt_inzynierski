@@ -4,14 +4,12 @@ function ManageCourse() {
     const { courseId } = useParams();
     const navigate = useNavigate();
 
-    const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedElement, setSelectedElement] = useState("");
     const [newGrade, setNewGrade] = useState("");
     const [editingStudent, setEditingStudent] = useState(null);
     const [editingScores, setEditingScores] = useState([]);
     const [notification, setNotification] = useState("");
-    const [newParticipant, setNewParticipant] = useState({ name: "", group: 1 });
     const [editingDescription, setEditingDescription] = useState(false);
     const [updatedDescription, setUpdatedDescription] = useState("");
     const editFormRef = useRef(null);
@@ -278,7 +276,7 @@ function ManageCourse() {
     return (
         <div className="manage-course">
             <div className="containermng">
-                <div className="course-details">
+                <div className="my-course-details">
                     <h2>Zarządzanie kursem: {selectedCourse?.name}</h2>
                     {notification && <div className="notification">{notification}</div>}
 
@@ -360,7 +358,7 @@ function ManageCourse() {
                                             Edytuj oceny
                                         </button>
                                         <button onClick={() => handleRemoveParticipant(student.id)}>
-                                            Usuń uczestnika tego kursu
+                                            Usuń uczestnika
                                         </button>
                                     </div>
                                 </li>

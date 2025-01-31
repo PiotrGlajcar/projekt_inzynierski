@@ -5,14 +5,30 @@ body {
     background-color: #f4f4f9;
     display: flex;
     flex-direction: column;
-    height: 100%; /* Ensures the full viewport height is considered */
-
+    height: 100%;
+    /*
     background-image: url("./assets/images/background.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    min-height: 100vh;
+    min-height: 100vh;*/
 }
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("./assets/images/background.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.6;
+    z-index: -1; /* tło pod resztę treści */
+}
+
+
 
 main {
     padding: 20px;
@@ -121,9 +137,9 @@ footer p:hover {
     background-position: center;
     display: flex;
     justify-content: center; /* Wyśrodkowanie poziome */
-
     align-items: flex-start; /* Przesunięcie w górę */
     padding-bottom: 40vh;
+    padding-top: 10px;
 }
 
 .container h1 {
@@ -400,6 +416,7 @@ button {
 }
 
 .course-tile button:last-of-type,
+.my-course-details button:first-of-type,
 .course-details button:first-of-type {
     background-color: rgb(110, 44, 50); /* Czerwony dla przycisku "Usuń kurs" */
 }
@@ -408,8 +425,9 @@ button {
     background-color: rgb(144, 80, 85);
 }
 .buttons button:last-of-type:hover,
+.my-course-details button:first-of-type:hover,
 .course-details button:first-of-type:hover {
-    background-color: rgb(96, 41, 46);
+    background-color: rgb(83, 36, 40);
 }
 .course-tile button:hover {
     background-color: #574964;
@@ -479,27 +497,34 @@ button {
 
 .course-details,
 .participants-list {
-    flex: 1;
-    background-color: #f9f9f9;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     background-color: #FFDAB3;
     border: 1px solid #87531c;
 }
+.participants-list {flex:1;}
 
+.course-details {
+    gap:20px;
+    min-width: 600px;
+    text-align: center;
+}
+.my-course-details {
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #FFDAB3;
+    border: 1px solid #87531c;
+    gap:20px;
+    max-width: 50%;
+    text-align: center;
+}
 .course-details h2,
 .participants-list h3 {
     margin-top: 0;
     color: #333;
 }
-
-.course-details p {
-    font-size: 16px;
-    color: #555;
-}
-
-
 
 .participant-info {
     flex: 1;
@@ -519,6 +544,7 @@ button {
 }
 
 .course-details button,
+.my-course-details button,
 .participants-list button {
     background-color: #BB9BB0;
     color: #fff;
@@ -531,6 +557,7 @@ button {
 }
 
 .course-details button:hover,
+.my-course-details button:hover,
 .participants-list button:hover {
     background-color: #A288A6;
 }
@@ -649,8 +676,15 @@ button {
     margin: 0;
 }
 .course-details li{
-    padding: 5px;
+    padding: 0px;
 }
+.course-details li p {
+    font-size: 16px;
+    color: #555;
+    margin-block-start: 0.2em;
+    opacity: 50%;
+}
+
 .course-details textarea {
     background-color: #ffcea5;
     border: 1px solid #87531c;
