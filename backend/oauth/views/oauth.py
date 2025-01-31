@@ -5,6 +5,7 @@ from oauth.utils.responses import api_response
 from oauth.utils.users import process_usos_user
 from oauth.services.usos import UsosAPI
 from django.contrib.auth import get_user_model
+from django.middleware.csrf import get_token
 
 # Initialize the UsosAPI instance
 usos_api = UsosAPI(
@@ -106,9 +107,12 @@ def logout_user(request):
     Logs out the user by clearing session data and resetting authentication state.
     """
     logout(request)  # Clears the session and resets request.user
-    return api_response(
+
+    response = api_response(
         status="success",
         message="User logged out successfully",
-        status_code=200
-    )
+        status_code=200)
+    response.set_cookie("csrftoken", get_token(request))
+    return response
+    
 

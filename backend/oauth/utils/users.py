@@ -32,18 +32,15 @@ def process_usos_user(user_info):
     user.first_name = first_name
     user.last_name = last_name
 
-    # Set role based on status
-    if staff_status == 2:
-        user.role = "staff"
-    elif student_status == 2:
-        user.role = "student"
-    else:
-        user.role = "unknown"
+    # Set role based on status ONLY if role is "unknown" or user is new
+    if created or user.role == "unknown":
+        if staff_status == 2:
+            user.role = "staff"
+        elif student_status == 2:
+            user.role = "student"
+        else:
+            user.role = "unknown"
     user.save()
-
-    # Save only if there are changes
-    if user.role != "unknown" or created:
-        user.save()
 
     # Handle Student updates if role is "student"
     if user.role == "student":

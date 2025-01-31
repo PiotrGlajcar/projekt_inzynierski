@@ -1,6 +1,15 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useContext } from "react";
+import { Link, useNavigate, } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
+
 function Header(){
+
+    const { logoutUser } = useContext(UserContext);
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        await logoutUser();
+    };
 
     return(
         <header>
@@ -9,10 +18,8 @@ function Header(){
                 <ul>
                     <li><Link to='/'>Home</Link></li>
                     <li><Link to='/about'>O nas</Link></li>
-                    {//<li><a href="#">Services</a></li>
-                    }       
                     <li><Link to='/contact'>Kontakt</Link></li>
-                    <li><Link to='/logged-out'>Wyloguj</Link></li>
+                    <li><button onClick={handleLogout} className="logout-button">Wyloguj</button></li>
                 </ul>
             </nav>
         </header>

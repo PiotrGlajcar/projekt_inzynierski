@@ -24,7 +24,6 @@ def handle_options(request):
     return response
 
 # User Views
-
 @api_view(['GET'])
 def users_me(request):
     """
@@ -422,7 +421,6 @@ class AssignmentListCreateView(generics.ListCreateAPIView):
             data=serializer.errors,
             status_code=400
         )
-
 
 class AssignmentDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
