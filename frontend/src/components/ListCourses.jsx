@@ -28,7 +28,7 @@ const ListCourses = () => {
         if (!isConfirmed) return;
 
         try {
-            const response = await fetch(`http://localhost:8000/courses/${id}`, {
+            const response = await fetch(`http://localhost:8000/courses/${id}/`, {
                 method: "DELETE",
             });
 
