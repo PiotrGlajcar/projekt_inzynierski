@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import backend from "../api";
+import { getCSRFToken } from "../api";
 
 const ListCourses = () => {
     const navigate = useNavigate();
@@ -8,31 +10,28 @@ const ListCourses = () => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const response = await fetch("http://localhost:8000/courses/");
-                if (response.ok) {
-                    const result = await response.json();
-                    setCourses(Array.isArray(result.data) ? result.data : []);
-                } else {
-                    console.error(response.messages);
-                }
+                const response = await backend.get("/courses/");
+                setCourses(Array.isArray(response.data.data) ? response.data.data : []);
             } catch (error) {
                 console.error("Error fetching courses:", error);
             }
         };
-
+    
         fetchCourses();
-    }, []);
+    }, []);    
 
     const handleDeleteCourse = async (id) => {
         const isConfirmed = window.confirm(`Are you sure you want to delete this course?`);
         if (!isConfirmed) return;
 
         try {
-            const response = await fetch(`http://localhost:8000/courses/${id}/`, {
-                method: "DELETE",
+            const response = await backend.delete(`/courses/${id}/`, {
+                headers: {
+                    "X-CSRFToken": getCSRFToken(),
+                },
             });
 
-            if (response.ok) {
+            if (response.status === 204) {
                 setCourses(courses.filter((course) => course.id !== id));
                 alert("Course deleted successfully.");
             } else {

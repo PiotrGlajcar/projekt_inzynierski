@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import backend from "../api";
 
 function MyCourses() {
     const navigate = useNavigate();
@@ -12,32 +13,27 @@ function MyCourses() {
     const { user } = useContext(UserContext);
 
     useEffect(() => {
-        if (user ) {
-            fetch("http://localhost:8000/enrollments")
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.status === "success") {
-                        // Filter enrollments for the current student
-                        const studentEnrollments = data.data.filter(
-                            (enrollment) => enrollment.student_id === user.student_id
-                        );
-                        setEnrollments(studentEnrollments);
-                    } else {
-                        console.error("Failed to fetch enrollments");
-                    }
-                })
-                .catch((error) => console.error("Error fetching enrollments:", error));
-        }
+        if (!user) return;
+    
+        const fetchEnrollments = async () => {
+            try {
+                const { data } = await backend.get("/enrollments");
+    
+                if (data.status === "success") {
+                    const studentEnrollments = data.data.filter(
+                        (enrollment) => enrollment.student_id === user.student_id
+                    );
+                    setEnrollments(studentEnrollments);
+                } else {
+                    console.error("Failed to fetch enrollments");
+                }
+            } catch (error) {
+                console.error("Error fetching enrollments:", error);
+            }
+        };
+    
+        fetchEnrollments();
     }, [user]);
-
-    // useEffect(() => {
-    //     if (user && user.student_number) {
-    //         const filteredCourses = courses.filter((course) =>
-    //             course.participants.some((participant) => participant.id === user.student_number)
-    //         );
-    //         setMyCourses(filteredCourses);
-    //     }
-    // }, [user, courses]);
 
     return (
         <div className="my-courses">

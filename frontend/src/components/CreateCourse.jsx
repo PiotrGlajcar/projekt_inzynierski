@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import backend from "../api";
+import { getCSRFToken } from "../api";
 
 function CreateCourse() {
     const [courseName, setCourseName] = useState("");
@@ -44,18 +46,19 @@ function CreateCourse() {
             };
 
             try {
-                const response = await fetch("http://localhost:8000/courses/?include=assignments", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(newCourse),
+                const response = await backend.post("/courses/?include=assignments", newCourse, {
+                    headers: {
+                        "X-CSRFToken": getCSRFToken()
+                    }
                 });
-                if (response.ok) {
+
+                if (response.status === 201) {
                     alert(`Kurs "${courseName}" został pomyślnie utworzony!`);
                     setCourseName("");
                     setCourseDescription("");
                     setRequiredElements([]);
                     setParticipants([]);
-                    navigate(`/manage-course/create-course/`);
+                    navigate(`/manage-course/`);
                 } else {
                     alert("Nie udało się utworzyć kursu.");
                 }

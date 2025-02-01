@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import backend from "../api";
 
 function MyCourseDetails() {
     const { courseId } = useParams();
@@ -11,54 +12,69 @@ function MyCourseDetails() {
     const [grades, setGrades] = useState([]);    
     const { user } = useContext(UserContext);
 
-    // Pobieranie danych kursu
     useEffect(() => {
-        if (courseId) {
-            fetch(`http://localhost:8000/courses/${courseId}`)
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.status === "success") {
-                        setSelectedCourse(data.data);
-                    } else {
-                        console.error("Failed to fetch course details.");
-                    }
-                })
-                .catch((error) => console.error("Error fetching course details:", error));
-        }
-    }, [courseId]);
+        if (!courseId) return;
+    
+        const fetchCourse = async () => {
+            try {
+                const { data } = await backend.get(`/courses/${courseId}`);
+    
+                if (data.status === "success") {
+                    setSelectedCourse(data.data);
+                } else {
+                    console.error("Failed to fetch course details.");
+                }
+            } catch (error) {
+                console.error("Error fetching course details:", error);
+            }
+        };
+    
+        fetchCourse();
+    }, [courseId]);    
 
     useEffect(() => {
-        if (user && courseId) {
-            fetch("http://localhost:8000/enrollments")
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.status === "success") {
-                        const userEnrollment = data.data.find(
-                            (enrollment) => enrollment.student_id === user.student_id && enrollment.course_id === Number(courseId)
-                        );
-                        if (userEnrollment) {
-                            setEnrollmentId(userEnrollment.id); // Store enrollment_id
-                        }
+        if (!user || !courseId) return;
+    
+        const fetchEnrollments = async () => {
+            try {
+                const { data } = await backend.get("/enrollments");
+    
+                if (data.status === "success") {
+                    const userEnrollment = data.data.find(
+                        (enrollment) => enrollment.student_id === user.student_id && enrollment.course_id === Number(courseId)
+                    );
+    
+                    if (userEnrollment) {
+                        setEnrollmentId(userEnrollment.id);
                     }
-                })
-                .catch((error) => console.error("Error fetching enrollments:", error));
-        }
-    }, [user, courseId]);
+                }
+            } catch (error) {
+                console.error("Error fetching enrollments:", error);
+            }
+        };
+    
+        fetchEnrollments();
+    }, [user, courseId]);    
 
     useEffect(() => {
-        if (enrollmentId) {
-            fetch("http://localhost:8000/grades")
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.status === "success") {
-                        // Filter grades based on enrollment_id
-                        const studentGrades = data.data.filter((grade) => grade.enrollment_id === enrollmentId);
-                        setGrades(studentGrades);
-                    }
-                })
-                .catch((error) => console.error("Error fetching grades:", error));
-        }
-    }, [enrollmentId]);
+        if (!enrollmentId) return;
+    
+        const fetchGrades = async () => {
+            try {
+                const { data } = await backend.get("/grades");
+    
+                if (data.status === "success") {
+                    // Filter grades based on enrollment_id
+                    const studentGrades = data.data.filter((grade) => grade.enrollment_id === enrollmentId);
+                    setGrades(studentGrades);
+                }
+            } catch (error) {
+                console.error("Error fetching grades:", error);
+            }
+        };
+    
+        fetchGrades();
+    }, [enrollmentId]);    
 
     if (!selectedCourse || !user) {
         return <p>Ładowanie szczegółów kursu...</p>;

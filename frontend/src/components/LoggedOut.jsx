@@ -6,14 +6,11 @@ function LoggedOut() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log("Redirecting in 3 seconds...");
         const timer = setTimeout(() => {
-            console.log("Redirecting now...");
             navigate("/");
         }, 3000);
 
         return () => {
-            console.log("Clearing timeout...");
             clearTimeout(timer);
         };
     }, [navigate]);

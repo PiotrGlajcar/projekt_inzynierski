@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import backend from "../api";
+
 function ManageCourse() {
     const { courseId } = useParams();
     const navigate = useNavigate();
@@ -22,15 +24,11 @@ function ManageCourse() {
     useEffect(() => {
         const fetchCourse = async () => {
             try {
-                const response = await fetch(
-                    `http://localhost:8000/courses/${courseId}?include=assignments&include=students`
-                );
-                if (response.ok) {
-                    const result = await response.json();
-                    setSelectedCourse(result.data);
-                } else {
-                    console.error(selectedCourse.message);
-                }
+                const response = await backend.get(`/courses/${courseId}`, {
+                    params: { include: ["assignments", "students"] },
+                });
+    
+                setSelectedCourse(response.data.data);
             } catch (error) {
                 console.error("Error fetching course details:", error);
             }
@@ -40,89 +38,73 @@ function ManageCourse() {
             fetchCourse();
         }
     }, [courseId]);
+    
 
     const handleUpdateDescription = async () => {
-
         if (!updatedDescription.trim()) {
             alert("Opis nie może być pusty.");
             return;
         }
-
+    
         try {
-            const response = await fetch(`http://localhost:8000/courses/${courseId}/`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ description: updatedDescription }),
+            const response = await backend.put(`/courses/${courseId}/`, {
+                description: updatedDescription,
             });
-
-            if (response.ok) {
-                const updatedCourse = await response.json();
-                setSelectedCourse((prev) => ({
-                    ...prev,
-                    description: updatedCourse.data.description,
-                }));
-                setEditingDescription(false);
-                setNotification(updatedCourse.message);
-                setTimeout(() => setNotification(""), 3000);
-            } else {
-                alert(selectedCourse.message);
-            }
-        } 
-        catch (error) {
+    
+            setSelectedCourse((prev) => ({
+                ...prev,
+                description: response.data.data.description,
+            }));
+    
+            setEditingDescription(false);
+            setNotification(response.data.message);
+            setTimeout(() => setNotification(""), 3000);
+        } catch (error) {
             console.error("Błąd podczas aktualizacji opisu:", error);
+            alert("Nie udało się zaktualizować opisu.");
         }
-    };
+    };    
 
     const handleRemoveParticipant = async (studentId) => {
         try {
-            const response = await fetch(
-                `http://localhost:8000/enrollments/detail/?student_id=${studentId}&course_id=${courseId}`,
-                { method: "DELETE" }
-            );
+            await backend.delete(`/enrollments/detail/`, {
+                params: { student_id: studentId, course_id: courseId },
+            });
     
-            if (response.ok) {
-                setSelectedCourse((prev) => ({
-                    ...prev,
-                    students: prev.students.filter((student) => student.id !== studentId),
-                }));
-                setNotification("Uczestnik został usunięty z kursu.");
-                setTimeout(() => setNotification(""), 3000);
-            } else {
-                alert("Nie udało się usunąć uczestnika.");
-            }
+            setSelectedCourse((prev) => ({
+                ...prev,
+                students: prev.students.filter((student) => student.id !== studentId),
+            }));
+    
+            setNotification("Uczestnik został usunięty z kursu.");
+            setTimeout(() => setNotification(""), 3000);
         } catch (error) {
             console.error("Błąd podczas usuwania uczestnika:", error);
+            alert("Nie udało się usunąć uczestnika.");
         }
-    };
+    };    
     
     const handleEditScores = async (studentId) => {
         const student = selectedCourse.students.find((s) => s.id === studentId);
-        const studentGrades = student ? student.grades : [];
         setEditingStudent(studentId);
-        setEditingScores([...studentGrades]);
-
-        // Fetch enrollment_id dynamically
+        setEditingScores(student ? [...student.grades] : []);
+    
         if (!editingEnrollmentId) {
             try {
-                const response = await fetch(
-                    `http://localhost:8000/enrollments/detail/?student_id=${studentId}&course_id=${courseId}`
-                );
-
-                if (response.ok) {
-                    const result = await response.json();
-                    setEditingEnrollmentId(result.data?.id);
-                } else {
-                    console.error("Failed to fetch enrollment ID.");
-                }
+                const { data } = await backend.get("/enrollments/detail/", {
+                    params: { student_id: studentId, course_id: courseId },
+                });
+    
+                setEditingEnrollmentId(data?.data?.id);
             } catch (error) {
                 console.error("Error fetching enrollment ID:", error);
             }
         }
-
+    
         if (editFormRef.current) {
             editFormRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
         }
-    };
+    };    
 
     const handleAddScore = () => {
         if (!newGrade || !selectedElement) return;
@@ -175,99 +157,76 @@ function ManageCourse() {
     const handleSaveScores = async () => {
         try {
             for (const score of editingScores) {
-
                 if (score.grade_id) {
 
-                    const response = await fetch(`http://localhost:8000/grades/${score.grade_id}/`, {
-                        method: "PUT",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ score: score.score }),
+                    // Update existing grade
+                    await backend.put(`/grades/${score.grade_id}/`, {
+                        score: score.score,
                     });
-    
-                    if (!response.ok) {
-                        throw new Error(`Failed to update grade with ID: ${score.grade_id}`);
-                    }
                 } else {
-
                     let assignmentId = score.assignment_id;
-
+    
                     if (!assignmentId) {
 
-                        const assignmentResponse = await fetch(`http://localhost:8000/assignments/`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                name: score.assignment_name,
-                                course_id: courseId,
-                                description: newElementDescription,
-                                weight: newElementWeight,
-                                is_mandatory: false,
-                            }),
+                        // Create a new assignment
+                        const { data: newAssignment } = await backend.post(`/assignments/`, {
+                            name: score.assignment_name,
+                            course_id: courseId,
+                            description: newElementDescription,
+                            weight: newElementWeight,
+                            is_mandatory: false,
                         });
-
-                        if (!assignmentResponse.ok) {
-                            throw new Error("Failed to create new assignment.");
-                        }
-
-                        const newAssignment = await assignmentResponse.json();
+    
                         assignmentId = newAssignment.data.id;
+    
+                        // Update the local state for assignments
                         setSelectedCourse((prevCourse) => ({
                             ...prevCourse,
                             assignments: [...prevCourse.assignments, newAssignment.data],
-                            students: prevCourse.students.map((student) => {
-                                if (student.id === editingStudent) {
-                                    return {
+                            students: prevCourse.students.map((student) =>
+                                student.id === editingStudent
+                                    ? {
                                         ...student,
-                                        grades: [...student.grades, {
-                                            assignment_id: newAssignment.data.id,
-                                            assignment_name: newAssignment.data.name,
-                                            score: score.score,
-                                        }]
-                                    };
-                                }
-                                return student;
-                            }),
+                                        grades: [
+                                            ...student.grades,
+                                            {
+                                                assignment_id: newAssignment.data.id,
+                                                assignment_name: newAssignment.data.name,
+                                                score: score.score,
+                                            },
+                                        ],
+                                    }
+                                    : student
+                            ),
                         }));
                     }
+    
                     // Add new grade
-                    const response = await fetch(`http://localhost:8000/grades/`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            enrollment_id: editingEnrollmentId,
-                            assignment_id: assignmentId,
-                            score: score.score,
-                        }),
+                    const { data: newGrade } = await backend.post(`/grades/`, {
+                        enrollment_id: editingEnrollmentId,
+                        assignment_id: assignmentId,
+                        score: score.score,
                     });
     
-                    if (!response.ok) {
-                        throw new Error("Failed to create new grade.");
-                    }
-    
-                    const newGrade = await response.json();
                     score.grade_id = newGrade.data.id;
                 }
             }
     
             // Update local state with the latest scores
-            setSelectedCourse((prevCourse) => {
-                const updatedStudents = prevCourse.students.map((student) => {
-                    if (student.id === editingStudent) {
-                        return {
-                            ...student,
-                            grades: editingScores,
-                        };
-                    }
-                    return student;
-                });
+            setSelectedCourse((prevCourse) => ({
+                ...prevCourse,
+                students: prevCourse.students.map((student) =>
+                    student.id === editingStudent
+                        ? { ...student, grades: editingScores }
+                        : student
+                ),
+            }));
     
-                return { ...prevCourse, students: updatedStudents };
-            });
-            
+            // Reset state & show notification
             setEditingScores([]);
             setEditingEnrollmentId(null);
-            setNewElementDescription(null);
-            setNewElementWeight(null);
+            setNewElementDescription("");
+            setNewElementWeight("");
             setNotification("Oceny zostały zaktualizowane.");
             setTimeout(() => setNotification(""), 3000);
             setEditingStudent(null);
@@ -276,6 +235,7 @@ function ManageCourse() {
             alert("Nie udało się zapisać zmian w ocenach.");
         }
     };
+    
 
     return (
         <div className="manage-course">
