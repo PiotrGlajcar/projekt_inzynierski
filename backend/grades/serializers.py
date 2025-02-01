@@ -112,12 +112,16 @@ class AssignmentSerializer(serializers.ModelSerializer):
     """
     Serializer for the Assignment model.
     """
+    course_id = serializers.IntegerField(write_only=True, required=False)
     class Meta:
         model = Assignment
-        fields = ['id', 'name', 'description', 'weight', 'is_mandatory']
+        fields = ['id', 'name', 'description', 'weight', 'is_mandatory', 'course_id']
 
     def create(self, validated_data):
-        course_id = validated_data.pop('course_id')
+        course_id = validated_data.pop('course_id', None)
+        if not course_id:
+            raise serializers.ValidationError({"course_id": "This field is required when creating an assignment directly."})
+
         course = Course.objects.get(id=course_id)
         return Assignment.objects.create(course=course, **validated_data)
     

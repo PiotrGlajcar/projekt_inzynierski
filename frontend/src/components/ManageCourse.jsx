@@ -15,6 +15,8 @@ function ManageCourse() {
     const editFormRef = useRef(null);
     const [newElement, setNewElement] = useState("");
     const [editingEnrollmentId, setEditingEnrollmentId] = useState(null);
+    const [newElementDescription, setNewElementDescription] = useState("");
+    const [newElementWeight, setNewElementWeight] = useState("");
 
 
     useEffect(() => {
@@ -100,19 +102,21 @@ function ManageCourse() {
         setEditingScores([...studentGrades]);
 
         // Fetch enrollment_id dynamically
-        try {
-            const response = await fetch(
-                `http://localhost:8000/enrollments/detail/?student_id=${studentId}&course_id=${courseId}`
-            );
+        if (!editingEnrollmentId) {
+            try {
+                const response = await fetch(
+                    `http://localhost:8000/enrollments/detail/?student_id=${studentId}&course_id=${courseId}`
+                );
 
-            if (response.ok) {
-                const result = await response.json();
-                setEditingEnrollmentId(result.data?.id);
-            } else {
-                console.error("Failed to fetch enrollment ID.");
+                if (response.ok) {
+                    const result = await response.json();
+                    setEditingEnrollmentId(result.data?.id);
+                } else {
+                    console.error("Failed to fetch enrollment ID.");
+                }
+            } catch (error) {
+                console.error("Error fetching enrollment ID:", error);
             }
-        } catch (error) {
-            console.error("Error fetching enrollment ID:", error);
         }
 
         if (editFormRef.current) {
@@ -125,9 +129,9 @@ function ManageCourse() {
     
         if (selectedElement === "other") {
             const newScore = {
-                id: null,
+                grade_id: null,
                 assignment_id: null,
-                assignment_name: "Inne",
+                assignment_name: newElement,
                 score: parseFloat(newGrade),
                 weight: 0,
             };
@@ -144,26 +148,24 @@ function ManageCourse() {
             return;
         }
     
-        const newScore = {
-            id: null,
-            assignment_id: assignment.id,
-            assignment_name: assignment.name,
-            score: parseFloat(newGrade),
-            weight: assignment.weight,
-        };
-    
         const existingIndex = editingScores.findIndex(
-            (score) => score.assignment_id === newScore.assignment_id
+            (score) => score.assignment_id === assignment.id
         );
-    
+
         if (existingIndex !== -1) {
             const updatedScores = [...editingScores];
             updatedScores[existingIndex] = {
                 ...updatedScores[existingIndex],
-                score: newScore.score,
+                score: parseFloat(newGrade), //  newScore.score,
             };
             setEditingScores(updatedScores);
         } else {
+            const newScore = {
+                grade_id: null,
+                assignment_id: assignment.id,
+                assignment_name: assignment.name,
+                score: parseFloat(newGrade)
+            };
             setEditingScores([...editingScores, newScore]);
         }
     
@@ -173,10 +175,9 @@ function ManageCourse() {
     const handleSaveScores = async () => {
         try {
             for (const score of editingScores) {
-                console.log("Updating grade with ID:", score.grade_id, "Score:", score.score);
 
                 if (score.grade_id) {
-                    // Update existing grade
+
                     const response = await fetch(`http://localhost:8000/grades/${score.grade_id}/`, {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
@@ -187,16 +188,54 @@ function ManageCourse() {
                         throw new Error(`Failed to update grade with ID: ${score.grade_id}`);
                     }
                 } else {
-                    // Add new grade
-                    if (!editingEnrollmentId) {
-                        throw new Error("Enrollment ID is missing.");
+
+                    let assignmentId = score.assignment_id;
+
+                    if (!assignmentId) {
+
+                        const assignmentResponse = await fetch(`http://localhost:8000/assignments/`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                name: score.assignment_name,
+                                course_id: courseId,
+                                description: newElementDescription,
+                                weight: newElementWeight,
+                                is_mandatory: false,
+                            }),
+                        });
+
+                        if (!assignmentResponse.ok) {
+                            throw new Error("Failed to create new assignment.");
+                        }
+
+                        const newAssignment = await assignmentResponse.json();
+                        assignmentId = newAssignment.data.id;
+                        setSelectedCourse((prevCourse) => ({
+                            ...prevCourse,
+                            assignments: [...prevCourse.assignments, newAssignment.data],
+                            students: prevCourse.students.map((student) => {
+                                if (student.id === editingStudent) {
+                                    return {
+                                        ...student,
+                                        grades: [...student.grades, {
+                                            assignment_id: newAssignment.data.id,
+                                            assignment_name: newAssignment.data.name,
+                                            score: score.score,
+                                        }]
+                                    };
+                                }
+                                return student;
+                            }),
+                        }));
                     }
+                    // Add new grade
                     const response = await fetch(`http://localhost:8000/grades/`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
                             enrollment_id: editingEnrollmentId,
-                            assignment_id: score.assignment_id,
+                            assignment_id: assignmentId,
                             score: score.score,
                         }),
                     });
@@ -206,7 +245,7 @@ function ManageCourse() {
                     }
     
                     const newGrade = await response.json();
-                    score.id = newGrade.data.id;
+                    score.grade_id = newGrade.data.id;
                 }
             }
     
@@ -224,54 +263,19 @@ function ManageCourse() {
     
                 return { ...prevCourse, students: updatedStudents };
             });
-    
-            // Reset editing state and notify the user
-            setEditingStudent(null);
+            
             setEditingScores([]);
             setEditingEnrollmentId(null);
+            setNewElementDescription(null);
+            setNewElementWeight(null);
             setNotification("Oceny zostały zaktualizowane.");
             setTimeout(() => setNotification(""), 3000);
+            setEditingStudent(null);
         } catch (error) {
             console.error("Błąd podczas zapisywania ocen:", error);
             alert("Nie udało się zapisać zmian w ocenach.");
         }
     };
-
-    // const handleAddParticipant = async () => {
-    //     if (!newParticipant.name.trim()) {
-    //         alert("Podaj nazwę uczestnika.");
-    //         return;
-    //     }
-
-    //     try {
-    //         const updatedCourse = { ...selectedCourse };
-
-    //         // Dodanie uczestnika z ID do participants
-    //         updatedCourse.participants.push({ ...newParticipant, id: generateUniqueId() });
-
-    //         const response = await fetch(`http://localhost:5000/courses/${encodeURIComponent(courseName)}`, {
-    //             method: "PUT",
-    //             headers: { "Content-Type": "application/json" },
-    //             body: JSON.stringify(updatedCourse),
-    //         });
-
-    //         if (response.ok) {
-    //             updatedCourse.participants.sort((a, b) => {
-    //                 const lastNameA = a.name.split(" ").slice(-1)[0].toLowerCase();
-    //                 const lastNameB = b.name.split(" ").slice(-1)[0].toLowerCase();
-    //                 return lastNameA.localeCompare(lastNameB);
-    //             });
-    //             setSelectedCourse(updatedCourse);
-    //             setNewParticipant({ name: "", group: 1 });
-    //             setNotification("Uczestnik został dodany.");
-    //             setTimeout(() => setNotification(""), 3000);
-    //         } else {
-    //             alert("Nie udało się dodać uczestnika.");
-    //         }
-    //     } catch (error) {
-    //         console.error("Błąd podczas dodawania uczestnika:", error);
-    //     }
-    // };
 
     return (
         <div className="manage-course">
@@ -387,8 +391,7 @@ function ManageCourse() {
                             <ul>
                                 {editingScores.map((score, index) => (
                                     <li key={index}>
-                                        {score.assignment_name}: {score.score} (Waga:{" "}
-                                        {score.weight}%)
+                                        {score.assignment_name}: {score.score}
                                     </li>
                                 ))}
                             </ul>
@@ -398,29 +401,71 @@ function ManageCourse() {
                                     setSelectedElement(value);
                                     if (value === "other") {
                                         setNewElement("");
+                                    }else {
+                                        const selectedAssignment = selectedCourse.assignments.find((a) => a.id === parseInt(value));
+                                        if (selectedAssignment) {
+                                            setNewElement(selectedAssignment.name);
+                                            setNewElementDescription(selectedAssignment.description || "");
+                                            setNewElementWeight(selectedAssignment.weight || 0);
+                                        }
                                     }
                                 }}
                                 value={selectedElement}
                             >
                                 <option value="">Wybierz element</option>
-                                {selectedCourse.assignments.map((assignment, index) => (
-                                    <option key={index} value={assignment.id}>
-                                        {assignment.name} (Waga: {assignment.weight}%)
-                                    </option>
-                                ))}
+                                    {selectedCourse.assignments.map((assignment, index) => {
+                                        // Find the current grade for this assignment (if it exists)
+                                        const currentGrade = editingScores.find((score) => score.assignment_id === assignment.id)?.score || "Brak oceny";
+
+                                        return (
+                                            <option key={index} value={assignment.id}>
+                                                {assignment.name} - Ocena: {currentGrade} - (Waga: {assignment.weight}%)
+                                            </option>
+                                        );
+                                    })}
+
                                 <option value="other">Inne</option>
                             </select>
+
+                            {/* Add OTHER assignment */}
                             {selectedElement === "other" && (
-                                <input
-                                    type="text"
-                                    placeholder="Podaj nowy element"
-                                    value={newElement}
-                                    onChange={(e) => setNewElement(e.target.value)}
-                                />
+                                <div>
+                                    {/* Assignment Name Input */}
+                                    <input
+                                        type="text"
+                                        placeholder="Podaj nazwę nowego zadania"
+                                        value={newElement}
+                                        onChange={(e) => setNewElement(e.target.value)}
+                                    />
+                            
+                                    {/* Assignment Description Input */}
+                                    <input
+                                        type="text"
+                                        placeholder="Podaj opis (opcjonalnie)"
+                                        value={newElementDescription}
+                                        onChange={(e) => setNewElementDescription(e.target.value)}
+                                    />
+                            
+                                    {/* Assignment Weight Input */}
+                                    <input
+                                        type="number"
+                                        placeholder="Podaj wagę (%)"
+                                        min="0"
+                                        max="100"
+                                        step="1"
+                                        value={newElementWeight}
+                                        onChange={(e) => setNewElementWeight(e.target.value)}
+                                    />
+                                </div>
                             )}
+
+                            {/* Grade Input */}
                             <input
                                 type="number"
                                 placeholder="Podaj ocenę"
+                                min="0"
+                                max="100"
+                                step="1"
                                 value={newGrade}
                                 onChange={(e) => setNewGrade(e.target.value)}
                             />
