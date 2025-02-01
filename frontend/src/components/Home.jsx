@@ -20,7 +20,7 @@ function Home() {
     return (
         <div className="centruj">
             <div className="container">
-                <h2>Witamy na stronie głównej {user ? user.first_name : ""}</h2>
+                <h2>Witamy na stronie głównej {user ? user.first_name : "Nieznany"}</h2>
                 <p>Wybierz co chesz zrobić:</p>
                 <div className="buttons">
                     <button className="button" onClick={goToCreateCourse}>Utwórz nowy kurs</button>

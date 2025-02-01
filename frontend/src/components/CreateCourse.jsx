@@ -55,8 +55,7 @@ function CreateCourse() {
                     setCourseDescription("");
                     setRequiredElements([]);
                     setParticipants([]);
-                    setUser("");
-                    navigate(`/manage-course/${encodeURIComponent(courseName)}`);
+                    navigate(`/manage-course/create-course/`);
                 } else {
                     alert("Nie udało się utworzyć kursu.");
                 }
@@ -132,8 +131,8 @@ function CreateCourse() {
                         </li>
                     ))}
                 </ul>
-                <p>Prowadzący kurs: {user.first_name} {user.last_name}</p>
-                <p>Zapisuje id w bazie: {user.id}</p>
+                <p>Prowadzący kurs: {user ? user.first_name : "Nieznany"} {user ? user.last_name : ""}</p>
+                <p>Zapisuje id w bazie: {user ? user.id : "Nieznany"}</p>
             </div>
 
             <button onClick={handleCreateCourse}>Utwórz kurs</button>

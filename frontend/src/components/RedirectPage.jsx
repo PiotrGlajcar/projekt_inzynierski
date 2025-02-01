@@ -4,12 +4,12 @@ import { useUser } from "../context/useUser";
 
 function RedirectPage() {
     const navigate = useNavigate();
-    const { user, loading, setUser } = useUser();
+    const { user, loading } = useUser();
 
     useEffect(() => {
         const ensureUserData = async () => {
             if (loading) {
-                return; // Wait until loading is complete
+                return;
             }
 
             if (!user) {
@@ -31,7 +31,7 @@ function RedirectPage() {
         };
 
         ensureUserData();
-    }, [user, loading, navigate, setUser]);
+    }, [user, loading, navigate ]);
 
     return (
         <div>
