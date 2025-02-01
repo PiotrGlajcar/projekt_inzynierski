@@ -1,29 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
 function MyCourseDetails() {
     const { courseId } = useParams();
     const navigate = useNavigate();
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [enrollmentId, setEnrollmentId] = useState(null);
-    const [grades, setGrades] = useState([]);
-    const [user, setUser] = useState(null);
-    
-
-    // Pobieranie danych użytkownika
-    useEffect(() => {
-        fetch("http://localhost:8000/users/me", {
-            credentials: "include",
-        })
-            .then((response) => response.json())
-            .then((user_data) => {
-                if (user_data.status === "success") {
-                    setUser(user_data.data);
-                } else {
-                    console.log("Failed to fetch user data");
-                }
-            });
-    }, []);
+    const [grades, setGrades] = useState([]);    
+    const { user } = useContext(UserContext);
 
     // Pobieranie danych kursu
     useEffect(() => {

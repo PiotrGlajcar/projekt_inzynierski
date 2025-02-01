@@ -1,27 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
 function Home() {
+
     const navigate = useNavigate();
+    const { user } = useContext(UserContext);
 
-    const [data, setUser] = useState(true);
     // const [error, setError] = useState(null); 
-
-    useEffect(() => {
-        fetch('http://localhost:8000/users/me', {
-            credentials: 'include'  // Important for session cookies
-        })
-        .then(response => response.json())
-        .then(user_data => {
-            if (user_data.status === 'success') {
-                console.log("User role:", user_data.data.role);
-                setUser(user_data.data);  // Save user data
-            } else {
-                console.log("Failed to fetch user data");
-            }
-        });
-    }, []);
-    
 
     const goToCreateCourse = () => {
         navigate("/create-course");
@@ -33,7 +20,7 @@ function Home() {
     return (
         <div className="centruj">
             <div className="container">
-                <h2>Witamy na stronie głównej {data.first_name}</h2>
+                <h2>Witamy na stronie głównej {user ? user.first_name : ""}</h2>
                 <p>Wybierz co chesz zrobić:</p>
                 <div className="buttons">
                     <button className="button" onClick={goToCreateCourse}>Utwórz nowy kurs</button>

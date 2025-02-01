@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
 function CreateCourse() {
     const [courseName, setCourseName] = useState("");
@@ -11,24 +13,8 @@ function CreateCourse() {
     const [elementDescription, setElementDescription] = useState("");
     const [elementWeight, setElementWeight] = useState("");
     const navigate = useNavigate();
-  
-    const [data, setUser] = useState(true);
+    const { user } = useContext(UserContext);
     // const [error, setError] = useState(null); 
-
-    useEffect(() => {
-        fetch('http://localhost:8000/users/me', {
-            credentials: 'include'  // Important for session cookies
-        })
-        .then(response => response.json())
-        .then(user_data => {
-            if (user_data.status === 'success') {
-                console.log("User role:", user_data.data.role);
-                setUser(user_data.data);  // Save user data
-            } else {
-                console.log("Failed to fetch user data");
-            }
-        });
-    }, []);
 
     const handleAddRequiredElement = () => {
         if (elementName && elementWeight > 0) {
@@ -54,7 +40,7 @@ function CreateCourse() {
                 name: courseName,
                 description: courseDescription,
                 writable_assignments: requiredElements,
-                teacher: data.id,
+                teacher: user.id,
             };
 
             try {
@@ -146,8 +132,8 @@ function CreateCourse() {
                         </li>
                     ))}
                 </ul>
-                <p>Prowadzący kurs: {data.first_name} {data.last_name}</p>
-                <p>Zapisuje id w bazie: {data.id}</p>
+                <p>Prowadzący kurs: {user.first_name} {user.last_name}</p>
+                <p>Zapisuje id w bazie: {user.id}</p>
             </div>
 
             <button onClick={handleCreateCourse}>Utwórz kurs</button>

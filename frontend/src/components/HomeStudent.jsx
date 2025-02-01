@@ -1,25 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
 function HomeStudent() {
     
-    const [user, setUser] = useState(null);
     const navigate = useNavigate();
-
-    useEffect(() => {
-            fetch('http://localhost:8000/users/me', {
-                credentials: 'include'  // Important for session cookies
-            })
-            .then(response => response.json())
-            .then(user_data => {
-                if (user_data.status === 'success') {
-                    console.log("User role:", user_data.data.role);
-                    setUser(user_data.data);  // Save user data
-                } else {
-                    console.log("Failed to fetch user data");
-                }
-            });
-        }, []);
+    const { user } = useContext(UserContext);
 
     const goToRegister = () => {
         navigate("/course-register");

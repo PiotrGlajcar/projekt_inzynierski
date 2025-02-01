@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
 function CourseRegister() {
     const { courseName } = useParams();
@@ -8,7 +10,7 @@ function CourseRegister() {
     const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [notification, setNotification] = useState("");
-    const [user, setUser] = useState(null);
+    const { user } = useContext(UserContext);
 
     useEffect(() => {
         fetch("http://localhost:8000/courses/")
@@ -22,26 +24,6 @@ function CourseRegister() {
             })
             .catch((error) => console.error("Error fetching courses:", error));
     }, []);
-
-    useEffect(() => {
-        fetch("http://localhost:8000/users/me", { credentials: "include" })
-            .then((response) => response.json())
-            .then((user_data) => {
-                if (user_data.status === "success") {
-                    setUser(user_data.data);
-                } else {
-                    console.error("Failed to fetch user data");
-                }
-            })
-            .catch((error) => console.error("Error fetching user:", error));
-    }, []);
-
-    // useEffect(() => {
-    //     if (courseName && courses.length > 0) {
-    //         const course = courses.find((c) => c.name === courseName);
-    //         setSelectedCourse(course || null);
-    //     }
-    // }, [courseName, courses]);
 
     const handleRegister = async (courseId) => {
         if (!user) {

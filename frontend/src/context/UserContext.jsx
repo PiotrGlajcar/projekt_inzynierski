@@ -21,10 +21,6 @@ export const UserProvider = ({ children }) => {
                 }
             } catch (error) {
                 console.error("Error fetching user:", error);
-                // if (error.response && error.response.status === 500) {
-                //     console.warn("Server returned 500 - Assuming user is logged out.");
-                //     setUser(null);
-                // }
                 setUser(null);
             }
             finally {

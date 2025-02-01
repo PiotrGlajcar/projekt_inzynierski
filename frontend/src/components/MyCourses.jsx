@@ -1,30 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
 function MyCourses() {
     const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
-    
     const [myCourses, setMyCourses] = useState([]);
     const [enrollments, setEnrollments] = useState([]);
-    const [user, setUser] = useState(null);
+    const { user } = useContext(UserContext);
 
     useEffect(() => {
-        fetch("http://localhost:8000/users/me", { credentials: "include" })
-            .then((response) => response.json())
-            .then((user_data) => {
-                if (user_data.status === "success") {
-                    setUser(user_data.data);
-                } else {
-                    console.error("Failed to fetch user data");
-                }
-            })
-            .catch((error) => console.error("Error fetching user:", error));
-    }, []);
-
-    useEffect(() => {
-        console.log("User data:", user);
         if (user ) {
             fetch("http://localhost:8000/enrollments")
                 .then((response) => response.json())
