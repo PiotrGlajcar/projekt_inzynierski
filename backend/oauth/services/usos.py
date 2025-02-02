@@ -1,9 +1,11 @@
 from requests_oauthlib import OAuth1Session
 
+
 class UsosAPI:
     """
     A helper class to interact with the USOS API.
     """
+
     def __init__(self, consumer_key, consumer_secret, callback_url, base_url):
         """
         Initialize the UsosAPI with necessary credentials and base URL.
@@ -19,7 +21,9 @@ class UsosAPI:
         self.callback_url = callback_url
         self.base_url = base_url
 
-    def get_oauth_session(self, resource_owner_key=None, resource_owner_secret=None, verifier=None):
+    def get_oauth_session(
+        self, resource_owner_key=None, resource_owner_secret=None, verifier=None
+    ):
         """
         Create and return an OAuth1Session for making requests.
 
@@ -37,7 +41,7 @@ class UsosAPI:
             resource_owner_key=resource_owner_key,
             resource_owner_secret=resource_owner_secret,
             callback_uri=self.callback_url,
-            verifier=verifier
+            verifier=verifier,
         )
 
     def fetch_request_token(self, scopes=None):
@@ -88,9 +92,11 @@ class UsosAPI:
         session = self.get_oauth_session(
             resource_owner_key=oauth_token,
             resource_owner_secret=oauth_token_secret,
-            verifier=verifier
+            verifier=verifier,
         )
-        response = session.fetch_access_token(f"{self.base_url}/services/oauth/access_token")
+        response = session.fetch_access_token(
+            f"{self.base_url}/services/oauth/access_token"
+        )
         return response
 
     def get_usos_user_data(self, access_token, access_token_secret, fields=None):
@@ -106,10 +112,9 @@ class UsosAPI:
             dict: The user's information.
         """
         session = self.get_oauth_session(
-            resource_owner_key=access_token,
-            resource_owner_secret=access_token_secret
+            resource_owner_key=access_token, resource_owner_secret=access_token_secret
         )
-        params = {'fields': fields} if fields else {}
+        params = {"fields": fields} if fields else {}
         response = session.get(f"{self.base_url}/services/users/user", params=params)
         response.raise_for_status()
         return response.json()

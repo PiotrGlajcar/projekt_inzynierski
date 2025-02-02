@@ -1,5 +1,7 @@
-from grades.models import Student, Teacher, User
 from django.conf import settings
+
+from grades.models import Student, Teacher, User
+
 
 def process_usos_user(user_info):
     """
@@ -46,8 +48,7 @@ def process_usos_user(user_info):
     if user.role == "student":
         Student.objects.get_or_create(
             user=user,
-            defaults={
-                "student_number": student_number},
+            defaults={"student_number": student_number},
         )
 
     # Handle Staff role

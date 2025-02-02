@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
+
 class UserManager(BaseUserManager):
     """
     Custom manager for User model where email is the unique identifier.
@@ -26,10 +27,12 @@ class UserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
 
+
 class User(AbstractUser):
     """
     Custom User model that uses email instead of username.
     """
+
     username = None  # Remove the username field
     email = models.EmailField(unique=True, db_index=True)
 
@@ -42,7 +45,7 @@ class User(AbstractUser):
         (ROLE_TEACHER, "Teacher"),
         (ROLE_UNKNOWN, "Unknown"),
     ]
-    
+
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
 
     USERNAME_FIELD = "email"  # Use email to log in
@@ -52,6 +55,7 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
 
 class Student(models.Model):
     """
@@ -68,6 +72,7 @@ class Student(models.Model):
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name} - {self.student_number}"
 
+
 class Teacher(models.Model):
     """
     Represents a teacher in the system.
@@ -81,49 +86,67 @@ class Teacher(models.Model):
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
 
+
 class Course(models.Model):
     """
     Represents a course in the system.
     """
+
     name = models.CharField(max_length=100, db_index=True)
-    description = models.TextField(default="No description provided.") 
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name="courses")
+    description = models.TextField(default="No description provided.")
+    teacher = models.ForeignKey(
+        Teacher, on_delete=models.CASCADE, related_name="courses"
+    )
 
     def __str__(self):
         return f"{self.name}"
 
+
 class Assignment(models.Model):
     name = models.CharField(max_length=100, db_index=True)
     description = models.TextField(blank=True, null=True)
-    weight = models.CharField(max_length=5, default="100") 
+    weight = models.CharField(max_length=5, default="100")
     is_mandatory = models.BooleanField(default=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="assignments")
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, related_name="assignments"
+    )
 
     def __str__(self):
-        return f"{self.name}"        
-    
+        return f"{self.name}"
+
+
 class Enrollment(models.Model):
     """
     Represents a student's enrollment in a course.
     """
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="enrollments")
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="enrollments")
+
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, related_name="enrollments"
+    )
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, related_name="enrollments"
+    )
 
     class Meta:
         unique_together = ("student", "course")  # Prevent duplicate enrollments
 
     def __str__(self):
-        return f"{self.student} - {self.course}" # f"{self.student.user.first_name} {self.student.user.last_name} - {self.course.name}"
-    
+        return f"{self.student} - {self.course}"  # f"{self.student.user.first_name} {self.student.user.last_name} - {self.course.name}"
+
+
 class Grade(models.Model):
     """
     Represents a grade assigned to a student for a specific course.
     """
-    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE, related_name="grades")
-    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, related_name="grades")
+
+    enrollment = models.ForeignKey(
+        Enrollment, on_delete=models.CASCADE, related_name="grades"
+    )
+    assignment = models.ForeignKey(
+        Assignment, on_delete=models.CASCADE, related_name="grades"
+    )
     score = models.DecimalField(max_digits=5, decimal_places=2)
     date_assigned = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.enrollment.student.user.first_name} - {self.assignment.name}: {self.score}"
-
