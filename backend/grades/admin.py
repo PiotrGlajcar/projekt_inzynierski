@@ -43,8 +43,9 @@ class UserAdmin(BaseUserAdmin):
         ),
     )
 
-    search_fields = ("email",)
+    search_fields = ("email", "first_name", "last_name")
     ordering = ("email",)
+    filter_horizontal = ()
 
 
 @admin.register(Teacher)
