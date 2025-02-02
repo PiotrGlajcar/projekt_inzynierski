@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import backend from "../api";
+import { getCSRFToken } from "../api";
 
 function ManageCourse() {
     const { courseId } = useParams();
@@ -24,9 +25,7 @@ function ManageCourse() {
     useEffect(() => {
         const fetchCourse = async () => {
             try {
-                const response = await backend.get(`/courses/${courseId}`, {
-                    params: { include: ["assignments", "students"] },
-                });
+                const response = await backend.get(`/courses/${courseId}/?include=assignments&include=students`);
     
                 setSelectedCourse(response.data.data);
             } catch (error) {
@@ -47,9 +46,15 @@ function ManageCourse() {
         }
     
         try {
-            const response = await backend.put(`/courses/${courseId}/`, {
-                description: updatedDescription,
-            });
+            const response = await backend.put(`/courses/${courseId}/`,
+                {
+                    description: updatedDescription,
+                },{
+                    headers: {
+                        "X-CSRFToken": getCSRFToken(),
+                    },
+                }
+            );
     
             setSelectedCourse((prev) => ({
                 ...prev,
@@ -69,6 +74,9 @@ function ManageCourse() {
         try {
             await backend.delete(`/enrollments/detail/`, {
                 params: { student_id: studentId, course_id: courseId },
+                headers: {
+                    "X-CSRFToken": getCSRFToken()
+                }
             });
     
             setSelectedCourse((prev) => ({
@@ -159,10 +167,14 @@ function ManageCourse() {
             for (const score of editingScores) {
                 if (score.grade_id) {
 
-                    // Update existing grade
-                    await backend.put(`/grades/${score.grade_id}/`, {
-                        score: score.score,
-                    });
+                    await backend.put(`/grades/${score.grade_id}/`,
+                        { score: score.score },
+                        {
+                            headers: {
+                                "X-CSRFToken": getCSRFToken(),
+                            },
+                        }
+                    );
                 } else {
                     let assignmentId = score.assignment_id;
     
@@ -175,6 +187,11 @@ function ManageCourse() {
                             description: newElementDescription,
                             weight: newElementWeight,
                             is_mandatory: false,
+                        },
+                        {
+                            headers: {
+                                "X-CSRFToken": getCSRFToken(),
+                            },
                         });
     
                         assignmentId = newAssignment.data.id;
@@ -206,6 +223,10 @@ function ManageCourse() {
                         enrollment_id: editingEnrollmentId,
                         assignment_id: assignmentId,
                         score: score.score,
+                    },{
+                        headers: {
+                            "X-CSRFToken": getCSRFToken(),
+                        },
                     });
     
                     score.grade_id = newGrade.data.id;
