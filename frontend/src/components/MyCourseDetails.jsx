@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import backend from "../api";
 
@@ -12,15 +11,16 @@ function MyCourseDetails() {
     const [grades, setGrades] = useState([]);    
     const { user } = useContext(UserContext);
 
+    // Fetch course details along with assignments and students
     useEffect(() => {
         if (!courseId) return;
     
         const fetchCourse = async () => {
             try {
-                const { data } = await backend.get(`/courses/${courseId}`);
-    
-                if (data.status === "success") {
-                    setSelectedCourse(data.data);
+                const response = await backend.get(`/courses/${courseId}/?include=assignments&include=students`);
+                
+                if (response.data.status === "success") {
+                    setSelectedCourse(response.data.data);
                 } else {
                     console.error("Failed to fetch course details.");
                 }
@@ -30,8 +30,9 @@ function MyCourseDetails() {
         };
     
         fetchCourse();
-    }, [courseId]);    
+    }, [courseId]);
 
+    // Fetch enrollment
     useEffect(() => {
         if (!user || !courseId) return;
     
@@ -56,6 +57,7 @@ function MyCourseDetails() {
         fetchEnrollments();
     }, [user, courseId]);    
 
+    // Fetch grades
     useEffect(() => {
         if (!enrollmentId) return;
     
@@ -64,7 +66,6 @@ function MyCourseDetails() {
                 const { data } = await backend.get("/grades");
     
                 if (data.status === "success") {
-                    // Filter grades based on enrollment_id
                     const studentGrades = data.data.filter((grade) => grade.enrollment_id === enrollmentId);
                     setGrades(studentGrades);
                 }
@@ -82,26 +83,34 @@ function MyCourseDetails() {
 
     return (
         <div className="centruj">
-                <div className="course-details">
-                    <h2>Szczegóły kursu: {selectedCourse.name}</h2>
-                    <h3>Opis kursu:</h3>
-                    <p>{selectedCourse.description || "Brak opisu."}</p>
-                    <h3>Twoje oceny:</h3>
-                    <ul>
-                        {grades.length > 0 ? (
-                            grades.map((grade) => (
-                                <li key={grade.id}>
-                                    <strong>{grade.assignment_name}:</strong> {grade.score}
-                                    <p>(Dodano: {grade.date_assigned})</p>
-                                </li>
-                            ))
-                        ) : (
-                            <p>Na razie nie posiadasz ocen z tego kursu.</p>
-                        )}
-                    </ul>
+            <div className="course-details">
+                <h2>Szczegóły kursu: {selectedCourse.name}</h2>
+                <h3>Opis kursu:</h3>
+                <p>{selectedCourse.description || "Brak opisu."}</p>
 
-                    <button onClick={() => navigate("/my-courses")}>Powrót</button>
-                </div>
+                <h3>Twoje oceny:</h3>
+                <ul>
+                    {selectedCourse.assignments && selectedCourse.assignments.length > 0 ? (
+                        selectedCourse.assignments.map((assignment) => {
+                            const grade = grades.find(g => g.assignment_id === assignment.id);
+                            return (
+                                <li key={assignment.id}>
+                                    <strong>{assignment.name}:</strong>{" "}
+                                    {grade ? (
+                                        `${grade.score} (Waga: ${assignment.weight}%)`
+                                    ) : (
+                                        <span style={{ color: "red" }}>Brak oceny</span>
+                                    )}
+                                </li>
+                            );
+                        })
+                    ) : (
+                        <p>Brak wymagań do zaliczenia kursu.</p>
+                    )}
+                </ul>
+
+                <button onClick={() => navigate("/my-courses")}>Wróć do moich kursów</button>
+            </div>
         </div>
     );
 }

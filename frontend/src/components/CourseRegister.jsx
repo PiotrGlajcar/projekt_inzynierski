@@ -116,12 +116,12 @@ function CourseRegister() {
                             return (
                                 <div key={course.id} className="course-tile">
                                     <h3>{course.name}</h3>
-                                    <p>{course.description || "No description available."}</p>
+                                    {/*<p>{course.description || "No description available."}</p>*/}
 
                                     {isEnrolled ? (
                                         <p className="registered-text">✔️ Zarejestrowano</p>
                                     ) : (
-                                        <button onClick={() => handleRegister(course.id)}>Register</button>
+                                        <button onClick={() => handleRegister(course.id)}>Zarejestruj się</button>
                                     )}
                                 </div>
                             );
