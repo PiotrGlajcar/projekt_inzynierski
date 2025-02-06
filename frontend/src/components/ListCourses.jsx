@@ -17,9 +17,9 @@ const ListCourses = () => {
                 const response = await backend.get("/courses/");
 
                 const allCourses = Array.isArray(response.data.data) ? response.data.data : [];
-                const teacherCourses = allCourses.filter(course => course.teacher_id === user?.teacher_id);
+                const teacherCourses = allCourses.filter(course => course.user_id === user?.id);
                 // TEACHER COURSES ODPOWIEDNIO POFILTROWAĆ
-                setCourses(teacherCourses);
+                setCourses(allCourses);
             } catch (error) {
                 console.error("Error fetching courses:", error);
             }

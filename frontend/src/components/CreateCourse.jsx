@@ -10,13 +10,11 @@ function CreateCourse() {
     const [courseName, setCourseName] = useState("");
     const [courseDescription, setCourseDescription] = useState("");
     const [requiredElements, setRequiredElements] = useState([]);
-    const [participants, setParticipants] = useState([]);
     const [elementName, setElementName] = useState("");
     const [elementDescription, setElementDescription] = useState("");
-    const [elementWeight, setElementWeight] = useState("");
+    const [elementWeight, setElementWeight] = useState(1);
     const navigate = useNavigate();
     const { user } = useContext(UserContext);
-    // const [error, setError] = useState(null); 
 
     const handleAddRequiredElement = () => {
         if (elementName && elementWeight > 0) {
@@ -57,7 +55,6 @@ function CreateCourse() {
                     setCourseName("");
                     setCourseDescription("");
                     setRequiredElements([]);
-                    setParticipants([]);
                     navigate(`/manage-course/`);
                 } else {
                     alert("Nie udało się utworzyć kursu.");
@@ -118,7 +115,7 @@ function CreateCourse() {
                     />
                 </label>
                 <label>
-                    Waga (%):
+                    Waga oceny:
                     <input
                         type="number"
                         value={elementWeight}
@@ -130,12 +127,12 @@ function CreateCourse() {
                 <ul>
                     {requiredElements.map((el, index) => (
                         <li key={index}>
-                            {el.name} - {el.description} (Waga: {el.weight}%)
+                            {el.name} (w = {el.weight})
                         </li>
                     ))}
                 </ul>
                 <p>Prowadzący kurs: {user ? user.first_name : "Nieznany"} {user ? user.last_name : ""}</p>
-                <p>Zapisuje id w bazie: {user ? user.id : "Nieznany"}</p>
+                <p>Zapisuje id użytkownika: {user ? user.id : "Nieznany"}</p>
             </div>
 
             <button onClick={handleCreateCourse}>Utwórz kurs</button>

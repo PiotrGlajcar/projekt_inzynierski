@@ -5,8 +5,7 @@ function About() {
         <div className="centruj">
             <div className="container">
                 <h2>O nas, o projekcie</h2>
-                <p>Jesteśmy studentami Politechniki Śląskiej z Wydziału Matematyki Stosowanej, kierunku Informatyka. Niniejsza aplikacja to realizacja pracy inżynierskiej będąca narzędziem  służącym do informo-
-                wania, zarządzania oraz przekazywania ocen w środowisku edukacyjnym. Oprogramowanie
+                <p>Jesteśmy studentami Politechniki Śląskiej z Wydziału Matematyki Stosowanej, kierunku Informatyka. Niniejsza aplikacja to realizacja pracy inżynierskiej będąca narzędziem  służącym do informowania, zarządzania oraz przekazywania ocen w środowisku edukacyjnym. Oprogramowanie
 umożliwia edukatorom zarządzanie kursami, wprowadzanie kluczowych elementów,
 takich jak etapy, efekty, punkty i sprawdziany, a kursantom śledzenie ich postępów
 i wyników, co zapewnia przejrzystość procesu nauczania. Prowadzący powinien

@@ -13,7 +13,7 @@ function Header(){
 
     return(
         <header>
-            <h1>Unigradeflow</h1>
+            <h1>UniGradeFlow</h1>
             <nav>
                 <ul>
                     <li><Link to='/redirect'>Home</Link></li>

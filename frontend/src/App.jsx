@@ -49,7 +49,9 @@ function App() {
               <ProtectedRoute role="staff">
                 <CreateCourse />
               </ProtectedRoute> }/>
-            
+
+              <Route path="/create-course-test" element={ <CreateCourse />}/>
+
             {/* ścieżki do zabezpieczenia później */}
             <Route path="/manage-course/" element={
               
