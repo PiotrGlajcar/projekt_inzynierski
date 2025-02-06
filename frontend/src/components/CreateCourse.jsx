@@ -40,11 +40,11 @@ function CreateCourse() {
                 name: courseName,
                 description: courseDescription,
                 writable_assignments: requiredElements,
-                teacher: user.id,
+                teacher: user.teacher_id,
             };
 
             try {
-                const response = await backend.post("/courses/?include=assignments", newCourse, {
+                const response = await backend.post("/courses/", newCourse, {
                     headers: {
                         "X-CSRFToken": getCSRFToken()
                     }
@@ -132,7 +132,7 @@ function CreateCourse() {
                     ))}
                 </ul>
                 <p>Prowadzący kurs: {user ? user.first_name : "Nieznany"} {user ? user.last_name : ""}</p>
-                <p>Zapisuje id użytkownika: {user ? user.id : "Nieznany"}</p>
+                <p>Zapisuje id nauczyciela: {user ? user.teacher_id : "Nieznany"}</p>
             </div>
 
             <button onClick={handleCreateCourse}>Utwórz kurs</button>
