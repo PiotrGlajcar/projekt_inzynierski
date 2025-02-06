@@ -20,7 +20,7 @@ function RedirectPage() {
                     case "student":
                         navigate("/home-student");
                         break;
-                    case "staff":
+                    case "teacher":
                         navigate("/home-staff");
                         break;
                     default:

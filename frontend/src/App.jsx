@@ -31,7 +31,7 @@ function App() {
             <Route path="/home" element={<ToLogin />} />
             <Route path="/redirect" element={<RedirectPage />} />
             <Route path='/home-staff' element={
-              <ProtectedRoute role="staff">
+              <ProtectedRoute role="teacher">
                 <Home />
               </ProtectedRoute>}/>
             {/*   pomocnicza strona do pracy jako prowadzący*/}
@@ -46,7 +46,7 @@ function App() {
             <Route path='/about' element={<About />} />
             <Route path='/contact' element={<Contact />} />
             <Route path="/create-course" element={
-              <ProtectedRoute role="staff">
+              <ProtectedRoute role="teacher">
                 <CreateCourse />
               </ProtectedRoute> }/>
 

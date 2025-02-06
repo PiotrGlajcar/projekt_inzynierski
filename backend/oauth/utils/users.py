@@ -37,7 +37,7 @@ def process_usos_user(user_info):
     # Set role based on status ONLY if role is "unknown" or user is new
     if created or user.role == "unknown":
         if staff_status == 2:
-            user.role = "staff"
+            user.role = "teacher"
         elif student_status == 2:
             user.role = "student"
         else:
@@ -52,7 +52,7 @@ def process_usos_user(user_info):
         )
 
     # Handle Staff role
-    elif user.role == "staff":
+    elif user.role == "teacher":
         Teacher.objects.get_or_create(user=user)
 
     return user

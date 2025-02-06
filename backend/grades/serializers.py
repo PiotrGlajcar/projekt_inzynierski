@@ -7,12 +7,14 @@ from .models import (Assignment, Course, Enrollment, Grade, Student, Teacher,
 class UserSerializer(serializers.ModelSerializer):
     student_id = serializers.SerializerMethodField()
     student_number = serializers.SerializerMethodField()
+    teacher_id = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = [
             "id",
             "student_id",
+            "teacher_id",
             "first_name",
             "last_name",
             "email",
@@ -31,7 +33,27 @@ class UserSerializer(serializers.ModelSerializer):
         if obj.role == "student" and hasattr(obj, "student"):
             return obj.student.student_number
         return None
+    
+    def get_teacher_id(self, obj):
+        """Returns the teacher's ID if the user is a teacher."""
+        if obj.role == User.ROLE_TEACHER and hasattr(obj, "teacher"):
+            return obj.teacher.id
+        return None
 
+    def to_representation(self, instance):
+        """
+        Dynamically modify response based on user's role.
+        """
+        data = super().to_representation(instance)
+
+        if instance.role == User.ROLE_STUDENT:
+            data.pop("teacher_id", None)
+
+        if instance.role == User.ROLE_TEACHER:
+            data.pop("student_id", None)
+            data.pop("student_number", None)
+
+        return data
 
 class StudentSerializer(serializers.ModelSerializer):
     user = UserSerializer()
