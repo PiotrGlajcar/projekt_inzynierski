@@ -5,28 +5,24 @@ import backend from "../api";
 const ToLogin = () => {
     const navigate = useNavigate();
 
-    const handleLoginAsLecturer = () => {
-        navigate("/home-staff");
-        {/*window.location.href = "http://localhost:8000/oauth/start/";*/}
-    };
-
-    const handleLoginAsParticipant = async () => {
+    const handleLogin = async () => {
         window.location.href = "http://localhost:8000/oauth/start/";
     };
 
     return (
         <div className="centruj">
             <div className="container">
-                <h1>Wybierz sposób logowania</h1>
+                <h1>Zaloguj się aby kontynuować</h1>
                 <div className="buttons">
-                    <button onClick={handleLoginAsLecturer} className="button">
-                        Logowanie jako Prowadzący
+                    <button onClick={handleLogin} className="button">
+                        Logowanie
                     </button>
+                    {/*}
                     <button onClick={handleLoginAsParticipant} className="button">
                         Logowanie jako Uczestnik
-                    </button>
+                    </button>*/}
                 </div>
-                <p></p>
+                <p>Korzystanie z aplikacji wymaga konta w systemie USOS</p>
             </div>
         </div>
     );

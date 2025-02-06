@@ -5,10 +5,9 @@ function Contact() {
         <div className="centruj">
             <div className="container">
                 <h2>Skontaktuj się z nami!</h2>
-                <p>Jeśli masz wątpliwości skontaktuj się z nami poprzez email lub telefon:</p>
+                <p>Jeśli masz wątpliwości lub chciałbyś zaoferować współpracę, skontaktuj się z nami poprzez email:</p>
                 <ul>
-                    <li>Email: kontakcik@example.com</li>
-                    <li>Telefon: +123 456 789</li>
+                    <li>kz303281@student.polsl.pl</li>
                 </ul>
             </div>
         </div>

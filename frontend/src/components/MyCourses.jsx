@@ -7,8 +7,6 @@ import backend from "../api";
 
 function MyCourses() {
     const navigate = useNavigate();
-    const [courses, setCourses] = useState([]);
-    const [myCourses, setMyCourses] = useState([]);
     const [enrollments, setEnrollments] = useState([]);
     const { user } = useContext(UserContext);
 

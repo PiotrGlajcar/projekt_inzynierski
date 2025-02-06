@@ -21,7 +21,7 @@ function RedirectPage() {
                         navigate("/home-student");
                         break;
                     case "staff":
-                        navigate("/dashboard");
+                        navigate("/home-staff");
                         break;
                     default:
                         navigate("/unauthorized");

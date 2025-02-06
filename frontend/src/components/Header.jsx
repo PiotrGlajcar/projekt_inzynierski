@@ -13,10 +13,10 @@ function Header(){
 
     return(
         <header>
-            <h1>Strona</h1>
+            <h1>Unigradeflow</h1>
             <nav>
                 <ul>
-                    <li><Link to='/'>Home</Link></li>
+                    <li><Link to='/redirect'>Home</Link></li>
                     <li><Link to='/about'>O nas</Link></li>
                     <li><Link to='/contact'>Kontakt</Link></li>
                     <li><button onClick={handleLogout} className="logout-button">Wyloguj</button></li>

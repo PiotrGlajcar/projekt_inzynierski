@@ -30,7 +30,13 @@ function App() {
             <Route path="" element={<ToLogin />} />
             <Route path="/home" element={<ToLogin />} />
             <Route path="/redirect" element={<RedirectPage />} />
-            <Route path='/home-staff' element={<Home />} />
+            <Route path='/home-staff' element={
+              <ProtectedRoute role="staff">
+                <Home />
+              </ProtectedRoute>}/>
+            {/*   pomocnicza strona do pracy jako prowadzący*/}
+            <Route path='/home-staff-test' element={<Home />} />
+
             <Route path='/home-student' element={
               <ProtectedRoute role="student">
                 <HomeStudent />
@@ -39,12 +45,22 @@ function App() {
             <Route path='logged-out' element={<LoggedOut />} />
             <Route path='/about' element={<About />} />
             <Route path='/contact' element={<Contact />} />
-            <Route path="/create-course" element={<CreateCourse />} />
-              {/* // <ProtectedRoute role="staff">
-              //     <CreateCourse />
-              // </ProtectedRoute> */}
-            <Route path="/manage-course/" element={<ListCourses />} />
-            <Route path="/manage-course/:courseId" element={<ManageCourse />} />
+            <Route path="/create-course" element={
+              <ProtectedRoute role="staff">
+                <CreateCourse />
+              </ProtectedRoute> }/>
+            
+            {/* ścieżki do zabezpieczenia później */}
+            <Route path="/manage-course/" element={
+              
+              <ListCourses />
+              }/>
+
+            <Route path="/manage-course/:courseId" element={
+              
+              <ManageCourse />
+              } />
+
             <Route path="/course-register/" element={<CourseRegister />} />
             <Route path="/course-register/:courseName" element={<CourseRegister />} />
             <Route path="/my-courses" element={<MyCourses />} />

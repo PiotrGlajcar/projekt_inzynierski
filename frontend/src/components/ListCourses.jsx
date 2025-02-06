@@ -1,17 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import backend from "../api";
 import { getCSRFToken } from "../api";
+import { UserContext } from "../context/UserContext";
 
 const ListCourses = () => {
     const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
+    
+    const { user } = useContext(UserContext);
 
     useEffect(() => {
         const fetchCourses = async () => {
+            
             try {
                 const response = await backend.get("/courses/");
-                setCourses(Array.isArray(response.data.data) ? response.data.data : []);
+
+                const allCourses = Array.isArray(response.data.data) ? response.data.data : [];
+                const teacherCourses = allCourses.filter(course => course.teacher_id === user?.teacher_id);
+                // TEACHER COURSES ODPOWIEDNIO POFILTROWAĆ
+                setCourses(teacherCourses);
             } catch (error) {
                 console.error("Error fetching courses:", error);
             }
