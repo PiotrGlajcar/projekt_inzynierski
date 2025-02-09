@@ -44,7 +44,7 @@ function CreateCourse() {
             };
 
             try {
-                const response = await backend.post("/courses/", newCourse, {
+                const response = await backend.post("/courses/?include=assignments", newCourse, {
                     headers: {
                         "X-CSRFToken": getCSRFToken()
                     }

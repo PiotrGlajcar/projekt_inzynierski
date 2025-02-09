@@ -17,14 +17,25 @@ export const UserProvider = ({ children }) => {
                     setUser(response.data.data);
                 } else {
                     console.error("Failed to fetch user:", response.data.message);
-                    setUser(null);
+                    if (user !== null) setUser(null);
                 }
             } catch (error) {
-                console.error("Error fetching user:", error);
-                setUser(null);
+                if (error.response) {
+                    if (error.response.status === 401) {
+                        console.error("User is not logged in (401 Unauthorized).");
+                        if (user !== null) setUser(null);
+                    } else if (error.response.status === 403) {
+                        console.error("User lacks permissions (403 Forbidden).");
+                        if (user !== null) setUser(null);
+                    } else {
+                        console.error("Unexpected error fetching user:", error.response);
+                    }
+                } else {
+                    console.error("Network error or server down:", error);
+                }
             }
             finally {
-                setLoading(false); // Set loading to false after the request
+                setLoading(false);
             }
         };
 
@@ -32,7 +43,7 @@ export const UserProvider = ({ children }) => {
     }, []);
 
     const getCSRFToken = () => {
-        return Cookies.get("csrftoken"); // Get CSRF token from cookies
+        return Cookies.get("csrftoken");
     };
 
     const logoutUser = async () => {
@@ -46,9 +57,10 @@ export const UserProvider = ({ children }) => {
             if (response.status === 200) {
                 console.log("Logged out successfully");
 
-                window.location.href = "/logged-out";
-
-                setTimeout(() => setUser(null), 100);
+                setTimeout(() => {
+                    setUser(null);
+                    window.location.href = "/logged-out";
+                }, 300);
             } else {
                 console.error("Logout failed");
             }

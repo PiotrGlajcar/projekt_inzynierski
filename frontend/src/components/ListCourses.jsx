@@ -12,21 +12,21 @@ const ListCourses = () => {
 
     useEffect(() => {
         const fetchCourses = async () => {
-            
             try {
                 const response = await backend.get("/courses/");
-
+    
                 const allCourses = Array.isArray(response.data.data) ? response.data.data : [];
-                const teacherCourses = allCourses.filter(course => course.user_id === user?.id);
-                // TEACHER COURSES ODPOWIEDNIO POFILTROWAĆ
-                setCourses(allCourses);
+                
+                const teacherCourses = allCourses.filter(course => course.teacher === user?.teacher_id);
+    
+                setCourses(teacherCourses);
             } catch (error) {
                 console.error("Error fetching courses:", error);
             }
         };
     
         fetchCourses();
-    }, []);    
+    }, [user]);   
 
     const handleDeleteCourse = async (id) => {
         const isConfirmed = window.confirm(`Are you sure you want to delete this course?`);

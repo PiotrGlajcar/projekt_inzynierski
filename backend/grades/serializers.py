@@ -181,6 +181,7 @@ class CourseSerializer(serializers.ModelSerializer):
     """
 
     teacher = serializers.PrimaryKeyRelatedField(queryset=Teacher.objects.all())
+    description = serializers.CharField(required=False, allow_blank=True)
     assignments = serializers.SerializerMethodField()
     students = serializers.SerializerMethodField()
     writable_assignments = AssignmentSerializer(
