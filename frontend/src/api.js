@@ -16,4 +16,11 @@ export const getCSRFToken = () => {
       ?.split("=")[1];
 };
 
+backend.interceptors.request.use(config => {
+  if (['post', 'put', 'delete'].includes(config.method?.toLowerCase())) {
+    config.headers['X-CSRFToken'] = getCSRFToken();
+  }
+  return config;
+});
+
 export default backend;

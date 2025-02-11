@@ -33,11 +33,7 @@ const ListCourses = () => {
         if (!isConfirmed) return;
 
         try {
-            const response = await backend.delete(`/courses/${id}/`, {
-                headers: {
-                    "X-CSRFToken": getCSRFToken(),
-                },
-            });
+            const response = await backend.delete(`/courses/${id}/`);
 
             if (response.status === 204) {
                 setCourses(courses.filter((course) => course.id !== id));

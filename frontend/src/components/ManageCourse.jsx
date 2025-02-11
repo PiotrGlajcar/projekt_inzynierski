@@ -49,10 +49,6 @@ function ManageCourse() {
             const response = await backend.put(`/courses/${courseId}/`,
                 {
                     description: updatedDescription,
-                },{
-                    headers: {
-                        "X-CSRFToken": getCSRFToken(),
-                    },
                 }
             );
     
@@ -73,10 +69,7 @@ function ManageCourse() {
     const handleRemoveParticipant = async (studentId) => {
         try {
             await backend.delete(`/enrollments/detail/`, {
-                params: { student_id: studentId, course_id: courseId },
-                headers: {
-                    "X-CSRFToken": getCSRFToken()
-                }
+                params: { student_id: studentId, course_id: courseId }
             });
     
             setSelectedCourse((prev) => ({
@@ -168,12 +161,7 @@ function ManageCourse() {
                 if (score.grade_id) {
 
                     await backend.put(`/grades/${score.grade_id}/`,
-                        { score: score.score },
-                        {
-                            headers: {
-                                "X-CSRFToken": getCSRFToken(),
-                            },
-                        }
+                        { score: score.score }
                     );
                 } else {
                     let assignmentId = score.assignment_id;
@@ -187,11 +175,6 @@ function ManageCourse() {
                             description: newElementDescription,
                             weight: newElementWeight,
                             is_mandatory: false,
-                        },
-                        {
-                            headers: {
-                                "X-CSRFToken": getCSRFToken(),
-                            },
                         });
     
                         assignmentId = newAssignment.data.id;
@@ -223,10 +206,6 @@ function ManageCourse() {
                         enrollment_id: editingEnrollmentId,
                         assignment_id: assignmentId,
                         score: score.score,
-                    },{
-                        headers: {
-                            "X-CSRFToken": getCSRFToken(),
-                        },
                     });
     
                     score.grade_id = newGrade.data.id;

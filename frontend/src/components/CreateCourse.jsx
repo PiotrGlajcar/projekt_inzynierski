@@ -44,11 +44,7 @@ function CreateCourse() {
             };
 
             try {
-                const response = await backend.post("/courses/?include=assignments", newCourse, {
-                    headers: {
-                        "X-CSRFToken": getCSRFToken()
-                    }
-                });
+                const response = await backend.post("/courses/?include=assignments", newCourse);
 
                 if (response.status === 201) {
                     alert(`Kurs "${courseName}" został pomyślnie utworzony!`);

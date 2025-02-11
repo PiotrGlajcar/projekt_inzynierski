@@ -64,11 +64,6 @@ function CourseRegister() {
                 {
                     student_id: user.student_id,
                     course_id: courseId,
-                },
-                {
-                    headers: {
-                        "X-CSRFToken": getCSRFToken(),
-                    },
                 }
             );
     
