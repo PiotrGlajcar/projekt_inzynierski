@@ -703,3 +703,73 @@ button {
     background-color: #ffcea5;
     border: 1px solid #87531c;
 }
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .modal p {
+    margin-bottom: 20px;
+    font-size: 1.2em;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .modal button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  /* "No" Button (Safe Option) */
+  .cancel-button {
+    background-color: #4CAF50; /* Green color for safety */
+    color: white;
+  }
+  
+  .cancel-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+  }
+  
+  .cancel-button:focus {
+    outline: 2px solid #45a049; /* Focus outline for accessibility */
+  }
+  
+  /* "Yes" Button (Danger Option) */
+  .confirm-button {
+    background-color: #f44336; /* Red color for danger */
+    color: white;
+  }
+  
+  .confirm-button:hover {
+    background-color: #d32f2f; /* Darker red on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+  }
+  
+  .confirm-button:focus {
+    outline: 2px solid #d32f2f; /* Focus outline for accessibility */
+  }

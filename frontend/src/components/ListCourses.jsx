@@ -3,11 +3,14 @@ import { useNavigate, Link } from "react-router-dom";
 import backend from "../api";
 import { getCSRFToken } from "../api";
 import { UserContext } from "../context/UserContext";
+import ConfirmationModal from "./ConfirmationModal";
 
 const ListCourses = () => {
     const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
-    
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [courseToDelete, setCourseToDelete] = useState(null);
+
     const { user } = useContext(UserContext);
 
     useEffect(() => {
@@ -29,22 +32,38 @@ const ListCourses = () => {
     }, [user]);   
 
     const handleDeleteCourse = async (id) => {
-        const isConfirmed = window.confirm(`Are you sure you want to delete this course?`);
-        if (!isConfirmed) return;
-
+        // Open the modal and store the course ID
+        setCourseToDelete(id);
+        setIsModalOpen(true);
+    };
+    
+    const confirmDelete = async () => {
+        if (!courseToDelete) return;
+    
         try {
-            const response = await backend.delete(`/courses/${id}/`);
-
-            if (response.status === 204) {
-                setCourses(courses.filter((course) => course.id !== id));
-                alert("Course deleted successfully.");
-            } else {
-                alert("Failed to delete the course.");
-            }
+        const response = await backend.delete(`/courses/${courseToDelete}/`);
+    
+        if (response.status === 204) {
+            setCourses(courses.filter((course) => course.id !== courseToDelete));
+            alert("Kurs został pomyślnie usunięty.");
+        } else {
+            alert("Nie udało się usunąć kursu.");
+        }
         } catch (error) {
-            console.error("Error deleting course:", error);
+        console.error("Error deleting course:", error);
+        } finally {
+        // Close the modal and reset the course ID
+        setIsModalOpen(false);
+        setCourseToDelete(null);
         }
     };
+
+    const cancelDelete = () => {
+        // Close the modal and reset the course ID
+        setIsModalOpen(false);
+        setCourseToDelete(null);
+      };
+    
 
     return (
         <div className="course-list">
@@ -69,6 +88,13 @@ const ListCourses = () => {
                 )}
             </div>
             <div className="centruj"><Link to="/home-staff" >⇦ Wróć</Link></div>
+            {/* Custom Confirmation Modal */}
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                onConfirm={confirmDelete}
+                onCancel={cancelDelete}
+                message="Czy na pewno chcesz usunąć ten kurs?"
+            />
         </div>
     );
 };
