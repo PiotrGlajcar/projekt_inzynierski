@@ -16,8 +16,6 @@ import ProtectedRoute from './components/ProtectedRoute.jsx';
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import MyCourses from './components/MyCourses.jsx'
 import MyCourseDetails from './components/MyCourseDetails.jsx'
-import background from "./assets/images/background.jpg";
-
 
 function App() {
 
@@ -27,46 +25,63 @@ function App() {
           <Header />
           <div className='content-container'>
           <Routes>
+            {/* Public Routes (No Auth Needed) */}
             <Route path="" element={<ToLogin />} />
             <Route path="/home" element={<ToLogin />} />
-            <Route path="/redirect" element={<RedirectPage />} />
-            <Route path='/home-staff' element={
-              <ProtectedRoute role="teacher">
-                <Home />
-              </ProtectedRoute>}/>
-            {/*   pomocnicza strona do pracy jako prowadzący*/}
-            <Route path='/home-staff-test' element={<Home />} />
+            <Route path='/about' element={<About />} />
+            <Route path='/contact' element={<Contact />} />
 
+            {/* Unauthorized Page */}
+            <Route path='/unauthorized' element={<Unauthorized />} />
+            <Route path="/redirect" element={<RedirectPage />} />
+            <Route path='/logged-out' element={<LoggedOut />} />
+            
+            {/* Student Routes */}
             <Route path='/home-student' element={
               <ProtectedRoute role="student">
                 <HomeStudent />
               </ProtectedRoute> }/>
-            <Route path='/unauthorized' element={<Unauthorized />} />
-            <Route path='logged-out' element={<LoggedOut />} />
-            <Route path='/about' element={<About />} />
-            <Route path='/contact' element={<Contact />} />
+
+            <Route path="/my-courses" element={
+              <ProtectedRoute role="student">
+                <MyCourses />
+              </ProtectedRoute> }/>
+
+            <Route path="/my-course/:courseId" element={
+              <ProtectedRoute role="student">
+                <MyCourseDetails />
+              </ProtectedRoute> }/>
+
+            <Route path="/course-register/" element={
+              <ProtectedRoute role="student">
+                <CourseRegister />
+              </ProtectedRoute> }/>
+
+            {/* Teacher Routes */}
+            <Route path='/home-staff' element={
+              <ProtectedRoute role="teacher">
+                <Home />
+              </ProtectedRoute> }/>
+
             <Route path="/create-course" element={
               <ProtectedRoute role="teacher">
                 <CreateCourse />
               </ProtectedRoute> }/>
 
-              <Route path="/create-course-test" element={ <CreateCourse />}/>
-
-            {/* ścieżki do zabezpieczenia później */}
             <Route path="/manage-course/" element={
-              
-              <ListCourses />
-              }/>
+              <ProtectedRoute role="teacher">
+                <ListCourses />
+              </ProtectedRoute> }/>
 
             <Route path="/manage-course/:courseId" element={
-              
-              <ManageCourse />
-              } />
+              <ProtectedRoute role="teacher">
+                <ManageCourse />
+              </ProtectedRoute> }/>
 
-            <Route path="/course-register/" element={<CourseRegister />} />
-            <Route path="/course-register/:courseName" element={<CourseRegister />} />
-            <Route path="/my-courses" element={<MyCourses />} />
-            <Route path="/my-course/:courseId" element={<MyCourseDetails />} />
+            {/* pomocnicza strona do pracy jako prowadzący - DO USUNIĘCIA !!! */}
+            <Route path='/home-staff-test' element={<Home />} />
+            <Route path="/create-course-test" element={ <CreateCourse />}/>
+
           </Routes>
           </div>
           <Footer />

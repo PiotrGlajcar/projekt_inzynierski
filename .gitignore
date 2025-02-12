@@ -10,7 +10,8 @@ __pycache__/
 ENV/
 env/
 *.venv
-*.env
+*.env*
+.envs/
 
 # Django Specific
 backend/db.sqlite3
