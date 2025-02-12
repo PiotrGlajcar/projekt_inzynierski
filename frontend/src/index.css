@@ -376,6 +376,9 @@ ul {
 .course-list {
     padding: 10px 20px;
 }
+.course-list h2{
+    text-align: center;
+}
 
 .course-item strong {
     font-size: 16px;
@@ -430,7 +433,7 @@ button {
 .course-tile button:last-of-type,
 .my-course-details button:first-of-type,
 .course-details button:first-of-type {
-    background-color: rgb(110, 44, 50); /* Czerwony dla przycisku "Usuń kurs" */
+    background-color: rgb(110, 44, 50);
 }
 
 .buttons button:last-of-type {

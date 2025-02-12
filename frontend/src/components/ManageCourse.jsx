@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import backend from "../api";
 import ConfirmationModal from "./ConfirmationModal";
 
@@ -264,9 +264,10 @@ function ManageCourse() {
                 {selectedCourse.assignments.map((assignment) => (
                   <li key={assignment.id}>
                     <strong>{assignment.name}</strong>
-                    <p>{assignment.description || "Brak opisu"}</p>
-                    <p>Waga: {assignment.weight}%</p>
-                    {/*<p>
+                    <p>waga: {assignment.weight}</p>
+                    {/*<p>{assignment.description || "Brak opisu"}</p>
+                    
+                    <p>
                         {assignment.is_mandatory
                             ? "Obowiązkowe"
                             : "Nieobowiązkowe"}
