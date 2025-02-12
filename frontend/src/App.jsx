@@ -26,8 +26,14 @@ function App() {
           <Header />
           <div className='content-container'>
           <Routes>
+            {/* Public Routes (No Auth Needed) */}
             <Route path="" element={<ToLogin />} />
             <Route path="/home" element={<ToLogin />} />
+            <Route path='/about' element={<About />} />
+            <Route path='/contact' element={<Contact />} />
+
+            {/* Unauthorized Page */}
+            <Route path='/unauthorized' element={<Unauthorized />} />
             <Route path="/redirect" element={<RedirectPage />} />
             <Route path='/home-staff' element={
               <ProtectedRoute role="teacher">
