@@ -7,6 +7,8 @@ from oauth.services.usos import UsosAPI
 from oauth.utils.responses import api_response
 from oauth.utils.users import process_usos_user
 
+
+
 # Initialize the UsosAPI instance
 usos_api = UsosAPI(
     consumer_key=settings.USOS_CONSUMER_KEY,
@@ -88,7 +90,8 @@ def process_oauth_callback(request):
         # Log the user in to associate the session with the User object
         login(request, user)
 
-        return redirect("http://localhost:5173/redirect")
+        redirect_url = f"{settings.FRONTEND_URL}/redirect"
+        return redirect(redirect_url)
         # (api_response(
         #     status="success",
         #     message="User data retrieved successfully",

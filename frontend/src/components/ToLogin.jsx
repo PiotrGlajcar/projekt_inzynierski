@@ -1,12 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import backend from "../api";
 
 const ToLogin = () => {
     const navigate = useNavigate();
 
     const handleLogin = async () => {
-        window.location.href = "http://localhost:8000/oauth/start/";
+        window.location.href = `${import.meta.env.VITE_API_BASE_URL}/oauth/start/`;
     };
 
     return (

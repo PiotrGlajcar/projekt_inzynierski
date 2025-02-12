@@ -11,25 +11,32 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+import os
+import dj_database_url
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables
+if os.environ.get('DJANGO_ENV') == 'production':
+    load_dotenv(os.path.join(BASE_DIR, '.env.production'))
+else:
+    load_dotenv(os.path.join(BASE_DIR, '.env.development'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-7#35zm5vpjl5v)qlv-g9)1ff_&o$+1h+kc42qa5_&59(mg5d_c"
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+# Allowed hosts
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -45,6 +52,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -54,9 +62,21 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-CSRF_TRUSTED_ORIGINS = ["http://localhost:5173"]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:8000",
+    "https://usosapi.polsl.pl"
+]
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:5173",
+#     "http://localhost:8000",
+#     "https://usosapi.polsl.pl"
+# ]
+
+CORS_ALLOW_REDIRECTS = True
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -69,9 +89,15 @@ CORS_ALLOW_METHODS = [
 ]
 
 CORS_ALLOW_HEADERS = [
-    "content-type",
+    "accept",
+    "accept-encoding",
     "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
     "x-csrftoken",
+    "x-requested-with",
 ]
 
 ROOT_URLCONF = "student_grades.urls"
@@ -91,7 +117,7 @@ REST_FRAMEWORK = {
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -110,11 +136,17 @@ WSGI_APPLICATION = "student_grades.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL')
+    )
 }
 
 
@@ -122,16 +154,13 @@ AUTH_USER_MODEL = "grades.User"
 
 
 # OAuth Configuration
-
-USOS_CONSUMER_KEY = "vu7qhje2x7ptS9VFPbcr"
-USOS_CONSUMER_SECRET = "ZrTx4cJHQq6MK8sHsjkd6ZwxgjPqRqQtpGt4kWeV"
-USOS_REQUEST_TOKEN_URL = "https://usosapi.polsl.pl/services/oauth/request_token"
-USOS_AUTHORIZE_URL = "https://usosapi.polsl.pl/services/oauth/authorize"
-USOS_ACCESS_TOKEN_URL = "https://usosapi.polsl.pl/services/oauth/access_token"
-USOS_CALLBACK_URL = "http://localhost:8000/oauth/callback/"
-# Replace with your frontend callback if needed
-
-FRONTEND_URL = "http://localhost:5137"
+USOS_CONSUMER_KEY = os.getenv('USOS_CONSUMER_KEY')
+USOS_CONSUMER_SECRET = os.getenv('USOS_CONSUMER_SECRET')
+USOS_REQUEST_TOKEN_URL = os.getenv('USOS_REQUEST_TOKEN_URL')
+USOS_AUTHORIZE_URL = os.getenv('USOS_AUTHORIZE_URL')
+USOS_ACCESS_TOKEN_URL = os.getenv('USOS_ACCESS_TOKEN_URL')
+USOS_CALLBACK_URL = os.getenv('USOS_CALLBACK_URL')
+FRONTEND_URL = os.getenv('FRONTEND_URL')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -167,7 +196,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),  # Include the static folder
+]
+
+# Serve static files in production
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

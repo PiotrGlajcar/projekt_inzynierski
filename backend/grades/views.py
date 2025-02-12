@@ -1,12 +1,16 @@
+from rest_framework.permissions import IsAuthenticated
+from grades.permissions import IsSuperuser, IsSuperuserOrStudent, IsSuperuserOrTeacher
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from rest_framework import status
+from django.contrib.auth.models import AnonymousUser
 from oauth.utils.responses import api_response
+from django.shortcuts import render
 
 from .models import (Assignment, Course, Enrollment, Grade, Student, Teacher,
                      User)
@@ -21,20 +25,39 @@ def handle_options(request):
     response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     return response
 
+def index(request):
+    return render(request, "frontend/index.html")
 
 # User Views
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def users_me(request):
     """
     Returns the logged-in user's details, including role-specific data.
     """
     user = request.user
+    if not user or isinstance(user, AnonymousUser):
+        return api_response(
+            status="error",
+            message="User is not authenticated.",
+            data={},
+            status_code=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    if user.role not in ["student", "teacher"]:
+        return api_response(
+            status="error",
+            message="Access denied. Insufficient permissions.",
+            data={},
+            status_code=status.HTTP_403_FORBIDDEN,
+        )
+
     serializer = UserSerializer(user)
+
     return api_response(
         status="success",
         message="User data retrieved successfully",
-        data=serializer.data,
-        status_code=200,
+        data=serializer.data
     )
 
 
@@ -45,7 +68,14 @@ class UserListCreateView(generics.ListCreateAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    
+    # authentication_classes = [IsAuthenticated]
 
+    # def get_permissions(self):
+    #     if self.request.method == "POST":
+    #         return [IsSuperuser()]
+    #     return [IsSuperuser()]
+    
     def list(self, request, *args, **kwargs):
         """
         List all users.
@@ -87,6 +117,9 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    # authentication_classes = [IsAuthenticated]
+    # permission_classes = [IsSuperuser]
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -136,6 +169,13 @@ class StudentListCreateView(generics.ListCreateAPIView):
     queryset = Student.objects.select_related("user").all()
     serializer_class = StudentSerializer
 
+    # authentication_classes = [IsAuthenticated]
+
+    # def get_permissions(self):
+    #     if self.request.method == "POST":
+    #         return [IsSuperuser()]
+    #     return [IsSuperuserOrTeacher()]
+    
     def list(self, request, *args, **kwargs):
         """
         List all students with a standardized response.
@@ -178,6 +218,14 @@ class StudentDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Student.objects.select_related("user").all()
     serializer_class = StudentSerializer
 
+    # authentication_classes = [IsAuthenticated]
+
+    # def get_permissions(self):
+    #     if self.request.method == "GET":
+    #         return [IsSuperuserOrTeacher()]
+    #     return [IsSuperuser()]
+
+    
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
@@ -189,7 +237,7 @@ class StudentDetailView(generics.RetrieveUpdateDestroyAPIView):
         )
 
     def update(self, request, *args, **kwargs):
-        partial = kwargs.pop("partial", True)  # Support partial updates
+        partial = kwargs.pop("partial", True)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
@@ -224,6 +272,9 @@ class TeacherListView(generics.ListAPIView):
     queryset = Teacher.objects.select_related("user").all()
     serializer_class = TeacherSerializer
 
+    # authentication_classes = [IsAuthenticated]
+    # permission_classes = [IsSuperuser]
+
     def list(self, request, *args, **kwargs):
         """
         List all teachers with a standardized response.
@@ -245,6 +296,9 @@ class TeacherDetailView(generics.RetrieveUpdateAPIView):
 
     queryset = Teacher.objects.select_related("user").all()
     serializer_class = TeacherSerializer
+
+    # authentication_classes = [IsAuthenticated]
+    # permission_classes = [IsSuperuser]
 
     def retrieve(self, request, *args, **kwargs):
         """
@@ -291,6 +345,13 @@ class CourseListCreateView(generics.ListCreateAPIView):
     queryset = Course.objects.select_related("teacher").prefetch_related("assignments")
     serializer_class = CourseSerializer
 
+    # authentication_classes = [IsAuthenticated]
+
+    # def get_permissions(self):
+    #     if self.request.method == "POST":
+    #         return [IsSuperuserOrTeacher()]
+    #     return [IsAuthenticated()]
+    
     def get_serializer_context(self):
         """
         Add 'include' query parameter to the serializer context.
@@ -347,6 +408,17 @@ class CourseDetailView(generics.RetrieveUpdateDestroyAPIView):
         "assignments", "enrollments__student__user", "enrollments__grades__assignment"
     )
     serializer_class = CourseSerializer
+
+    # authentication_classes = [IsAuthenticated]
+
+    # def get_permissions(self):
+    #     if self.request.method == "GET":
+    #         return [IsAuthenticated()]
+        
+    #     if self.request.method in ["PUT", "PATCH"]:
+    #         return [IsSuperuserOrTeacher()]
+        
+    #     return [IsSuperuserOrTeacher()]
 
     def get_serializer_context(self):
         """
@@ -414,6 +486,13 @@ class AssignmentListCreateView(generics.ListCreateAPIView):
     queryset = Assignment.objects.select_related("course").all()
     serializer_class = AssignmentSerializer
 
+    # authentication_classes = [IsAuthenticated]
+
+    # def get_permissions(self):
+    #     if self.request.method == "POST":
+    #         return [IsSuperuserOrTeacher()]
+    #     return [IsAuthenticated()]
+    
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
@@ -449,6 +528,13 @@ class AssignmentDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Assignment.objects.select_related("course").all()
     serializer_class = AssignmentSerializer
+
+    # authentication_classes = [IsAuthenticated]
+
+    # def get_permissions(self):
+    #     if self.request.method == "GET":
+    #         return [IsAuthenticated()]
+    #     return [IsSuperuserOrTeacher()]
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
