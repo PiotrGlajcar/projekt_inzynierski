@@ -17,10 +17,6 @@ backend/db.sqlite3
 db.sqlite3
 *.log
 
-# Django Migrations
-**/migrations/*
-!**/migrations/__init__.py
-
 # Python Package Files
 *.egg
 *.egg-info/
