@@ -18,8 +18,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from grades.views import index
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("grades.urls")),
     path("api/oauth/", include("oauth.urls")),
+    path("", index, name="index"),
+    path("<path:path>", index),
 ]
