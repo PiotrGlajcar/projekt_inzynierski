@@ -17,6 +17,7 @@ export const getCSRFToken = () => {
 };
 
 backend.interceptors.request.use(config => {
+  config.withCredentials = true;
   if (['post', 'put', 'delete'].includes(config.method?.toLowerCase())) {
     config.headers['X-CSRFToken'] = getCSRFToken();
   }
