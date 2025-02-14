@@ -24,16 +24,10 @@ if os.environ.get('DJANGO_ENV') == 'production':
 else:
     load_dotenv(os.path.join(BASE_DIR, '.env.development'))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-# Allowed hosts
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 
@@ -63,23 +57,17 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173",
-    "http://localhost:8000",
-    "https://usosapi.polsl.pl"
-]
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
 
-CORS_ALLOW_ALL_ORIGINS = True
-
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:5173",
-#     "http://localhost:8000",
-#     "https://usosapi.polsl.pl"
-# ]
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
 
 CORS_ALLOW_REDIRECTS = True
-
 CORS_ALLOW_CREDENTIALS = True
+
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None' 
 
 CORS_ALLOW_METHODS = [
     "GET",
@@ -133,32 +121,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "student_grades.wsgi.application"
 
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
 DATABASES = {
     'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
 
-
 AUTH_USER_MODEL = "grades.User"
 
-
 # OAuth Configuration
+USOS_BASE_URL = os.getenv('USOS_BASE_URL')
 USOS_CONSUMER_KEY = os.getenv('USOS_CONSUMER_KEY')
 USOS_CONSUMER_SECRET = os.getenv('USOS_CONSUMER_SECRET')
 USOS_REQUEST_TOKEN_URL = os.getenv('USOS_REQUEST_TOKEN_URL')
 USOS_AUTHORIZE_URL = os.getenv('USOS_AUTHORIZE_URL')
 USOS_ACCESS_TOKEN_URL = os.getenv('USOS_ACCESS_TOKEN_URL')
 USOS_CALLBACK_URL = os.getenv('USOS_CALLBACK_URL')
+
 FRONTEND_URL = os.getenv('FRONTEND_URL')
 
 # Password validation
@@ -192,8 +169,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
+# Static files
 
 STATIC_URL = "/static/"
 
@@ -202,13 +178,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 # Serve static files in production
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-# Enable compression and caching for WhiteNoise
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-# settings.py
-# SESSION_COOKIE_SECURE = True    # Send session cookies over HTTPS only
-# CSRF_COOKIE_SECURE = True       # Send CSRF cookies over HTTPS only
-# SESSION_COOKIE_AGE = 1209600    # Session expiration time (2 weeks)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

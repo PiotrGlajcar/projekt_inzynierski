@@ -14,7 +14,7 @@ usos_api = UsosAPI(
     consumer_key=settings.USOS_CONSUMER_KEY,
     consumer_secret=settings.USOS_CONSUMER_SECRET,
     callback_url=settings.USOS_CALLBACK_URL,
-    base_url="https://usosapi.polsl.pl",
+    base_url=settings.USOS_BASE_URL,
 )
 
 
