@@ -206,9 +206,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # settings.py
-SESSION_COOKIE_SECURE = True    # Send session cookies over HTTPS only
-CSRF_COOKIE_SECURE = True       # Send CSRF cookies over HTTPS only
-SESSION_COOKIE_AGE = 1209600    # Session expiration time (2 weeks)
+# SESSION_COOKIE_SECURE = True    # Send session cookies over HTTPS only
+# CSRF_COOKIE_SECURE = True       # Send CSRF cookies over HTTPS only
+# SESSION_COOKIE_AGE = 1209600    # Session expiration time (2 weeks)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
