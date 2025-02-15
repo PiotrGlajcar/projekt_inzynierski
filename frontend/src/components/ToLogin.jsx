@@ -5,7 +5,7 @@ const ToLogin = () => {
     const navigate = useNavigate();
 
     const handleLogin = async () => {
-        window.location.href = "/api/oauth/start/";
+        window.location.href = `${import.meta.env.VITE_API_BASE_URL}/oauth/start/`;
     };
 
     return (
