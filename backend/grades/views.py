@@ -25,9 +25,6 @@ def handle_options(request):
     response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     return response
 
-def index(request):
-    return render(request, "frontend/index.html")
-
 # User Views
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const backend = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_ENDPOINT,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
