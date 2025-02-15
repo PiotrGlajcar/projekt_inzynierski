@@ -118,5 +118,5 @@ def logout_user(request):
     response = api_response(
         status="success", message="User logged out successfully", status_code=200
     )
-    response.set_cookie("csrftoken", get_token(request))
+    response.delete_cookie("sessionid")
     return response
