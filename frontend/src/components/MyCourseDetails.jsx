@@ -38,7 +38,7 @@ function MyCourseDetails() {
     
         const fetchEnrollments = async () => {
             try {
-                const { data } = await backend.get("/enrollments");
+                const { data } = await backend.get("/enrollments/");
     
                 if (data.status === "success") {
                     const userEnrollment = data.data.find(
@@ -63,7 +63,7 @@ function MyCourseDetails() {
     
         const fetchGrades = async () => {
             try {
-                const { data } = await backend.get("/grades");
+                const { data } = await backend.get("/grades/");
     
                 if (data.status === "success") {
                     const studentGrades = data.data.filter((grade) => grade.enrollment_id === enrollmentId);

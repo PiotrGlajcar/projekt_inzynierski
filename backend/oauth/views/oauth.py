@@ -90,8 +90,7 @@ def process_oauth_callback(request):
         # Log the user in to associate the session with the User object
         login(request, user)
 
-        redirect_url = f"{settings.FRONTEND_URL}/redirect"
-        return redirect(redirect_url)
+        return redirect("/redirect")
         # (api_response(
         #     status="success",
         #     message="User data retrieved successfully",

@@ -15,7 +15,7 @@ function MyCourses() {
     
         const fetchEnrollments = async () => {
             try {
-                const { data } = await backend.get("/enrollments");
+                const { data } = await backend.get("/enrollments/");
     
                 if (data.status === "success") {
                     const studentEnrollments = data.data.filter(

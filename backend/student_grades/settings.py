@@ -102,8 +102,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
-        #'rest_framework.permissions.IsAuthenticated',
-        "rest_framework.permissions.AllowAny"
+        'rest_framework.permissions.IsAuthenticated'
     ],
 }
 
@@ -183,6 +182,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 # Serve static files in production
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
